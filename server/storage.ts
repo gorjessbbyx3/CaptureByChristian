@@ -235,7 +235,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Contracts
-  async getContracts(): Promise<(Contract & { client: Client })[]> {
+  /*async getContracts(): Promise<(Contract & { client: Client })[]> {
     try {
       const contractsData = await db
         .select()
@@ -252,7 +252,7 @@ export class DatabaseStorage implements IStorage {
       // Return empty array if table doesn't exist or has schema issues
       return [];
     }
-  }
+  }*/
 
   async getContract(id: number): Promise<(Contract & { client: Client }) | undefined> {
     try {

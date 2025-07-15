@@ -86,3 +86,12 @@ replit.nix
 # Storybook build outputs
 .out
 .storybook-out
+
+# venv
+./venv
+venv
+.venv
+
+#env
+.env
+env

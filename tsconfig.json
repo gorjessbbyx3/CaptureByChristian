@@ -17,7 +17,23 @@
     "types": ["node", "vite/client"],
     "paths": {
       "@/*": ["./client/src/*"],
+      "@/components/*": ["./client/src/components/*"],
+      "@/modules/*": ["./client/src/modules/*"],
       "@shared/*": ["./shared/*"]
-    }
-  }
+    },
+    "types": ["node"]
+  },
+  "include": [
+    "client/src/**/*.ts",
+    "client/src/**/*.tsx",
+    "client/src/**/*.js",
+    "client/src/**/*.jsx",
+    "server/**/*.ts",
+    "shared/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build"
+  ]
 }

@@ -235,13 +235,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Contracts
-  /*async getContracts(): Promise<(Contract & { client: Client })[]> {
+  async getContracts(): Promise<(Contract & { client: Client })[]> {
     try {
       const contractsData = await db
         .select()
         .from(contracts)
-        .leftJoin(clients, eq(contracts.clientId, clients.id))
-        .orderBy(desc(contracts.createdAt));
+        .leftJoin(clients, eq(contracts.clientid, clients.id))
+        .orderBy(desc(contracts.createdat));
       
       return contractsData.map(row => ({
         ...row.contracts,
@@ -252,7 +252,7 @@ export class DatabaseStorage implements IStorage {
       // Return empty array if table doesn't exist or has schema issues
       return [];
     }
-  }*/
+  }
 
   async getContract(id: number): Promise<(Contract & { client: Client }) | undefined> {
     try {
@@ -495,7 +495,7 @@ export class DatabaseStorage implements IStorage {
   async getClientPortalStats(): Promise<any> {
     // Get actual portal session data
     const allSessions = await db.select().from(clientPortalSessions);
-    const activeSessions = allSessions.filter(s => s.status === 'active');
+    const activeSessions = allSessions.filter((s: any) => s.status === 'active');
     
     // Calculate total logins (session starts)
     const totalLogins = allSessions.length;
@@ -506,15 +506,15 @@ export class DatabaseStorage implements IStorage {
     const accessRate = totalClients > 0 ? Math.round((activeSessions.length / totalClients) * 100) : 0;
     
     // Count downloads from activity logs
-    const downloadCount = allSessions.reduce((sum, session) => {
+    const downloadCount = allSessions.reduce((sum: number, session: any) => {
       const activities = session.activityLog || [];
       return sum + activities.filter((activity: any) => activity.type === 'download').length;
     }, 0);
     
     // Calculate average rating from sessions with ratings
-    const sessionsWithRatings = allSessions.filter(s => s.rating && s.rating > 0);
+    const sessionsWithRatings = allSessions.filter((s: any) => s.rating && s.rating > 0);
     const avgRating = sessionsWithRatings.length > 0 
-      ? (sessionsWithRatings.reduce((sum, s) => sum + (s.rating || 0), 0) / sessionsWithRatings.length).toFixed(1)
+      ? (sessionsWithRatings.reduce((sum: number, s: any) => sum + (s.rating || 0), 0) / sessionsWithRatings.length).toFixed(1)
       : null;
 
     return {

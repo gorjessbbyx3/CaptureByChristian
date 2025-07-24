@@ -63,43 +63,43 @@ export const bookings = pgTable("bookings", {
 
 export const contracts = pgTable("contracts", {
   id: serial("id").primaryKey(),
-  bookingId: integer("booking_id").references(() => bookings.id),
-  clientId: integer("client_id").references(() => clients.id).notNull(),
-  contractType: text("contract_type").notNull(), // 'individual', 'business'
-  serviceType: text("service_type"), // 'portrait', 'wedding', 'commercial', etc.
+  bookingId: integer("bookingId").references(() => bookings.id),
+  clientId: integer("clientId").references(() => clients.id).notNull(),
+  contractType: text("contractType").notNull(), // 'individual', 'business'
+  serviceType: text("serviceType"), // 'portrait', 'wedding', 'commercial', etc.
   status: text("status").notNull().default("draft"), // 'draft', 'sent', 'signed', 'completed', 'cancelled'
   title: text("title").notNull(),
-  templateContent: text("template_content").notNull(),
-  signedContent: text("signed_content"),
-  sessionDate: timestamp("session_date"),
+  templateContent: text("templateContent").notNull(),
+  signedContent: text("signedContent"),
+  sessionDate: timestamp("sessionDate"),
   location: text("location"),
-  packageType: text("package_type"),
-  totalAmount: decimal("total_amount", { precision: 10, scale: 2 }),
-  retainerAmount: decimal("retainer_amount", { precision: 10, scale: 2 }),
-  balanceAmount: decimal("balance_amount", { precision: 10, scale: 2 }),
-  paymentTerms: text("payment_terms"),
+  packageType: text("packageType"),
+  totalAmount: decimal("totalAmount", { precision: 10, scale: 2 }),
+  retainerAmount: decimal("retainerAmount", { precision: 10, scale: 2 }),
+  balanceAmount: decimal("balanceAmount", { precision: 10, scale: 2 }),
+  paymentTerms: text("paymentTerms"),
   deliverables: text("deliverables"),
   timeline: text("timeline"),
-  usageRights: text("usage_rights"),
-  cancellationPolicy: text("cancellation_policy"),
-  additionalTerms: text("additional_terms"),
-  clientSignature: text("client_signature"), // base64 client signature
-  clientSignedAt: timestamp("client_signed_at"),
-  clientIpAddress: text("client_ip_address"),
-  photographerSignature: text("photographer_signature"),
-  photographerSignedAt: timestamp("photographer_signed_at"),
-  signatureRequestSent: timestamp("signature_request_sent"),
-  portalAccessToken: text("portal_access_token"), // For client portal access
-  isFullySigned: boolean("is_fully_signed").default(false),
-  signatureMetadata: json("signature_metadata").$type<{
+  usageRights: text("usageRights"),
+  cancellationPolicy: text("cancellationPolicy"),
+  additionalTerms: text("additionalTerms"),
+  clientSignature: text("clientSignature"), // base64 client signature
+  clientSignedAt: timestamp("clientSignedAt"),
+  clientIpAddress: text("clientIpAddress"),
+  photographerSignature: text("photographerSignature"),
+  photographerSignedAt: timestamp("photographerSignedAt"),
+  signatureRequestSent: timestamp("signatureRequestSent"),
+  portalAccessToken: text("portalAccessToken"), // For client portal access
+  isFullySigned: boolean("isFullySigned").default(false),
+  signatureMetadata: json("signatureMetadata").$type<{
     clientDevice?: string;
     clientUserAgent?: string;
     signatureMethod?: 'electronic' | 'digital';
     witnessRequired?: boolean;
     notarizedRequired?: boolean;
   }>(),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow()
+  createdAt: timestamp("createdAt").defaultNow(),
+  updatedAt: timestamp("updatedAt").defaultNow()
 });
 
 export const invoices = pgTable("invoices", {

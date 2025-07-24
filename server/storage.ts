@@ -240,8 +240,8 @@ export class DatabaseStorage implements IStorage {
       const contractsData = await db
         .select()
         .from(contracts)
-        .leftJoin(clients, eq(contracts.clientid, clients.id))
-        .orderBy(desc(contracts.createdat));
+        .leftJoin(clients, eq(contracts.clientId, clients.id))
+        .orderBy(desc(contracts.createdAt));
       
       return contractsData.map(row => ({
         ...row.contracts,

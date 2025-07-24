@@ -131,3 +131,15 @@ export class PropertyInferenceEngine {
     const avgPricePerSqFt = this.getRegionalPricePerSqFt(data.zipCode || '');
     const baseValue = data.totalSquareFootage * avgPricePerSqFt;
     
+  }
+
+  // Mock implementation for regional price per square foot
+  private getRegionalPricePerSqFt(zipCode: string): number {
+    // In a real implementation, this would query a database or API
+    // For demonstration, return a default value or use zipCode to adjust
+    const defaultPrice = 200; // $200 per sq ft
+    if (zipCode === '90210') return 800;
+    if (zipCode === '10001') return 600;
+    return defaultPrice;
+  }
+    

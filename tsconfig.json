@@ -16,17 +16,20 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@/components/*": ["./src/components/*"],
-      "@/modules/*": ["./src/modules/*"]
+      "@/*": ["./client/src/*"],
+      "@/components/*": ["./client/src/components/*"],
+      "@/modules/*": ["./client/src/modules/*"],
+      "@shared/*": ["./shared/*"]
     },
     "types": ["node"]
   },
   "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.js",
-    "src/**/*.jsx"
+    "client/src/**/*.ts",
+    "client/src/**/*.tsx",
+    "client/src/**/*.js",
+    "client/src/**/*.jsx",
+    "server/**/*.ts",
+    "shared/**/*.ts"
   ],
   "exclude": [
     "node_modules",

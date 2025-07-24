@@ -1,319 +1,219 @@
-# 🌊 Universal Payment Protocol (UPP)
-## Any Device + Internet = Payment Terminal
+# CaptureByChristian - Photography Business Platform
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
-[![Stripe](https://img.shields.io/badge/Stripe-Integrated-purple.svg)](https://stripe.com/)
+A comprehensive photography business management platform built with modern web technologies. This full-stack application provides client management, booking systems, portfolio showcasing, and business analytics for professional photographers.
 
-> **Revolutionary payment processing that works with ANY internet-connected device**
+## 🚀 Features
 
-UPP is the "IV for payments" - a universal middleware protocol that translates between any device and payment systems, just like how IV allows different Python ML libraries to communicate seamlessly.
+### Client Management System
+- Complete CRM with lead scoring and pipeline management
+- Contact form integration with AI-powered lead analysis
+- Client portal for booking management and gallery access
+- Communication tracking and follow-up scheduling
 
-## 🚀 What Makes UPP Special?
+### Booking & Scheduling
+- Interactive calendar with availability management
+- AI-powered booking assistant for customer inquiries
+- Service package management with pricing
+- Automated booking confirmations and reminders
 
-- **📱 Universal Device Support**: Smartphones, Smart TVs, IoT devices, Voice assistants, Gaming consoles
-- **🌐 Internet-Only Requirement**: No special hardware needed - just an internet connection
-- **💰 Lower Fees**: 2.5% vs industry standard 2.9%
-- **🏝️ Hawaii-Based**: Serving underserved Pacific markets first
-- **🔓 Open Source**: MIT licensed - make money and contribute back
+### Portfolio & Gallery Management
+- Password-protected portfolio showcase
+- Client gallery delivery system
+- High-resolution image upload and management
+- Featured work curation
 
-## 🎯 Supported Devices
+### Business Operations
+- Invoice generation with PDF export
+- Digital contract signing
+- Revenue tracking and analytics
+- Service management and pricing
 
-| Device Type | Status | Input Methods | Demo |
-|-------------|--------|---------------|------|
-| 📱 Smartphones | ✅ Live | NFC, QR, Voice, Touch, Biometric | [Try Demo](/demo/smartphone) |
-| 📺 Smart TVs | ✅ Live | QR Display, Remote Control | [Try Demo](/demo/smart-tv) |
-| 🏠 IoT Devices | ✅ Live | Sensors, Buttons, Automation | [Try Demo](/demo/iot) |
-| 🎤 Voice Assistants | ✅ Live | Natural Language | [Try Demo](/demo/voice) |
-| 🎮 Gaming Consoles | ✅ Live | Controller Navigation | [Try Demo](/demo/gaming) |
-| ⌚ Smartwatches | 🚧 Coming Soon | Touch, Voice, Haptic | - |
-| 🚗 Car Systems | 🚧 Coming Soon | Voice, Touch, Integration | - |
+### Admin Dashboard
+- Real-time analytics and reporting
+- Client relationship insights
+- Booking calendar management
+- Revenue and performance metrics
 
-## 🏃‍♂️ Quick Start
+## 🛠️ Technology Stack
 
-### Prerequisites
+- **Frontend**: React 18 + TypeScript, Vite, Wouter routing
+- **Backend**: Express.js + TypeScript
+- **Database**: PostgreSQL with Drizzle ORM
+- **UI**: Tailwind CSS + shadcn/ui components
+- **AI**: OpenAI API integration
+- **Deployment**: Vercel (recommended) or Docker
+
+## 📋 Prerequisites
+
 - Node.js 18+
-- Stripe account (free)
-- AWS/Vercel hosting (optional)
+- PostgreSQL database
+- OpenAI API key (for AI features)
+- Optional: Twilio account (for SMS features)
 
-### Installation
+## ⚡ Quick Start
+
+### 1. Environment Setup
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/universal-payment-protocol.git
-cd universal-payment-protocol
+git clone <repository-url>
+cd CaptureByChristian
 
 # Install dependencies
 npm install
 
-# Set up environment variables
+# Copy environment template
 cp .env.example .env
-# Edit .env with your Stripe keys
+```
 
-# Start development server
+### 2. Database Configuration
+
+```bash
+# Set your database URL in .env
+DATABASE_URL=postgresql://user:pass@host:5432/capturedccollective
+
+# Deploy database schema
+npm run db:push
+
+# Optional: Load sample data
+npm run db:seed
+```
+
+### 3. Start Development Server
+
+```bash
+# Start the development server
 npm run dev
 ```
 
-### Environment Variables
+Visit `http://localhost:3000` to access the application.
+
+## 📊 Database Management
+
+```bash
+# Deploy schema changes
+npm run db:push
+
+# Open database studio
+npm run db:studio
+
+# Generate migration files
+npm run db:generate
+
+# Apply migrations
+npm run db:migrate
+```
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+
+```bash
+# Install Vercel CLI
+npm install -g vercel
+
+# Deploy
+./deploy-vercel.sh
+```
+
+### Docker
+
+```bash
+# Development
+docker-compose -f docker-compose.dev.yml up
+
+# Production
+docker-compose up --build
+```
+
+## 📁 Project Structure
+
+```
+CaptureByChristian/
+├── client/src/          # React frontend
+│   ├── components/      # UI components
+│   │   ├── admin/       # Admin dashboard components
+│   │   ├── client-portal/ # Client portal components
+│   │   └── ui/          # Reusable UI components
+│   ├── pages/           # Route components
+│   ├── hooks/           # Custom React hooks
+│   └── lib/             # Utilities and API client
+├── server/              # Express backend
+│   ├── index.ts         # Server entry point
+│   ├── routes.ts        # API routes
+│   ├── db.ts           # Database connection
+│   ├── storage.ts      # Data access layer
+│   └── openai.ts       # AI integration
+├── shared/              # Shared TypeScript schemas
+├── migrations/          # Database migrations
+└── attached_assets/     # File uploads
+```
+
+## 🔧 Environment Variables
+
+### Required
 
 ```env
-# Required
-STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
-STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key
-
-# Optional
-PORT=3000
-FRONTEND_URL=http://localhost:3000
+DATABASE_URL=postgresql://user:pass@host:5432/capturedccollective
+OPENAI_API_KEY=sk-...
 NODE_ENV=development
 ```
 
-## 🎮 Try the Demo
+### Optional
 
-```bash
-# Start the server
-npm run dev
-
-# Visit the demo endpoints
-curl http://localhost:3000/demo
-curl http://localhost:3000/health
+```env
+TWILIO_ACCOUNT_SID=...
+TWILIO_AUTH_TOKEN=...
+TWILIO_PHONE_NUMBER=...
+VERCEL=1  # For Vercel deployment
 ```
 
-### Live Demo Examples
+## 📖 API Documentation
 
-**Smartphone Payment:**
-```bash
-curl -X POST http://localhost:3000/api/process-payment \
-  -H "Content-Type: application/json" \
-  -d '{
-    "amount": 25.99,
-    "deviceType": "smartphone",
-    "deviceId": "phone_123",
-    "description": "Coffee purchase via NFC"
-  }'
-```
+The application provides RESTful API endpoints for:
 
-**Smart TV Payment:**
-```bash
-curl -X POST http://localhost:3000/api/process-payment \
-  -H "Content-Type: application/json" \
-  -d '{
-    "amount": 49.99,
-    "deviceType": "smart_tv",
-    "deviceId": "tv_456",
-    "description": "Netflix subscription via QR code"
-  }'
-```
+- Client management (`/api/clients`)
+- Booking operations (`/api/bookings`)
+- Service management (`/api/services`)
+- Gallery operations (`/api/gallery`)
+- Contract handling (`/api/contracts`)
+- Invoice generation (`/api/invoices`)
 
-## 🏗️ Architecture
+## 🔐 Authentication
 
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Any Device    │───▶│  UPP Protocol   │───▶│ Payment Gateway │
-│                 │    │   Translator    │    │   (Stripe)      │
-│ • Smartphone    │    │                 │    │                 │
-│ • Smart TV      │    │ • Input Parser  │    │ • Secure        │
-│ • IoT Device    │    │ • Output Format │    │ • Compliant     │
-│ • Voice AI      │    │ • Device Adapt  │    │ • Fast          │
-│ • Any Internet  │    │ • Security      │    │ • Reliable      │
-│   Connected     │    │                 │    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-```
+- Admin authentication with session management
+- Client portal access with secure login
+- Role-based access control
 
-## 💻 API Reference
+## 🎨 Customization
 
-### Device Registration
-```typescript
-POST /api/register-device
-{
-  "deviceType": "smartphone",
-  "capabilities": {
-    "nfc": true,
-    "camera": true,
-    "biometric": true
-  },
-  "fingerprint": "device_unique_id"
-}
-```
+The platform is designed to be easily customizable:
 
-### Process Payment
-```typescript
-POST /api/process-payment
-{
-  "amount": 25.99,
-  "deviceType": "smartphone",
-  "deviceId": "registered_device_id",
-  "description": "Purchase description",
-  "customerEmail": "customer@example.com"
-}
-```
+- Brand colors and styling via Tailwind CSS
+- Business information in database profiles
+- Service packages and pricing
+- AI assistant prompts and responses
 
-### Payment Status
-```typescript
-GET /api/payment-status/:paymentIntentId
-```
+## 📞 Support
 
-## 🔧 Development
+For detailed setup instructions, see:
 
-### Project Structure
-```
-universal-payment-protocol/
-├── src/
-│   ├── server/              # Express server
-│   ├── modules/
-│   │   ├── universal-payment-protocol/
-│   │   │   ├── core/        # Core UPP logic
-│   │   │   └── devices/     # Device adapters
-│   │   ├── crm/             # Customer relationship management
-│   │   └── payments/        # Payment processing
-│   └── demo/                # Live demos
-├── docs/                    # Documentation
-├── WHITEPAPER.md           # Technical white paper
-└── LICENSE                 # MIT License
-```
-
-### Adding New Device Types
-
-1. Create device adapter:
-```typescript
-// src/modules/universal-payment-protocol/devices/YourDeviceAdapter.ts
-export class YourDeviceAdapter implements UPPDevice {
-  deviceType = 'your_device';
-  capabilities = { /* device capabilities */ };
-  
-  async handlePaymentResponse(response: any) {
-    // Handle payment confirmation
-  }
-}
-```
-
-2. Register with UPP:
-```typescript
-const upp = new UniversalPaymentProtocol(config);
-const device = new YourDeviceAdapter(deviceInfo);
-const deviceId = await upp.registerDevice(device);
-```
-
-3. Process payments:
-```typescript
-const result = await upp.processPayment(deviceId, paymentData);
-```
-
-## 🌍 Deployment
-
-### AWS Deployment
-```bash
-# Build for production
-npm run build
-
-# Deploy to AWS (configure AWS CLI first)
-aws s3 sync dist/ s3://your-bucket-name
-```
-
-### Vercel Deployment
-```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel --prod
-```
-
-### Docker Deployment
-```bash
-# Build image
-docker build -t upp-server .
-
-# Run container
-docker run -p 3000:3000 --env-file .env upp-server
-```
-
-## 💰 Business Model
-
-- **Transaction Fees**: 2.5% (vs 2.9% industry standard)
-- **SaaS Subscriptions**: $50-500/month
-- **Enterprise Licensing**: Custom pricing
-- **Open Source**: Free with commercial use allowed
-
-## 🤝 Contributing
-
-We welcome contributions! Here's how:
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Commit changes: `git commit -m 'Add amazing feature'`
-4. Push to branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
-
-### Development Guidelines
-- Follow TypeScript best practices
-- Add tests for new features
-- Update documentation
-- Ensure security compliance
+- [`DATABASE_SETUP.md`](DATABASE_SETUP.md) - Database configuration
+- [`DEPLOYMENT.md`](DEPLOYMENT.md) - Deployment guide
+- [`CLAUDE.md`](CLAUDE.md) - Development guidance
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-**Commercial use is encouraged!** We want everyone to make money with this technology.
+## 🤝 Contributing
 
-## 🎯 Roadmap
-
-### Version 1.0 (Current)
-- ✅ Core UPP protocol
-- ✅ Smartphone, TV, IoT adapters
-- ✅ Stripe integration
-- ✅ Basic security
-
-### Version 1.5 (Q2 2025)
-- 🚧 Voice assistant integration
-- 🚧 Enhanced biometric security
-- 🚧 Real-time analytics
-- 🚧 Multi-currency support
-
-### Version 2.0 (Q4 2025)
-- 📋 AI fraud detection
-- 📋 Blockchain integration
-- 📋 Advanced IoT support
-- 📋 Enterprise tools
-
-## 🏆 Success Stories
-
-> "UPP transformed our coffee shop! Now customers can pay with their phones, smartwatches, even ask Alexa to pay for their order. Revenue up 40%!" 
-> - *Local Hawaii Coffee Shop*
-
-> "As an IoT device manufacturer, UPP let us add payments to our smart appliances in days, not months."
-> - *Tech Startup CEO*
-
-## 📞 Support & Contact
-
-- **Documentation**: [Read the Docs](docs/)
-- **White Paper**: [WHITEPAPER.md](WHITEPAPER.md)
-- **Issues**: [GitHub Issues](https://github.com/your-username/universal-payment-protocol/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-username/universal-payment-protocol/discussions)
-- **Email**: contact@universalpaymentprotocol.com
-- **Location**: Hawaii, USA 🏝️
-
-## ⭐ Show Your Support
-
-If UPP helps your business, please give us a star! ⭐
-
-[![GitHub stars](https://img.shields.io/github/stars/your-username/universal-payment-protocol.svg?style=social&label=Star)](https://github.com/your-username/universal-payment-protocol)
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests and linting
+5. Submit a pull request
 
 ---
 
-**Built with ❤️ by Kai 🌊**
-
-*Making payments universal, one device at a time.*
-
-## 🔥 Join the Revolution
-
-The future of payments is here. Any device, anywhere, anytime.
-
-**Ready to get started?** [Try the demo](http://localhost:3000/demo) or [read the white paper](WHITEPAPER.md).
-
-**Want to contribute?** Check out our [contributing guidelines](CONTRIBUTING.md).
-
-**Need help?** Join our [community discussions](https://github.com/your-username/universal-payment-protocol/discussions).
-
-Let's build the future of payments together! 🌊💰
+**Built for professional photographers who want to streamline their business operations and provide exceptional client experiences.**

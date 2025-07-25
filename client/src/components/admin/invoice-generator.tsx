@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchBookings, fetchClients } from "@/lib/api";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { fetchBookings } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,16 +18,13 @@ import {
 import { 
   FileText, 
   Download, 
-  Mail, 
   Plus, 
   DollarSign, 
   Calendar,
   User,
   Eye,
-  Edit,
   Trash,
-  Send,
-  Settings
+  Send
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -72,17 +69,12 @@ export function InvoiceGenerator() {
   const [discountRate, setDiscountRate] = useState(0);
   const [notes, setNotes] = useState("Payment due within 30 days of invoice date. Late payments may incur additional fees.");
   const { toast } = useToast();
-  const queryClient = useQueryClient();
 
   const { data: bookings } = useQuery({
     queryKey: ['/api/bookings'],
     queryFn: fetchBookings,
   });
 
-  const { data: clients } = useQuery({
-    queryKey: ['/api/clients'],
-    queryFn: fetchClients,
-  });
 
   const { data: invoiceStats = {} } = useQuery({
     queryKey: ['/api/invoices/stats'],
@@ -212,24 +204,6 @@ export function InvoiceGenerator() {
     }
   };
 
-  const generatePaymentLink = async (invoice: Invoice) => {
-    try {
-      // In production, this would integrate with Stripe/PayPal
-      const paymentUrl = `https://pay.christianpicaso.com/invoice/${invoice.invoiceNumber}`;
-      
-      await navigator.clipboard.writeText(paymentUrl);
-      toast({
-        title: "Payment Link Generated",
-        description: `Payment link copied to clipboard: ${paymentUrl}`,
-      });
-    } catch (error) {
-      toast({
-        title: "Link Generation Failed",
-        description: "Unable to generate payment link. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
 
   const handleDownloadInvoice = async (invoice: Invoice) => {
     try {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchClients, fetchBookings } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -35,14 +35,23 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertClientSchema } from "@shared/schema";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
-const addClientFormSchema = insertClientSchema.extend({
+const addClientFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Valid email is required"),
+  phone: z.string().optional(),
+  status: z.string().optional(),
+  leadSource: z.string().optional(),
+  preferredCommunication: z.string().optional(),
+  timezone: z.string().optional(),
+  leadScore: z.number().optional(),
+  lifetimeValue: z.string().optional(),
+  notes: z.string().optional(),
+  source: z.string().optional(),
+  customFields: z.record(z.any()).optional(),
 });
 
 function AddClientForm({ onSuccess }: { onSuccess?: () => void }) {
@@ -202,9 +211,7 @@ function AddClientForm({ onSuccess }: { onSuccess?: () => void }) {
 
 export function ClientManagement() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedClient, setSelectedClient] = useState<any>(null);
   const [addClientDialogOpen, setAddClientDialogOpen] = useState(false);
-  const queryClient = useQueryClient();
 
   const { data: clients, isLoading: clientsLoading } = useQuery({
     queryKey: ['/api/clients'],
@@ -376,7 +383,6 @@ export function ClientManagement() {
                             <Button 
                               variant="outline" 
                               size="sm"
-                              onClick={() => setSelectedClient(client)}
                             >
                               <Eye className="h-4 w-4 mr-1" />
                               View

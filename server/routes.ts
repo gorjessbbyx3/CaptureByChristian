@@ -26,15 +26,44 @@ import {
 import { z } from "zod";
 import { generateBookingResponse, analyzeImage } from "./openai";
 import { log } from "./vite";
+import { getDatabaseInitializer } from "./database-init";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Health check endpoint for Docker
   app.get("/api/health", (req, res) => {
+    const dbInitializer = getDatabaseInitializer();
     res.status(200).json({ 
       status: "healthy", 
       timestamp: new Date().toISOString(),
-      service: "CapturedCCollective"
+      service: "CapturedCCollective",
+      database_initialized: dbInitializer.getInitializationStatus()
     });
+  });
+
+  // Database status endpoint for debugging
+  app.get("/api/admin/database-status", async (req, res) => {
+    try {
+      const dbInitializer = getDatabaseInitializer();
+      const isInitialized = dbInitializer.getInitializationStatus();
+      
+      // Test current connection
+      const connectionTest = await dbInitializer.testConnection();
+      
+      res.json({
+        success: true,
+        database: {
+          initialized: isInitialized,
+          connection_healthy: connectionTest,
+          timestamp: new Date().toISOString()
+        }
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: "Failed to check database status",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
   });
 
   // Client routes

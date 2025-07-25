@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Expand, Award, Star } from "lucide-react";
+import { Expand, Star } from "lucide-react";
 import { Lightbox } from "@/components/lightbox";
 import { Link } from "wouter";
 import { apiRequest } from "@/lib/queryClient";

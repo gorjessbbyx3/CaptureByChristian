@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchBookings, updateBooking } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,7 +9,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -122,7 +121,7 @@ export function AdminCalendar() {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
     const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
+    // const lastDay = new Date(year, month + 1, 0); // Last day of month - not currently used
     const startDate = new Date(firstDay);
     startDate.setDate(startDate.getDate() - firstDay.getDay());
 
@@ -381,7 +380,7 @@ export function AdminCalendar() {
 
   const renderWeekView = () => {
     const days = getWeekDays();
-    const hours = Array.from({ length: 24 }, (_, i) => i);
+    const businessHours = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18]; // 9 AM to 6 PM
 
     return (
       <div className="flex flex-col">
@@ -400,6 +399,11 @@ export function AdminCalendar() {
                 <div className={`text-lg font-semibold ${isToday ? 'text-blue-600' : ''}`}>
                   {day.getDate()}
                 </div>
+                {dayBookings.length > 0 && (
+                  <div className="text-xs text-bronze font-medium">
+                    {dayBookings.length} booking{dayBookings.length !== 1 ? 's' : ''}
+                  </div>
+                )}
               </div>
             );
           })}
@@ -409,7 +413,7 @@ export function AdminCalendar() {
         <div className="flex-1 grid grid-cols-8 max-h-[500px] overflow-y-auto">
           {/* Time labels */}
           <div className="border-r">
-            {[9, 10, 11, 12, 13, 14, 15, 16, 17, 18].map(hour => (
+            {businessHours.map(hour => (
               <div key={hour} className="h-16 border-b p-2 text-sm text-muted-foreground">
                 {hour === 12 ? '12 PM' : hour > 12 ? `${hour - 12} PM` : `${hour} AM`}
               </div>
@@ -422,7 +426,7 @@ export function AdminCalendar() {
 
             return (
               <div key={dayIndex} className="border-l">
-                {[9, 10, 11, 12, 13, 14, 15, 16, 17, 18].map(hour => (
+                {businessHours.map(hour => (
                   <div key={hour} className="h-16 border-b p-1">
                     {dayBookings.map((booking: any) => {
                       try {
@@ -664,11 +668,35 @@ export function AdminCalendar() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="clientName">Client Name *</Label>
+                <Select 
+                  value={newAppointment.clientName} 
+                  onValueChange={(value) => {
+                    const selectedClient = clients.find((c: any) => c.name === value);
+                    setNewAppointment(prev => ({ 
+                      ...prev, 
+                      clientName: value,
+                      clientEmail: selectedClient?.email || prev.clientEmail,
+                      clientPhone: selectedClient?.phone || prev.clientPhone
+                    }));
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select or enter client name" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {clients.map((client: any) => (
+                      <SelectItem key={client.id} value={client.name}>
+                        {client.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <Input
-                  id="clientName"
+                  id="clientNameCustom"
                   value={newAppointment.clientName}
                   onChange={(e) => setNewAppointment(prev => ({ ...prev, clientName: e.target.value }))}
-                  placeholder="Enter client name"
+                  placeholder="Or enter new client name"
+                  className="mt-2"
                 />
               </div>
               <div className="space-y-2">

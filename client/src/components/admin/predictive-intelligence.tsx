@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,17 +8,10 @@ import {
   TrendingUp, 
   Gem, 
   Target, 
-  Calendar, 
-  DollarSign, 
-  Users, 
-  Camera,
-  MapPin,
   Sparkles,
   Zap,
   Brain,
-  LineChart,
-  BarChart3,
-  PieChart
+  BarChart3
 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 

@@ -15,7 +15,6 @@ import {
   Gift,
   Calendar,
   DollarSign,
-  Camera,
   MessageSquare,
   Crown,
   Flame,
@@ -65,10 +64,10 @@ export function GamifiedProgress() {
   });
 
   // Calculate real metrics
-  const confirmedBookings = bookings.filter((b: any) => b.status === 'confirmed').length;
-  const totalRevenue = invoiceStats?.totalRevenue || 0;
-  const conversionRate = clients.length > 0 ? (confirmedBookings / clients.length) * 100 : 0;
-  const portfolioRequests = contactMessages.filter((m: any) => m.source === 'portfolio_access').length;
+  const confirmedBookings = (bookings as any[])?.filter((b: any) => b.status === 'confirmed').length || 0;
+  const totalRevenue = (invoiceStats as any)?.totalRevenue || 0;
+  const conversionRate = (clients as any[])?.length > 0 ? (confirmedBookings / (clients as any[]).length) * 100 : 0;
+  const portfolioRequests = (contactMessages as any[])?.filter((m: any) => m.source === 'portfolio_access').length || 0;
 
   // Define progress levels
   const progressLevels: ProgressLevel[] = [
@@ -236,9 +235,9 @@ export function GamifiedProgress() {
       title: 'Social Butterfly',
       description: 'Receive 5 contact messages',
       icon: MessageSquare,
-      progress: Math.min(contactMessages.length, 5),
+      progress: Math.min((contactMessages as any[])?.length || 0, 5),
       maxProgress: 5,
-      unlocked: contactMessages.length >= 5,
+      unlocked: ((contactMessages as any[])?.length || 0) >= 5,
       category: 'engagement',
       points: 150,
       color: 'text-pink-500'
@@ -248,9 +247,9 @@ export function GamifiedProgress() {
       title: 'Client Favorite',
       description: 'Build a client base of 20+ contacts',
       icon: Star,
-      progress: Math.min(clients.length, 20),
+      progress: Math.min((clients as any[])?.length || 0, 20),
       maxProgress: 20,
-      unlocked: clients.length >= 20,
+      unlocked: ((clients as any[])?.length || 0) >= 20,
       category: 'engagement',
       points: 600,
       color: 'text-indigo-500'
@@ -438,7 +437,7 @@ export function GamifiedProgress() {
         <Card>
           <CardContent className="p-4 text-center">
             <Users className="h-8 w-8 mx-auto mb-2 text-blue-500" />
-            <div className="text-2xl font-bold">{clients.length}</div>
+            <div className="text-2xl font-bold">{(clients as any[])?.length || 0}</div>
             <div className="text-sm text-muted-foreground">Total Clients</div>
           </CardContent>
         </Card>

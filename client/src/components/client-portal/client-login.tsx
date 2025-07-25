@@ -65,7 +65,7 @@ export function ClientLogin({ onLoginSuccess }: ClientLoginProps) {
 
     setIsLoading(true);
     try {
-      const response = await apiRequest('POST', '/api/client-portal/magic-link', { email });
+      await apiRequest('POST', '/api/client-portal/magic-link', { email });
 
       toast({
         title: "Magic Link Sent",

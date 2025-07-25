@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,7 +10,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { 
   ShoppingCart, 
@@ -23,7 +22,6 @@ import {
   Truck,
   Image,
   FileText,
-  Calendar,
   Star,
   Award,
   Users
@@ -47,7 +45,6 @@ export function ProductSales() {
     </div>
   );
 
-  const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [newProductOpen, setNewProductOpen] = useState(false);
 
   // Product sales feature requires database implementation

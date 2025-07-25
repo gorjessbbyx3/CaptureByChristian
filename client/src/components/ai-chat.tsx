@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { sendAIMessage, fetchAIChat } from "@/lib/api";
+import { useState, useRef, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { sendAIMessage } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";

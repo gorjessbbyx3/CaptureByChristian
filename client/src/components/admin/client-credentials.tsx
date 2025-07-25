@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,7 +25,6 @@ import {
   Shield,
   Lock,
   User,
-  Calendar,
   RefreshCw,
   Settings,
   Bell
@@ -94,10 +93,11 @@ export function ClientCredentials() {
     setLoadingStates(prev => ({ ...prev, [clientId]: true }));
     try {
       const response = await apiRequest('POST', '/api/admin/client-credentials/magic-link', { clientId });
+      const result = await response.json();
 
       toast({
         title: "Magic Link Sent",
-        description: "Secure login link has been sent to the client's email.",
+        description: result?.message || "Secure login link has been sent to the client's email.",
       });
       queryClient.invalidateQueries({ queryKey: ['/api/client-credentials'] });
     } catch (error) {
@@ -456,6 +456,61 @@ export function ClientCredentials() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Client Details Dialog */}
+      {selectedClient && (
+        <Dialog open={!!selectedClient} onOpenChange={() => setSelectedClient(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Client Details: {selectedClient.clientName}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label>Email</Label>
+                <p className="text-sm text-muted-foreground">{selectedClient.clientEmail}</p>
+              </div>
+              <div>
+                <Label>Portal Access</Label>
+                <Badge variant={selectedClient.portalAccess ? "default" : "secondary"}>
+                  {selectedClient.portalAccess ? "Enabled" : "Disabled"}
+                </Badge>
+              </div>
+              <div>
+                <Label>Last Login</Label>
+                <p className="text-sm text-muted-foreground">
+                  {selectedClient.lastLogin ? new Date(selectedClient.lastLogin).toLocaleDateString() : "Never"}
+                </p>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="customEmail">Send Magic Link to Custom Email</Label>
+                <div className="flex space-x-2">
+                  <Input
+                    id="customEmail"
+                    type="email"
+                    placeholder="Enter email address"
+                    value={magicLinkEmail}
+                    onChange={(e) => setMagicLinkEmail(e.target.value)}
+                  />
+                  <Button 
+                    onClick={() => {
+                      if (magicLinkEmail) {
+                        // Send magic link to custom email
+                        sendMagicLink(selectedClient.clientId);
+                        setMagicLinkEmail("");
+                      }
+                    }}
+                    disabled={!magicLinkEmail}
+                  >
+                    <Send className="h-4 w-4 mr-1" />
+                    Send
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

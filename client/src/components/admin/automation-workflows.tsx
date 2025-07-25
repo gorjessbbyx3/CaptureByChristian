@@ -13,26 +13,19 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { 
   Zap, 
   Mail, 
   MessageSquare, 
-  Clock, 
-  Play, 
-  Pause, 
+ 
   Plus,
-  Settings,
   ArrowRight,
-  Calendar,
   Users,
-  Camera,
   FileText,
   Edit,
   Eye
 } from "lucide-react";
-import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -63,8 +56,8 @@ export function AutomationWorkflows() {
   // Calculate workflow statistics from real booking data
   const calculateWorkflowStats = () => {
     const totalBookings = bookings.length;
-    const confirmedBookings = bookings.filter(b => b.status === 'confirmed').length;
-    const pendingBookings = bookings.filter(b => b.status === 'pending').length;
+    const confirmedBookings = bookings.filter((b: any) => b.status === 'confirmed').length;
+    const pendingBookings = bookings.filter((b: any) => b.status === 'pending').length;
     
     return {
       totalWorkflows: workflows.length || 1,
@@ -257,12 +250,25 @@ export function AutomationWorkflows() {
     return `${Math.floor(hours / 24)} days`;
   };
 
-  const totalStats = workflows.reduce((acc, workflow) => ({
-    triggered: acc.triggered + workflow.stats.triggered,
-    completed: acc.completed + workflow.stats.completed,
-    avgOpenRate: Math.round(workflows.reduce((sum, w) => sum + w.stats.openRate, 0) / workflows.length),
-    avgClickRate: Math.round(workflows.reduce((sum, w) => sum + w.stats.clickRate, 0) / workflows.length)
+  const totalStats = displayWorkflows.reduce((acc: any, workflow: any) => ({
+    triggered: acc.triggered + (workflow.stats?.triggered || 0),
+    completed: acc.completed + (workflow.stats?.completed || 0),
+    avgOpenRate: Math.round(displayWorkflows.reduce((sum: any, w: any) => sum + (w.stats?.openRate || 0), 0) / displayWorkflows.length),
+    avgClickRate: Math.round(displayWorkflows.reduce((sum: any, w: any) => sum + (w.stats?.clickRate || 0), 0) / displayWorkflows.length)
   }), { triggered: 0, completed: 0, avgOpenRate: 0, avgClickRate: 0 });
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardContent className="p-8 text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-bronze mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading automation workflows...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -273,7 +279,7 @@ export function AutomationWorkflows() {
             <div className="flex items-center space-x-2">
               <Zap className="h-4 w-4 text-bronze" />
               <div>
-                <p className="text-2xl font-bold">{workflows.filter(w => w.active).length}</p>
+                <p className="text-2xl font-bold">{displayWorkflows.filter((w: any) => w.active).length}</p>
                 <p className="text-xs text-muted-foreground">Active Workflows</p>
               </div>
             </div>
@@ -285,8 +291,8 @@ export function AutomationWorkflows() {
             <div className="flex items-center space-x-2">
               <Users className="h-4 w-4 text-blue-500" />
               <div>
-                <p className="text-2xl font-bold">{totalStats.triggered}</p>
-                <p className="text-xs text-muted-foreground">Total Triggered</p>
+                <p className="text-2xl font-bold">{workflowStats.activeBookings}</p>
+                <p className="text-xs text-muted-foreground">Active Bookings</p>
               </div>
             </div>
           </CardContent>
@@ -297,8 +303,8 @@ export function AutomationWorkflows() {
             <div className="flex items-center space-x-2">
               <Mail className="h-4 w-4 text-green-500" />
               <div>
-                <p className="text-2xl font-bold">{totalStats.avgOpenRate}%</p>
-                <p className="text-xs text-muted-foreground">Avg Open Rate</p>
+                <p className="text-2xl font-bold">{workflowStats.pendingBookings}</p>
+                <p className="text-xs text-muted-foreground">Pending Bookings</p>
               </div>
             </div>
           </CardContent>
@@ -309,8 +315,20 @@ export function AutomationWorkflows() {
             <div className="flex items-center space-x-2">
               <Eye className="h-4 w-4 text-purple-500" />
               <div>
-                <p className="text-2xl font-bold">{totalStats.avgClickRate}%</p>
+                <p className="text-2xl font-bold">{workflowStats.successRate}%</p>
                 <p className="text-xs text-muted-foreground">Avg Click Rate</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2">
+              <FileText className="h-4 w-4 text-orange-500" />
+              <div>
+                <p className="text-2xl font-bold">{totalStats.triggered}</p>
+                <p className="text-xs text-muted-foreground">Total Triggered</p>
               </div>
             </div>
           </CardContent>
@@ -333,7 +351,7 @@ export function AutomationWorkflows() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {workflows.map((workflow) => (
+            {displayWorkflows.map((workflow: any) => (
               <div key={workflow.id} className="border rounded-lg p-4">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
@@ -368,7 +386,7 @@ export function AutomationWorkflows() {
 
                     {/* Workflow Steps Visualization */}
                     <div className="flex flex-wrap items-center gap-2">
-                      {workflow.steps.map((step, index) => (
+                      {workflow.steps.map((step: any, index: number) => (
                         <React.Fragment key={index}>
                           <div className="flex items-center space-x-2 bg-muted/50 px-3 py-1 rounded-lg">
                             {getStepIcon(step.type)}
@@ -394,7 +412,7 @@ export function AutomationWorkflows() {
                       <span className="text-sm">{workflow.active ? "Active" : "Inactive"}</span>
                     </div>
                     <div className="flex space-x-2">
-                      <Button size="sm" variant="outline">
+                      <Button size="sm" variant="outline" onClick={() => setSelectedWorkflow(workflow)}>
                         <Edit className="h-3 w-3 mr-1" />
                         Edit
                       </Button>
@@ -448,10 +466,54 @@ export function AutomationWorkflows() {
               <Button variant="outline" onClick={() => setNewWorkflowOpen(false)}>
                 Cancel
               </Button>
-              <Button className="btn-bronze">
-                Create Workflow
+              <Button 
+                className="btn-bronze" 
+                onClick={() => createWorkflowMutation.mutate({
+                  name: "New Workflow",
+                  trigger: "manual",
+                  active: true,
+                  steps: []
+                })}
+                disabled={createWorkflowMutation.isPending}
+              >
+                {createWorkflowMutation.isPending ? "Creating..." : "Create Workflow"}
               </Button>
             </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Workflow Dialog */}
+      <Dialog open={!!selectedWorkflow} onOpenChange={() => setSelectedWorkflow(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Workflow: {selectedWorkflow?.name}</DialogTitle>
+            <DialogDescription>
+              Modify the workflow settings and automation steps.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Workflow editing functionality coming soon. For now, you can view workflow details.
+            </p>
+            
+            {selectedWorkflow && (
+              <div className="space-y-2">
+                <p><strong>Trigger:</strong> {selectedWorkflow.trigger}</p>
+                <p><strong>Steps:</strong> {selectedWorkflow.steps?.length || 0}</p>
+                <p><strong>Status:</strong> {selectedWorkflow.active ? 'Active' : 'Inactive'}</p>
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-end space-x-2">
+            <Button variant="outline" onClick={() => setSelectedWorkflow(null)}>
+              Close
+            </Button>
+            <Button className="btn-bronze" disabled>
+              Save Changes
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

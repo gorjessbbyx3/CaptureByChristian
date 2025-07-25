@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,16 +8,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   Brain, 
   TrendingUp, 
-  Target, 
   DollarSign, 
   Users, 
   Calendar,
-  Camera,
   MapPin,
   Lightbulb,
   BarChart3,
-  PieChart,
-  LineChart,
   Send,
   Sparkles
 } from "lucide-react";
@@ -86,7 +82,7 @@ export function AIBusinessInsights() {
         revenue: serviceRevenue,
         avgValue: serviceBookings.length > 0 ? serviceRevenue / serviceBookings.length : 0
       };
-    }).sort((a, b) => b.revenue - a.revenue);
+    }).sort((a: any, b: any) => b.revenue - a.revenue);
 
     const topService = servicePerformance[0];
     const businessInsights = [

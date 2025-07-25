@@ -1,4 +1,3 @@
-import React from "react";
 
 export const INVOICE_HTML_TEMPLATE = `
 <!DOCTYPE html>
@@ -160,33 +159,33 @@ export const INVOICE_HTML_TEMPLATE = `
         <tr class="item-row">
           <td>{{description}}</td>
           <td class="right">{{quantity}}</td>
-          <td class="right">${{rate}}</td>
-          <td class="right">${{amount}}</td>
+          <td class="right">\${{rate}}</td>
+          <td class="right">\${{amount}}</td>
         </tr>
         {{/items}}
         
         <tr class="subtotal-row">
           <td colspan="3">Subtotal</td>
-          <td class="right">${{subtotal}}</td>
+          <td class="right">\${{subtotal}}</td>
         </tr>
         
         {{#tax}}
         <tr>
           <td colspan="3">Tax ({{taxRate}}%)</td>
-          <td class="right">${{tax}}</td>
+          <td class="right">\${{tax}}</td>
         </tr>
         {{/tax}}
         
         {{#discount}}
         <tr>
           <td colspan="3">Discount</td>
-          <td class="right">-${{discount}}</td>
+          <td class="right">-\${{discount}}</td>
         </tr>
         {{/discount}}
         
         <tr class="total-row">
           <td colspan="3"><strong>TOTAL</strong></td>
-          <td class="right"><strong>${{total}}</strong></td>
+          <td class="right"><strong>\${{total}}</strong></td>
         </tr>
       </tbody>
     </table>

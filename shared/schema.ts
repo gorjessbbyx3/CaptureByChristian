@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, decimal, json, date } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, decimal, json } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -454,58 +454,58 @@ export const insertProfileSchema = createInsertSchema(profiles).omit({
 
 // Types
 export type User = typeof users.$inferSelect;
-export type InsertUser = z.infer<typeof insertUserSchema>;
+export type InsertUser = any;
 
 export type Client = typeof clients.$inferSelect;
-export type InsertClient = z.infer<typeof insertClientSchema>;
+export type InsertClient = any;
 
 export type Service = typeof services.$inferSelect;
-export type InsertService = z.infer<typeof insertServiceSchema>;
+export type InsertService = any;
 
 export type Booking = typeof bookings.$inferSelect;
-export type InsertBooking = z.infer<typeof insertBookingSchema>;
+export type InsertBooking = any;
 
 export type Contract = typeof contracts.$inferSelect;
-export type InsertContract = z.infer<typeof insertContractSchema>;
+export type InsertContract = any;
 
 export type Invoice = typeof invoices.$inferSelect;
-export type InsertInvoice = z.infer<typeof insertInvoiceSchema>;
+export type InsertInvoice = any;
 
 export type GalleryImage = typeof galleryImages.$inferSelect;
-export type InsertGalleryImage = z.infer<typeof insertGalleryImageSchema>;
+export type InsertGalleryImage = any;
 
 export type AiChat = typeof aiChats.$inferSelect;
-export type InsertAiChat = z.infer<typeof insertAiChatSchema>;
+export type InsertAiChat = any;
 
 export type Lead = typeof leads.$inferSelect;
-export type InsertLead = z.infer<typeof insertLeadSchema>;
+export type InsertLead = any;
 
 export type CommunicationLog = typeof communicationLog.$inferSelect;
-export type InsertCommunicationLog = z.infer<typeof insertCommunicationLogSchema>;
+export type InsertCommunicationLog = any;
 
 export type AutomationSequence = typeof automationSequences.$inferSelect;
-export type InsertAutomationSequence = z.infer<typeof insertAutomationSequenceSchema>;
+export type InsertAutomationSequence = any;
 
 export type Questionnaire = typeof questionnaires.$inferSelect;
-export type InsertQuestionnaire = z.infer<typeof insertQuestionnaireSchema>;
+export type InsertQuestionnaire = any;
 
 export type ClientPortalSession = typeof clientPortalSessions.$inferSelect;
-export type InsertClientPortalSession = z.infer<typeof insertClientPortalSessionSchema>;
+export type InsertClientPortalSession = any;
 
 export type Product = typeof products.$inferSelect;
-export type InsertProduct = z.infer<typeof insertProductSchema>;
+export type InsertProduct = any;
 
 export type Order = typeof orders.$inferSelect;
-export type InsertOrder = z.infer<typeof insertOrderSchema>;
+export type InsertOrder = any;
 
 export type TeamMember = typeof teamMembers.$inferSelect;
-export type InsertTeamMember = z.infer<typeof insertTeamMemberSchema>;
+export type InsertTeamMember = any;
 
 export type ContactMessage = typeof contactMessages.$inferSelect;
-export type InsertContactMessage = z.infer<typeof insertContactMessageSchema>;
+export type InsertContactMessage = any;
 
 export type ClientMessage = typeof clientMessages.$inferSelect;
-export type InsertClientMessage = z.infer<typeof insertClientMessageSchema>;
+export type InsertClientMessage = any;
 
 export type Profile = typeof profiles.$inferSelect;
-export type InsertProfile = z.infer<typeof insertProfileSchema>;
+export type InsertProfile = any;

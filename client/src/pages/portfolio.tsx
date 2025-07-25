@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Navigation } from "@/components/navigation";
 import { Portfolio } from "@/components/portfolio";
 import { PortfolioGate } from "@/components/portfolio-gate";

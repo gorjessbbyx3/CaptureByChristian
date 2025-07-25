@@ -5,10 +5,12 @@ This guide covers how to deploy the CapturedCCollective photography platform usi
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Docker and Docker Compose installed
 - Git (to clone the repository)
 
 ### 1. Setup Environment
+
 ```bash
 # Copy the environment template
 cp .env.docker .env
@@ -18,6 +20,7 @@ nano .env
 ```
 
 ### 2. Start the Application
+
 ```bash
 # Using the convenience script
 ./docker-scripts/start.sh
@@ -27,7 +30,8 @@ docker-compose up -d
 ```
 
 ### 3. Access the Application
-- **Web Application**: http://localhost:7000
+
+- **Web Application**: <http://localhost:7000>
 - **Database**: localhost:5432
 - **Redis**: localhost:6379 (optional)
 
@@ -66,14 +70,15 @@ SESSION_SECRET=your_session_secret_here
 ### API Keys Setup
 
 1. **OpenAI API Key**: For AI booking assistance and image analysis
-   - Get from: https://platform.openai.com/api-keys
+   - Get from: <https://platform.openai.com/api-keys>
 
 2. **Twilio Credentials**: For SMS notifications
-   - Get from: https://console.twilio.com/
+   - Get from: <https://console.twilio.com/>
 
 ## 🔧 Management Commands
 
 ### Start/Stop Services
+
 ```bash
 # Start all services
 ./docker-scripts/start.sh
@@ -86,6 +91,7 @@ docker-compose restart
 ```
 
 ### View Logs
+
 ```bash
 # View app logs
 ./docker-scripts/logs.sh app
@@ -98,6 +104,7 @@ docker-compose logs -f
 ```
 
 ### Database Management
+
 ```bash
 # Connect to database
 docker-compose exec database psql -U postgres -d capturedcollective
@@ -124,6 +131,7 @@ docker-compose -f docker-compose.dev.yml logs -f app
 ## 🐳 Docker Commands
 
 ### Build and Deploy
+
 ```bash
 # Build the application
 docker-compose build
@@ -136,6 +144,7 @@ docker-compose up -d --scale app=3
 ```
 
 ### Maintenance
+
 ```bash
 # Check service status
 docker-compose ps
@@ -150,11 +159,13 @@ docker system prune -a
 ## 📊 Monitoring
 
 ### Health Checks
-- App health: http://localhost:7000/api/health
+
+- App health: <http://localhost:7000/api/health>
 - Database health: `docker-compose ps database`
 - Redis health: `docker-compose ps redis`
 
 ### Container Logs
+
 ```bash
 # Real-time logs
 docker-compose logs -f app
@@ -169,6 +180,7 @@ docker-compose logs --since="2024-01-01T00:00:00" app
 ## 🔒 Security
 
 ### Production Security
+
 - Change default passwords in `.env`
 - Use strong session secrets
 - Enable HTTPS in nginx configuration
@@ -176,6 +188,7 @@ docker-compose logs --since="2024-01-01T00:00:00" app
 - Regular security updates
 
 ### SSL/TLS Setup
+
 ```bash
 # Generate SSL certificates
 mkdir ssl
@@ -192,6 +205,7 @@ docker-compose restart nginx
 ### Common Issues
 
 1. **Database Connection Failed**
+
    ```bash
    # Check database status
    docker-compose ps database
@@ -204,6 +218,7 @@ docker-compose restart nginx
    ```
 
 2. **App Won't Start**
+
    ```bash
    # Check app logs
    docker-compose logs app
@@ -216,6 +231,7 @@ docker-compose restart nginx
    ```
 
 3. **Port Already in Use**
+
    ```bash
    # Find process using port
    sudo lsof -i :7000
@@ -226,6 +242,7 @@ docker-compose restart nginx
    ```
 
 ### Reset Everything
+
 ```bash
 # Stop and remove all containers, networks, and volumes
 docker-compose down -v
@@ -240,6 +257,7 @@ docker rmi $(docker images -q)
 ## 📈 Performance Optimization
 
 ### Resource Limits
+
 ```yaml
 # In docker-compose.yml
 services:
@@ -254,6 +272,7 @@ services:
 ```
 
 ### Database Optimization
+
 ```bash
 # Increase shared_buffers in postgres
 docker-compose exec database psql -U postgres -c "ALTER SYSTEM SET shared_buffers = '256MB';"
@@ -263,6 +282,7 @@ docker-compose restart database
 ## 🔄 Backup Strategy
 
 ### Automated Backups
+
 ```bash
 # Create backup script
 cat > backup.sh << 'EOF'
@@ -281,12 +301,14 @@ echo "0 2 * * * /path/to/backup.sh" | crontab -
 ## 🌐 Production Deployment
 
 ### Cloud Deployment
+
 1. **AWS ECS**: Use provided docker-compose.yml
 2. **Google Cloud Run**: Deploy from container registry
 3. **Azure Container Instances**: Use docker-compose
 4. **DigitalOcean Apps**: Deploy from GitHub with Dockerfile
 
 ### Domain Setup
+
 ```bash
 # Update nginx.conf with your domain
 server_name yourdomain.com www.yourdomain.com;
@@ -298,6 +320,7 @@ certbot --nginx -d yourdomain.com -d www.yourdomain.com
 ## 📞 Support
 
 For Docker-related issues:
+
 - Check logs: `./docker-scripts/logs.sh app`
 - View configuration: `docker-compose config`
 - Test connectivity: `docker-compose exec app curl -f http://localhost:7000/api/health`

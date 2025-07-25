@@ -528,7 +528,7 @@ const envSchema = z.object({
   OPENAI_API_KEY: z.string().optional(),
   TWILIO_ACCOUNT_SID: z.string().optional(),
   TWILIO_AUTH_TOKEN: z.string().optional(),
-  PORT: z.string().default('5000'),
+  PORT: z.string().default('7000'),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
 });
 

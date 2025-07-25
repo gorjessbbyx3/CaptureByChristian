@@ -11,6 +11,7 @@ This guide will help you deploy your photography business application on Render 
 ## 🗂️ **Step 1: Push Code to GitHub**
 
 1. **Create a new GitHub repository** (if not already done):
+
    ```bash
    # From your project directory
    git init
@@ -50,14 +51,16 @@ This guide will help you deploy your photography business application on Render 
 
 Add these environment variables in Render's dashboard:
 
-### Required Variables:
+### Required Variables
+
 ```env
 NODE_ENV=production
 DATABASE_URL=[COPY FROM YOUR POSTGRESQL SERVICE]
-PORT=5000
+PORT=7000
 ```
 
-### API Keys (Replace with your actual keys):
+### API Keys (Replace with your actual keys)
+
 ```env
 OPENAI_API_KEY=sk-your-openai-key-here
 TWILIO_ACCOUNT_SID=your-twilio-account-sid
@@ -66,7 +69,8 @@ TWILIO_PHONE_NUMBER=your-twilio-phone-number
 SESSION_SECRET=your-secure-session-secret-here
 ```
 
-### Optional:
+### Optional
+
 ```env
 REPLIT_AI_TOKEN=your-replit-token (if using Replit AI)
 ```
@@ -74,6 +78,7 @@ REPLIT_AI_TOKEN=your-replit-token (if using Replit AI)
 ## 📋 **Step 5: Database Setup**
 
 The application will automatically:
+
 - ✅ Create database if it doesn't exist
 - ✅ Run migrations on startup
 - ✅ Initialize tables and schema
@@ -91,6 +96,7 @@ No manual database setup required!
 ## 🧪 **Step 7: Test Deployment**
 
 Once deployed, test these endpoints:
+
 - `https://your-app.onrender.com/` - Main website
 - `https://your-app.onrender.com/api/health` - Health check
 - `https://your-app.onrender.com/admin` - Admin dashboard
@@ -98,23 +104,28 @@ Once deployed, test these endpoints:
 
 ## 📊 **Step 8: Monitor & Scale**
 
-### Health Monitoring:
+### Health Monitoring
+
 - Render automatically monitors `/api/health`
 - Set up alerts in Render dashboard
 - Monitor logs in real-time
 
-### Scaling:
+### Scaling
+
 - **Free Tier**: Sleeps after 15 min inactivity
 - **Paid Plans**: Always on, auto-scaling available
 
 ## 🔧 **Environment-Specific Configuration**
 
-### Development vs Production:
+### Development vs Production
+
 The app automatically detects environment and:
+
 - **Development**: Uses local database, detailed logging
 - **Production**: Uses Render PostgreSQL, optimized performance
 
-### File Uploads:
+### File Uploads
+
 - **Current**: Local file storage in `/attached_assets`
 - **Recommendation**: Use Cloudinary or AWS S3 for production
 
@@ -135,7 +146,7 @@ The app automatically detects environment and:
 
 ## 📞 **Need Help?**
 
-- **Render Docs**: https://render.com/docs
+- **Render Docs**: <https://render.com/docs>
 - **Application Logs**: Check Render dashboard
 - **Database Issues**: Verify `DATABASE_URL` format
 

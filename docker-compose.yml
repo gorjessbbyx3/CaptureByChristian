@@ -6,11 +6,11 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "5000:5000"
+      - "7000:7000"
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://postgresusr:password@db:5432/capturedcollective
-      - PORT=5000
+      - PORT=7000
       - OPENAI-API=open-ai-token-here
       - SESSION_SECRET=your-secure-session-secret-here
       - TWILIO_ACCOUNT_SID=your-twilio-account-sid

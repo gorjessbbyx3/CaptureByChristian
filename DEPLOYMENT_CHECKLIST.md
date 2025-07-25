@@ -22,7 +22,7 @@
 ## ⚙️ **Environment Variables**
 - [ ] `NODE_ENV=production`
 - [ ] `DATABASE_URL=[from PostgreSQL service]`
-- [ ] `PORT=5000`
+- [ ] `PORT=7000`
 - [ ] `OPENAI_API_KEY=[your key]`
 - [ ] `SESSION_SECRET=[secure random string]`
 - [ ] `TWILIO_*` (optional but recommended)

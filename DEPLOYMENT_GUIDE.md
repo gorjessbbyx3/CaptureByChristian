@@ -60,7 +60,7 @@ docker-compose exec app node docker-scripts/wait-for-db.js
    ```env
    NODE_ENV=production
    DATABASE_URL=postgresql://[username]:[password]@[host]:[port]/[database]
-   PORT=5000
+   PORT=7000
    OPENAI_API_KEY=sk-your-key-here
    SESSION_SECRET=your-secure-secret-here
    ```

@@ -27,7 +27,7 @@ docker-compose up -d
 ```
 
 ### 3. Access the Application
-- **Web Application**: http://localhost:5000
+- **Web Application**: http://localhost:7000
 - **Database**: localhost:5432
 - **Redis**: localhost:6379 (optional)
 
@@ -51,7 +51,7 @@ DATABASE_URL=postgresql://postgres:secure_password_123@database:5432/capturedcol
 
 # Application
 NODE_ENV=production
-PORT=5000
+PORT=7000
 
 # Required API Keys
 OPENAI_API_KEY=your_openai_api_key_here
@@ -150,7 +150,7 @@ docker system prune -a
 ## 📊 Monitoring
 
 ### Health Checks
-- App health: http://localhost:5000/api/health
+- App health: http://localhost:7000/api/health
 - Database health: `docker-compose ps database`
 - Redis health: `docker-compose ps redis`
 
@@ -218,11 +218,11 @@ docker-compose restart nginx
 3. **Port Already in Use**
    ```bash
    # Find process using port
-   sudo lsof -i :5000
+   sudo lsof -i :7000
    
    # Change port in docker-compose.yml
    ports:
-     - "5001:5000"  # Change external port
+     - "5001:7000"  # Change external port
    ```
 
 ### Reset Everything
@@ -300,6 +300,6 @@ certbot --nginx -d yourdomain.com -d www.yourdomain.com
 For Docker-related issues:
 - Check logs: `./docker-scripts/logs.sh app`
 - View configuration: `docker-compose config`
-- Test connectivity: `docker-compose exec app curl -f http://localhost:5000/api/health`
+- Test connectivity: `docker-compose exec app curl -f http://localhost:7000/api/health`
 
 The CapturedCCollective platform is now fully containerized and ready for production deployment!

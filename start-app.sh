@@ -5,7 +5,7 @@ echo "🚀 Starting CaptureByChristian Application..."
 # Set environment variables for Docker network
 export DATABASE_URL=postgresql://postgres:secure_password_123@database:5432/capturedcollective
 export NODE_ENV=development
-export PORT=5000
+export PORT=7000
 
 echo "🔧 Environment configured:"
 echo "  DATABASE_URL: $DATABASE_URL"

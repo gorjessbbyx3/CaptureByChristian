@@ -129,10 +129,10 @@ export function AIBusinessInsights() {
       {
         type: "growth_strategy",
         title: "Business Growth Recommendations",
-        insight: `With ${bookingsData.length} active bookings and $${totalRevenue.toLocaleString()} revenue, your business shows ${totalRevenue > 5000 ? 'strong growth potential' : 'foundation for expansion'}. ${confirmedBookings > 0 ? 'Focus on converting pending bookings.' : 'Prioritize lead generation.'}`,
+        insight: `With ${bookingsData.length} active bookings and $${totalRevenue.toLocaleString()} revenue, your business shows ${totalRevenue > 7000 ? 'strong growth potential' : 'foundation for expansion'}. ${confirmedBookings > 0 ? 'Focus on converting pending bookings.' : 'Prioritize lead generation.'}`,
         confidence: 88,
         impact: "High",
-        action: totalRevenue > 5000 ? "Consider expanding service offerings or geographic reach" : "Focus on confirming existing bookings and generating new leads",
+        action: totalRevenue > 7000 ? "Consider expanding service offerings or geographic reach" : "Focus on confirming existing bookings and generating new leads",
         icon: DollarSign,
         color: "text-emerald-600"
       }

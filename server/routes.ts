@@ -1126,7 +1126,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
 
       // Generate secure token with expiration
       const token = `magic_${clientId}_${Date.now()}`;
-      const magicLink = `${process.env.REPL_URL || 'http://localhost:5000'}/client-portal?token=${token}`;
+      const magicLink = `${process.env.REPL_URL || 'http://localhost:7000'}/client-portal?token=${token}`;
 
       // Import SMS functionality
       const { sendMagicLinkSMS, isTwilioConfigured } = await import('./twilio');

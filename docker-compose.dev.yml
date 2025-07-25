@@ -28,9 +28,9 @@ services:
     environment:
       NODE_ENV: development
       DATABASE_URL: postgresql://postgres:dev_password@database:5432/capturedcollective_dev
-      PORT: 5000
+      PORT: 7000
     ports:
-      - "5000:5000"
+      - "7000:7000"
     volumes:
       - .:/app
       - /app/node_modules

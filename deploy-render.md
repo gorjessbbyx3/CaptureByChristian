@@ -32,7 +32,7 @@ In the Render dashboard, add these:
 ```env
 NODE_ENV=production
 DATABASE_URL=postgresql://[FROM YOUR DATABASE]
-PORT=5000
+PORT=7000
 OPENAI_API_KEY=sk-your-key-here
 SESSION_SECRET=your-secure-secret-123
 ```

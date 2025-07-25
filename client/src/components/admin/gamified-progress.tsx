@@ -221,9 +221,9 @@ export function GamifiedProgress() {
       title: 'Revenue King',
       description: 'Generate $5,000 in total revenue',
       icon: Crown,
-      progress: Math.min(totalRevenue, 5000),
-      maxProgress: 5000,
-      unlocked: totalRevenue >= 5000,
+      progress: Math.min(totalRevenue, 7000),
+      maxProgress: 7000,
+      unlocked: totalRevenue >= 7000,
       category: 'revenue',
       points: 750,
       color: 'text-gold-600'

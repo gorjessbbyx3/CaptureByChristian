@@ -115,7 +115,7 @@ export function PredictiveIntelligence() {
         title: "Market Position Analysis",
         prediction: `Current market position: ${bookingsData.length} active bookings, $${totalRevenue.toLocaleString()} revenue`,
         probability: totalRevenue > 1000 ? 75 : 45,
-        impact: totalRevenue > 5000 ? 'High' : 'Medium',
+        impact: totalRevenue > 7000 ? 'High' : 'Medium',
         timeframe: "Current analysis",
         confidence: Math.min(79, bookingsData.length * 10),
         factors: [

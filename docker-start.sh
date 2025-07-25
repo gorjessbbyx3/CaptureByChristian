@@ -23,4 +23,4 @@ docker compose down
 echo "🚀 Building and starting containers..."
 docker compose up --build
 
-echo "✅ CaptureByChristian should now be running on http://localhost:5000"
+echo "✅ CaptureByChristian should now be running on http://localhost:7000"

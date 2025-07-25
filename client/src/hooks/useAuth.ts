@@ -36,7 +36,7 @@ export function useAuth() {
       loginTime,
     };
   });
-  const [location, setLocation] = useLocation();
+  const [_location, setLocation] = useLocation();
 
   useEffect(() => {
     const checkAuth = () => {

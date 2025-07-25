@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { ClientLogin } from "@/components/client-portal/client-login";
 import { ClientDashboard } from "@/components/client-portal/client-dashboard";
 import { GalleryViewer } from "@/components/client-portal/gallery-viewer";

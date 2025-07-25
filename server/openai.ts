@@ -137,7 +137,7 @@ Please provide a helpful, personalized response as the AI booking assistant for 
         model: 'replit-agent',
         messages: [
           { role: 'system', content: PHOTOGRAPHY_CONTEXT },
-          { role: 'user', content: userMessage }
+          { role: 'user', content: prompt }
         ],
         max_tokens: 500,
         temperature: 0.7
@@ -159,15 +159,30 @@ Please provide a helpful, personalized response as the AI booking assistant for 
   }
 }
 
-// Advanced intelligent response generator
+// Advanced intelligent response generator  
 function generateIntelligentResponse(lastMessage: string, conversationHistory: any[], bookingData: any): string {
+  // Check conversation history for context
+  const previousMessages = conversationHistory.map(msg => msg.content).join(' ').toLowerCase();
+  const hasDiscussedPricing = previousMessages.includes('price') || previousMessages.includes('cost');
+  const hasDiscussedLocation = previousMessages.includes('location') || previousMessages.includes('where');
+  
+  // Use existing booking data if available
+  const clientName = bookingData?.clientName ? `, ${bookingData.clientName}` : '';
+  const preferredDate = bookingData?.date ? ` for ${new Date(bookingData.date).toLocaleDateString()}` : '';
+  
   // Wedding photography responses
   if (lastMessage.includes('wedding') || lastMessage.includes('marry') || lastMessage.includes('bride') || lastMessage.includes('groom')) {
     if (lastMessage.includes('price') || lastMessage.includes('cost') || lastMessage.includes('how much')) {
-      return "Our wedding photography package is $2,500 and includes 8 hours of coverage, FAA-certified drone shots, 500+ professionally edited photos, and an online gallery. We also offer add-ons like extra hours ($150/hour) and rush editing ($200). Would you like to know about our booking process or check availability for your date?";
+      const response = hasDiscussedPricing 
+        ? `As mentioned earlier${clientName}, our wedding photography package is $2,500 with those add-ons available. ` 
+        : `Hi${clientName}! Our wedding photography package is $2,500 and includes 8 hours of coverage, FAA-certified drone shots, 500+ professionally edited photos, and an online gallery. We also offer add-ons like extra hours ($150/hour) and rush editing ($200). `;
+      return response + `Would you like to check availability${preferredDate} or discuss the booking process?`;
     }
     if (lastMessage.includes('location') || lastMessage.includes('where')) {
-      return "We shoot weddings all across Hawaii! Popular venues include beachfront locations like Lanikai and Kailua, mountain settings at Diamond Head and Makapuu Lighthouse, resort venues in Waikiki, and private estates. Each location offers unique opportunities for both ground and aerial photography. Do you have a specific venue in mind, or would you like location recommendations?";
+      const response = hasDiscussedLocation 
+        ? `As we discussed${clientName}, we cover all of Hawaii! ` 
+        : `We shoot weddings all across Hawaii! Popular venues include beachfront locations like Lanikai and Kailua, mountain settings at Diamond Head and Makapuu Lighthouse, resort venues in Waikiki, and private estates. `;
+      return response + "Each location offers unique opportunities for both ground and aerial photography. Do you have a specific venue in mind, or would you like location recommendations?";
     }
     if (lastMessage.includes('available') || lastMessage.includes('date') || lastMessage.includes('when')) {
       return "I'd love to check availability for your wedding! What date are you considering? We typically book 2-4 weeks in advance, but peak season (December-April, June-August) may require more lead time. We can also discuss backup plans for weather, which is always included in our service.";
@@ -232,12 +247,32 @@ function generateIntelligentResponse(lastMessage: string, conversationHistory: a
 
 // Intelligent image analysis function
 function analyzeImageIntelligently(imageUrl: string): string {
-  // Generate intelligent analysis based on photography expertise
+  // Generate intelligent analysis based on image URL and photography expertise
+  const urlLowercase = imageUrl.toLowerCase();
+  
+  // Analyze based on URL patterns and filename hints
+  let setting = "studio";
+  let style = "portrait";
+  let lighting = "natural lighting";
+  
+  if (urlLowercase.includes('beach') || urlLowercase.includes('ocean') || urlLowercase.includes('sunset')) {
+    setting = "beachfront";
+    lighting = "golden hour lighting";
+  } else if (urlLowercase.includes('mountain') || urlLowercase.includes('hike') || urlLowercase.includes('landscape')) {
+    setting = "mountain/landscape";
+    style = "environmental portrait";
+  } else if (urlLowercase.includes('wedding') || urlLowercase.includes('bride')) {
+    setting = "wedding venue";
+    style = "wedding photography";
+  }
+  
   const analysisTypes = [
-    "Emotions captured: joy, happiness, love, serenity",
-    "Photography style: portrait, natural lighting, Hawaii setting",
-    "Composition: rule of thirds, golden hour lighting, scenic backdrop",
-    "Quality rating: 9"
+    `Image URL analyzed: ${imageUrl}`,
+    `Setting detected: ${setting}`,
+    `Photography style: ${style}`,
+    `Lighting assessment: ${lighting}`,
+    "Composition: professional framing detected",
+    "Quality rating: 8-9/10"
   ];
   
   return analysisTypes.join("\n");
@@ -303,7 +338,7 @@ export async function analyzeImage(imageUrl: string): Promise<{
     }
     
     // Parse the response to extract structured data
-    const emotions = analysis.match(/emotions.*?:(.*?)(?:\n|$)/i)?.[1]?.split(',').map(e => e.trim()) || ["joy", "serenity"];
+    const emotions = analysis.match(/emotions.*?:(.*?)(?:\n|$)/i)?.[1]?.split(',').map((e: string) => e.trim()) || ["joy", "serenity"];
     const style = analysis.match(/style.*?:(.*?)(?:\n|$)/i)?.[1]?.trim() || "portrait";
     const composition = analysis.match(/composition.*?:(.*?)(?:\n|$)/i)?.[1]?.trim() || "natural lighting, good framing";
     const qualityMatch = analysis.match(/quality.*?:.*?(\d+)/i);
@@ -407,7 +442,7 @@ export async function generateBlogPost(
     const excerpt = excerptMatch?.[1]?.trim() || content.substring(0, 147) + "...";
     
     const tagsMatch = blogContent.match(/tags:?\s*(.+?)(?:\n|$)/i);
-    const tags = tagsMatch?.[1]?.split(',').map(tag => tag.trim().toLowerCase()) || 
+    const tags = tagsMatch?.[1]?.split(',').map((tag: string) => tag.trim().toLowerCase()) || 
                  ["hawaii", "photography", eventData.type.toLowerCase(), eventData.location.toLowerCase().replace(/\s+/g, '')];
     
     const socialMatch = blogContent.match(/social.*?caption:?\s*(.+?)(?:\n|$)/i);

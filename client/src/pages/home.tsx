@@ -1,4 +1,4 @@
-import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Navigation } from "@/components/navigation";
 import { Hero } from "@/components/hero";
 import { FeaturedGallery } from "@/components/featured-gallery";
@@ -6,8 +6,7 @@ import { Services } from "@/components/services";
 import { ContactForm } from "@/components/contact-form";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { useQuery } from "@tanstack/react-query";
+// import { Badge } from "@/components/ui/badge";
 import { 
   Award, 
   Shield, 
@@ -24,7 +23,15 @@ import { Link } from "wouter";
 
 export default function Home() {
   // Fetch profile data for dynamic content
-  const { data: profile } = useQuery({
+  const { data: profile } = useQuery<{
+    name?: string;
+    bio?: string;
+    headshot?: string;
+    phone?: string;
+    email?: string;
+    address?: string;
+    title?: string;
+  }>({
     queryKey: ["/api/profile"],
   });
 

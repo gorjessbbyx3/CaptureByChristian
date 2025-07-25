@@ -1,4 +1,4 @@
-import { writeFileSync, readFileSync } from 'fs';
+import { writeFileSync /*, readFileSync */ } from 'fs';
 import { join } from 'path';
 
 // Simple HTML to PDF conversion using Puppeteer-like approach

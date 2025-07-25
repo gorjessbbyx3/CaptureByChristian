@@ -1,9 +1,8 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useState, useRef, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -11,14 +10,10 @@ import {
   User, 
   Send, 
   Brain, 
-  Camera, 
-  Calendar, 
   DollarSign,
-  MessageSquare,
   Lightbulb,
   TrendingUp,
   Target,
-  Sparkles,
   Zap
 } from "lucide-react";
 
@@ -101,7 +96,8 @@ export function AdvancedAIChat() {
 
     // Calculate comprehensive business metrics from real data
     const totalRevenue = bookingsData.reduce((sum: number, booking: any) => sum + (booking.totalPrice || 0), 0);
-    const avgBookingValue = bookingsData.length > 0 ? totalRevenue / bookingsData.length : 0;
+    const totalBookings = bookingsData.length;
+    const avgBookingValue = totalBookings > 0 ? totalRevenue / totalBookings : 0;
     const confirmedBookings = bookingsData.filter((b: any) => b.status === 'confirmed').length;
     const pendingBookings = bookingsData.filter((b: any) => b.status === 'pending').length;
     const unreadMessages = contactMessages.filter((m: any) => m.status === 'unread').length;
@@ -117,7 +113,7 @@ export function AdvancedAIChat() {
         revenue: serviceRevenue,
         avgValue: serviceBookings.length > 0 ? serviceRevenue / serviceBookings.length : 0
       };
-    }).sort((a, b) => b.revenue - a.revenue);
+    }).sort((a: any, b: any) => b.revenue - a.revenue);
 
     const topService = servicePerformance[0];
     const conversionRate = clientsData.length > 0 ? (confirmedBookings / clientsData.length) * 100 : 0;

@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 // Progress component not available, we'll use a simple div
@@ -14,15 +13,11 @@ import {
   FileText, 
   MessageSquare, 
   Calendar,
-  Heart,
   Clock,
   CheckCircle,
-  Star,
   Eye,
   DollarSign,
-  Send,
-  User,
-  Phone
+  Send
 } from "lucide-react";
 import { format } from "date-fns";
 import { CreditCard } from "lucide-react";

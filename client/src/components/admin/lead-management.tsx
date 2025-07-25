@@ -1,10 +1,9 @@
-import React, { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Dialog,
@@ -19,7 +18,6 @@ import {
   Eye, 
   Phone, 
   Mail, 
-  MessageSquare, 
   Calendar,
   DollarSign,
   Target,
@@ -38,7 +36,6 @@ export function LeadManagement() {
   const [selectedLead, setSelectedLead] = useState<any>(null);
   const [filterStatus, setFilterStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
-  const queryClient = useQueryClient();
   const { toast } = useToast();
 
   // Fetch real contact messages as leads
@@ -52,7 +49,7 @@ export function LeadManagement() {
   });
 
   // Transform contact messages into lead format
-  const leads = contactMessages.map((message: any, index: number) => ({
+  const leads = contactMessages.map((message: any) => ({
     id: message.id,
     clientId: null, // Not linked to clients yet
     source: "website", // All from contact form
@@ -75,7 +72,7 @@ export function LeadManagement() {
   }));
 
   // Filter leads based on search and status
-  const filteredLeads = leads.filter(lead => {
+  const filteredLeads = leads.filter((lead: any) => {
     const matchesSearch = lead.formData.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          lead.formData.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          lead.source.toLowerCase().includes(searchTerm.toLowerCase());
@@ -91,9 +88,10 @@ export function LeadManagement() {
   // Calculate lead statistics from real data
   const leadStats = {
     total: leads.length,
-    hot: leads.filter(lead => lead.temperature === "hot").length,
-    qualified: leads.filter(lead => lead.qualification === "qualified").length,
-    avgScore: leads.length > 0 ? Math.round(leads.reduce((sum, lead) => sum + lead.score, 0) / leads.length) : 0
+    hot: leads.filter((lead: any) => lead.temperature === "hot").length,
+    qualified: leads.filter((lead: any) => lead.qualification === "qualified").length,
+    avgScore: leads.length > 0 ? Math.round(leads.reduce((sum: number, lead: any) => sum + lead.score, 0) / leads.length) : 0,
+    conversionRate: leads.length > 0 ? Math.round((leads.filter((lead: any) => lead.qualification === "qualified").length / leads.length) * 100) : 0
   };
 
 
@@ -235,7 +233,7 @@ export function LeadManagement() {
 
           {/* Leads List */}
           <div className="space-y-4">
-            {filteredLeads.map((lead) => (
+            {filteredLeads.map((lead: any) => (
               <div key={lead.id} className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">

@@ -21,7 +21,6 @@ import {
   Eye,
   Star,
   Tag,
-  Edit,
   Trash2,
   Download,
   Share
@@ -168,13 +167,6 @@ export function PortfolioManagement() {
     return stats;
   };
 
-  const toggleFeatured = (imageId: number, featured: boolean) => {
-    toggleFeaturedMutation.mutate({ imageId, featured: !featured });
-  };
-
-  const deleteImage = (imageId: number) => {
-    deleteMutation.mutate(imageId);
-  };
 
   const stats = getImageStats();
 
@@ -432,6 +424,7 @@ function ImageDetailView({
   toggleFeaturedMutation: any;
   deleteMutation: any;
 }) {
+  const { toast } = useToast();
   return (
     <div className="grid lg:grid-cols-2 gap-6">
       {/* Image Preview */}

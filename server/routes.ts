@@ -10,7 +10,7 @@ const upload = multer({
     fileSize: 50 * 1024 * 1024, // 50MB limit for high-resolution photography
     files: 10, // Maximum 10 files per upload
   },
-  fileFilter: (req, file, cb) => {
+  fileFilter: (_req, file, cb) => {
     if (file.mimetype.startsWith('image/')) {
       cb(null, true);
     } else {
@@ -20,30 +20,59 @@ const upload = multer({
 });
 import { 
   insertClientSchema, insertBookingSchema, insertServiceSchema,
-  insertContractSchema, insertInvoiceSchema, insertGalleryImageSchema,
-  insertAiChatSchema
+  insertContractSchema, insertInvoiceSchema, insertGalleryImageSchema
 } from "@shared/schema";
 import { z } from "zod";
 import { generateBookingResponse, analyzeImage } from "./openai";
+import { log } from "./vite";
+import { getDatabaseInitializer } from "./database-init";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Health check endpoint for Docker
-  app.get("/api/health", (req, res) => {
+  app.get("/api/health", (_req, res) => {
+    const dbInitializer = getDatabaseInitializer();
     res.status(200).json({ 
       status: "healthy", 
       timestamp: new Date().toISOString(),
-      service: "CapturedCCollective"
+      service: "CapturedCCollective",
+      database_initialized: dbInitializer.getInitializationStatus()
     });
   });
 
+  // Database status endpoint for debugging
+  app.get("/api/admin/database-status", async (_req, res) => {
+    try {
+      const dbInitializer = getDatabaseInitializer();
+      const isInitialized = dbInitializer.getInitializationStatus();
+      
+      // Test current connection
+      const connectionTest = await dbInitializer.testConnection();
+      
+      res.json({
+        success: true,
+        database: {
+          initialized: isInitialized,
+          connection_healthy: connectionTest,
+          timestamp: new Date().toISOString()
+        }
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: "Failed to check database status",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
   // Client routes
-  app.get("/api/clients", async (req, res) => {
+  app.get("/api/clients", async (_req, res) => {
     try {
       const clients = await storage.getClients();
       res.json(clients);
     } catch (error) {
       console.error("Error fetching clients:", error);
-      res.status(500).json({ error: "Failed to fetch clients", details: error.message });
+      res.status(500).json({ error: "Failed to fetch clients", details: (error as Error).message });
     }
   });
 
@@ -74,7 +103,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Service routes
-  app.get("/api/services", async (req, res) => {
+  app.get("/api/services", async (_req, res) => {
     try {
       const services = await storage.getActiveServices();
       res.json(services);
@@ -128,7 +157,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get all services (including inactive) for admin
-  app.get('/api/services/admin', async (req, res) => {
+  app.get('/api/services/admin', async (_req, res) => {
     try {
       const services = await storage.getServices();
       res.json(services);
@@ -139,13 +168,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Booking routes
-  app.get("/api/bookings", async (req, res) => {
+  app.get("/api/bookings", async (_req, res) => {
     try {
       const bookings = await storage.getBookings();
       res.json(bookings);
     } catch (error) {
       console.error("Error fetching bookings:", error);
-      res.status(500).json({ error: "Failed to fetch bookings", details: error.message });
+      res.status(500).json({ error: "Failed to fetch bookings", details: (error as Error).message });
     }
   });
 
@@ -227,7 +256,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof z.ZodError) {
         res.status(400).json({ error: "Invalid booking data", details: error.errors });
       } else {
-        res.status(500).json({ error: "Failed to create booking", details: error.message });
+        res.status(500).json({ error: "Failed to create booking", details: (error as Error).message });
       }
     }
   });
@@ -308,7 +337,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof z.ZodError) {
         res.status(400).json({ error: "Invalid contract data", details: error.errors });
       } else {
-        res.status(500).json({ error: "Failed to create contract", details: error.message });
+        res.status(500).json({ error: "Failed to create contract", details: (error as Error).message });
       }
     }
   });
@@ -393,7 +422,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
 
         const files = req.files as Express.Multer.File[];
-        const { category = "portfolio", description = "" } = req.body;
+        const { category = "portfolio" } = req.body;
 
         if (!files || files.length === 0) {
           return res.status(400).json({ 
@@ -406,7 +435,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         // Create database entries for uploaded images
         const uploadedImages = [];
-        const { clientId, bookingId } = req.body;
+        const { bookingId } = req.body;
         
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
@@ -457,7 +486,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.status(500).json({ 
           error: "Upload failed", 
           message: "An unexpected error occurred while uploading. Please try again.",
-          details: error.message 
+          details: (error as Error).message 
         });
       }
     });
@@ -602,7 +631,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // Analytics routes
-  app.get("/api/analytics/stats", async (req, res) => {
+  app.get("/api/analytics/stats", async (_req, res) => {
     try {
       const stats = await storage.getBookingStats();
       res.json(stats);
@@ -611,73 +640,6 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
-  // Real-time analytics endpoint
-  app.get("/api/analytics/realtime", async (req, res) => {
-    try {
-      const [bookings, clients, galleryImages] = await Promise.all([
-        storage.getBookings(),
-        storage.getClients(),
-        storage.getGalleryImages()
-      ]);
-
-      const now = new Date();
-      const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-      const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-
-      // Get contact messages
-      const contactMessages = await storage.getContactMessages();
-
-      // Calculate actual real-time metrics
-      const recentBookings = bookings.filter(b => new Date(b.createdAt) >= oneHourAgo);
-      const todayBookings = bookings.filter(b => new Date(b.createdAt) >= oneDayAgo);
-      const recentClients = clients.filter(c => new Date(c.createdAt) >= oneDayAgo);
-      const todayMessages = contactMessages.filter(m => new Date(m.createdAt) >= oneDayAgo);
-
-      const realTimeData = {
-        activeVisitors: 0, // No real-time visitor tracking available
-        pageViews: 0, // No page view tracking available
-        newBookings: recentBookings.length,
-        totalBookings: bookings.length,
-        newClients: recentClients.length,
-        totalClients: clients.length,
-        portfolioViews: 0, // No portfolio view tracking available
-        avgSessionDuration: "0:00", // No session tracking available
-        bounceRate: 0, // No bounce rate tracking available
-        topPages: [
-          { page: "/", views: 0, percentage: 0 },
-          { page: "/portfolio", views: 0, percentage: 0 },
-          { page: "/services", views: 0, percentage: 0 },
-          { page: "/contact", views: 0, percentage: 0 }
-        ],
-        recentActivity: [
-          ...todayMessages.slice(0, 3).map(m => ({
-            action: "New inquiry",
-            client: m.name,
-            time: new Date(m.createdAt).toLocaleTimeString()
-          })),
-          ...todayBookings.slice(0, 2).map(b => ({
-            action: "New booking",
-            client: b.client?.name || "Unknown",
-            time: new Date(b.createdAt).toLocaleTimeString()
-          }))
-        ].slice(0, 5),
-        trafficSources: [
-          { source: "No tracking data", visitors: 0, percentage: 0 }
-        ],
-        deviceTypes: [
-          { type: "No tracking data", count: 0, percentage: 0 }
-        ],
-        locations: [
-          { city: "No tracking data", state: "", visitors: 0 }
-        ]
-      };
-
-      res.json(realTimeData);
-    } catch (error) {
-      console.error("Error fetching real-time analytics:", error);
-      res.status(500).json({ error: "Failed to fetch real-time analytics" });
-    }
-  });
 
   app.get("/api/analytics/revenue/:year/:month", async (req, res) => {
     try {
@@ -720,7 +682,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   // Client Portal Authentication Routes
   app.post("/api/client-portal/login", async (req, res) => {
     try {
-      const { email, password } = req.body;
+      const { email } = req.body;
 
       // Find client by email
       const client = await storage.getClientByEmail(email);
@@ -812,7 +774,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
           status: 'proofing',
           coverImage: unbookedImages[0].url,
           photoCount: unbookedImages.length,
-          createdAt: new Date().toISOString()
+          createdAt: new Date()
         });
       }
 
@@ -830,7 +792,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       let galleryImages = [];
       let galleryName = "";
       let galleryStatus = "proofing";
-      let createdAt = new Date().toISOString();
+      let createdAt: Date | string = new Date().toISOString();
 
       if (galleryId.startsWith('unbooked_')) {
         // Handle unbooked images
@@ -1019,7 +981,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // ===== Admin Client Portal API Routes =====
-  app.get("/api/admin/client-portal-sessions", async (req, res) => {
+  app.get("/api/admin/client-portal-sessions", async (_req, res) => {
     try {
       const sessions = await storage.getClientPortalSessions();
       res.json(sessions);
@@ -1030,7 +992,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // Send welcome emails to all clients
-  app.post("/api/admin/send-welcome-emails", async (req, res) => {
+  app.post("/api/admin/send-welcome-emails", async (_req, res) => {
     try {
       const clients = await storage.getClients();
       // Implementation would send actual emails via email service
@@ -1044,7 +1006,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // Reset all client portal sessions
-  app.post("/api/admin/reset-portal-sessions", async (req, res) => {
+  app.post("/api/admin/reset-portal-sessions", async (_req, res) => {
     try {
       // Implementation would reset all active sessions
       console.log("Resetting all client portal sessions");
@@ -1056,9 +1018,9 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // Get questionnaire responses
-  app.get("/api/questionnaire-responses", async (req, res) => {
+  app.get("/api/questionnaire-responses", async (_req, res) => {
     try {
-      const questionnaires = await storage.getQuestionnaires();
+      // const questionnaires = await storage.getQuestionnaires();
       // For now, return empty array since we don't have response tracking yet
       res.json([]);
     } catch (error) {
@@ -1067,7 +1029,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
-  app.get("/api/admin/client-portal-stats", async (req, res) => {
+  app.get("/api/admin/client-portal-stats", async (_req, res) => {
     try {
       const stats = await storage.getClientPortalStats();
       res.json(stats);
@@ -1106,7 +1068,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // ===== Client Credential Management API Routes =====
-  app.get("/api/admin/client-credentials", async (req, res) => {
+  app.get("/api/admin/client-credentials", async (_req, res) => {
     try {
       const clients = await storage.getClients();
 
@@ -1203,7 +1165,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // Get client credentials for admin management
-  app.get("/api/client-credentials", async (req, res) => {
+  app.get("/api/client-credentials", async (_req, res) => {
     try {
       const clients = await storage.getClients();
 
@@ -1246,7 +1208,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // ===== Invoice Analytics API Routes =====
-  app.get("/api/invoices/stats", async (req, res) => {
+  app.get("/api/invoices/stats", async (_req, res) => {
     try {
       const stats = await storage.getInvoiceStats();
       res.json(stats);
@@ -1257,7 +1219,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // Get all invoices
-  app.get("/api/invoices", async (req, res) => {
+  app.get("/api/invoices", async (_req, res) => {
     try {
       // Get real invoices from database
       const bookings = await storage.getBookings();
@@ -1352,15 +1314,15 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
         res.json(invoice);
       } catch (validationError) {
         console.error("Invoice validation error:", validationError);
-        return res.status(400).json({ error: "Invalid invoice data", details: validationError.errors });
+        return res.status(400).json({ error: "Invalid invoice data", details: (validationError as any).errors });
       }
     } catch (error) {
       console.error("Error creating invoice:", error);
-      res.status(500).json({ error: "Failed to create invoice", details: error.message });
+      res.status(500).json({ error: "Failed to create invoice", details: (error as Error).message });
     }
   });
 
-  app.get("/api/analytics/business-kpis", async (req, res) => {
+  app.get("/api/analytics/business-kpis", async (_req, res) => {
     try {
       const kpis = await storage.getBusinessKPIs();
       res.json(kpis);
@@ -1370,7 +1332,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
-  app.get("/api/analytics/clients", async (req, res) => {
+  app.get("/api/analytics/clients", async (_req, res) => {
     try {
       const metrics = await storage.getClientMetrics();
       res.json(metrics);
@@ -1381,7 +1343,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // ===== Contact Messages API Routes =====
-  app.get("/api/contact-messages", async (req, res) => {
+  app.get("/api/contact-messages", async (_req, res) => {
     try {
       const messages = await storage.getContactMessages();
       res.json(messages);
@@ -1465,7 +1427,7 @@ Please respond with a JSON object containing:
     try {
       const { 
         name, email, phone, subject, message, priority, 
-        source, ipAddress, userAgent, aiCategory, suggestedResponse 
+        source 
       } = req.body;
 
       // Insert contact message into database
@@ -1513,17 +1475,6 @@ Please respond with a JSON object containing:
     }
   });
 
-  // ===== Invoices API Routes =====
-  app.get("/api/invoices", async (req, res) => {
-    try {
-      // For now, return empty array since we don't have any invoices created yet
-      // In a real app, this would fetch from the database
-      res.json([]);
-    } catch (error) {
-      console.error("Error fetching invoices:", error);
-      res.status(500).json({ error: "Failed to fetch invoices" });
-    }
-  });
 
   // ===== Invoice PDF & Email Routes =====
   app.post("/api/invoices/pdf/:invoiceNumber", async (req, res) => {
@@ -1605,7 +1556,7 @@ Please respond with a JSON object containing:
   });
 
   // Real-time analytics endpoint
-  app.get("/api/analytics/realtime", async (req, res) => {
+  app.get("/api/analytics/realtime", async (_req, res) => {
     try {
       const bookings = await storage.getBookings();
       const clients = await storage.getClients();
@@ -1620,12 +1571,7 @@ Please respond with a JSON object containing:
       const todayMessages = contactMessages.filter(m => new Date(m.createdAt) >= todayStart);
 
       // Calculate authentic metrics from real business data
-      const totalRevenue = bookings.reduce((sum, b) => sum + (b.totalPrice || 0), 0);
-      const recentMessages = contactMessages.filter(m => new Date(m.createdAt) >= new Date(Date.now() - 24 * 60 * 60 * 1000));
-      const recentBookings = bookings.filter(b => new Date(b.createdAt) >= new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
-
       // Estimate visitors based on contact messages and bookings activity
-      const estimatedVisitors = Math.max(5, recentMessages.length * 3 + recentBookings.length * 2);
 
       // Calculate lead sources from actual client data
       const leadSources = clients.reduce((acc: any, client: any) => {
@@ -1688,16 +1634,14 @@ Please respond with a JSON object containing:
   });
 
   // Automation sequences endpoint - using real booking data for workflow calculations
-  app.get("/api/automation-sequences", async (req, res) => {
+  app.get("/api/automation-sequences", async (_req, res) => {
     try {
       const bookings = await storage.getBookings();
-      const clients = await storage.getClients();
 
       // Calculate real workflow performance from booking data
       const confirmedBookings = bookings.filter(b => b.status === 'confirmed').length;
       const totalBookings = bookings.length;
       const successRate = totalBookings > 0 ? Math.round((confirmedBookings / totalBookings) * 100) : 0;
-      const activeClients = clients.filter(c => c.status === 'active').length;
 
       // Real workflow templates based on actual business operations
       const workflows = [
@@ -1728,7 +1672,7 @@ Please respond with a JSON object containing:
             openRate: successRate,
             clickRate: Math.max(65, successRate - 10)
           },
-          createdAt: new Date().toISOString()
+          createdAt: new Date()
         },
         {
           id: 2,
@@ -1750,7 +1694,7 @@ Please respond with a JSON object containing:
             openRate: 92,
             clickRate: 78
           },
-          createdAt: new Date().toISOString()
+          createdAt: new Date()
         },
         {
           id: 3,
@@ -1772,7 +1716,7 @@ Please respond with a JSON object containing:
             openRate: 85,
             clickRate: 45
           },
-          createdAt: new Date().toISOString()
+          createdAt: new Date()
         }
       ];
 
@@ -1865,7 +1809,7 @@ Please respond with a JSON object containing:
   });
 
   // Profile Management API
-  app.get("/api/profile", async (req, res) => {
+  app.get("/api/profile", async (_req, res) => {
     try {
       const profile = await storage.getProfile();
       if (!profile) {
@@ -1885,7 +1829,7 @@ Please respond with a JSON object containing:
             youtube: "ChristianPicasoHawaii"
           },
           isActive: true,
-          createdAt: new Date().toISOString(),
+          createdAt: new Date(),
           updatedAt: new Date().toISOString()
         };
         res.json(defaultProfile);
@@ -1910,13 +1854,13 @@ Please respond with a JSON object containing:
   });
 
   // Contract routes
-  app.get("/api/contracts", async (req, res) => {
+  app.get("/api/contracts", async (_req, res) => {
     try {
       const contracts = await storage.getContracts();
       res.json(contracts);
     } catch (error) {
       console.error("Error fetching contracts:", error);
-      res.status(500).json({ error: "Failed to fetch contracts", details: error.message });
+      res.status(500).json({ error: "Failed to fetch contracts", details: (error as Error).message });
     }
   });
 
@@ -1930,7 +1874,7 @@ Please respond with a JSON object containing:
         res.status(400).json({ error: "Invalid contract data", details: error.errors });
       } else {
         console.error("Error creating contract:", error);
-        res.status(500).json({ error: "Failed to create contract", details: error.message });
+        res.status(500).json({ error: "Failed to create contract", details: (error as Error).message });
       }
     }
   });
@@ -1944,7 +1888,7 @@ Please respond with a JSON object containing:
       res.json(contract);
     } catch (error) {
       console.error("Error fetching contract:", error);
-      res.status(500).json({ error: "Failed to fetch contract", details: error.message });
+      res.status(500).json({ error: "Failed to fetch contract", details: (error as Error).message });
     }
   });
 
@@ -1955,7 +1899,7 @@ Please respond with a JSON object containing:
       res.json(contract);
     } catch (error) {
       console.error("Error updating contract:", error);
-      res.status(500).json({ error: "Failed to update contract", details: error.message });
+      res.status(500).json({ error: "Failed to update contract", details: (error as Error).message });
     }
   });
 
@@ -1966,7 +1910,7 @@ Please respond with a JSON object containing:
       res.json(result);
     } catch (error) {
       console.error("Error sending contract:", error);
-      res.status(500).json({ error: "Failed to send contract", details: error.message });
+      res.status(500).json({ error: "Failed to send contract", details: (error as Error).message });
     }
   });
 

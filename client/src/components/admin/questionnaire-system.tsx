@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,9 +10,9 @@ import { Switch } from "@/components/ui/switch";
 import { 
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { 
   FileText, 
@@ -28,15 +29,12 @@ import {
   Home,
   Zap,
   Target,
-  Star,
   Clock,
-  CheckCircle,
-  AlertCircle
+  CheckCircle
 } from "lucide-react";
 import { format } from "date-fns";
 
 export function QuestionnaireSystem() {
-  const [selectedQuestionnaire, setSelectedQuestionnaire] = useState<any>(null);
   const [newQuestionnaireOpen, setNewQuestionnaireOpen] = useState(false);
   const [questionnaireBuilder, setQuestionnaireBuilder] = useState(false);
 
@@ -329,7 +327,7 @@ export function QuestionnaireSystem() {
   ];
 
   // Fetch real questionnaire responses from database
-  const { data: responses = [], isLoading: responsesLoading } = useQuery({
+  const { data: responses = [] } = useQuery({
     queryKey: ['/api/questionnaire-responses'],
     queryFn: async () => {
       const response = await fetch('/api/questionnaire-responses');
@@ -530,7 +528,7 @@ export function QuestionnaireSystem() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {responses.map((response) => {
+            {responses.map((response: any) => {
               const questionnaire = questionnaires.find(q => q.id === response.questionnaireId);
               return (
                 <div key={response.id} className="border rounded-lg p-4">
@@ -554,7 +552,7 @@ export function QuestionnaireSystem() {
                           <div key={key} className="flex">
                             <span className="text-muted-foreground w-32 capitalize">{key.replace(/_/g, ' ')}:</span>
                             <span className="flex-1">
-                              {Array.isArray(value) ? value.join(', ') : value}
+                              {Array.isArray(value) ? value.join(', ') : String(value)}
                             </span>
                           </div>
                         ))}

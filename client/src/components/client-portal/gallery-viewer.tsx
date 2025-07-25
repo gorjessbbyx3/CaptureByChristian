@@ -1,21 +1,18 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { 
   Heart, 
-  Download, 
   MessageSquare, 
   Share2, 
   Eye, 
   X, 
   ChevronLeft, 
-  ChevronRight,
-  Star,
-  Check
+  ChevronRight
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -40,7 +37,7 @@ export function GalleryViewer({ galleryId, clientId }: GalleryViewerProps) {
   });
 
   // Fetch existing selections from real database
-  const { data: existingSelections } = useQuery({
+  const { data: selectionsData } = useQuery({
     queryKey: ['/api/client-portal/selections', galleryId],
     queryFn: async () => {
       const response = await fetch(`/api/client-portal/selections/${galleryId}?clientId=${clientId}`);
@@ -50,16 +47,18 @@ export function GalleryViewer({ galleryId, clientId }: GalleryViewerProps) {
       }
       if (!response.ok) throw new Error('Failed to fetch selections');
       return response.json();
-    },
-    onSuccess: (data) => {
-      if (data?.favorites) {
-        setFavorites(new Set(data.favorites));
-      }
-      if (data?.comments) {
-        setComments(data.comments);
-      }
     }
   });
+
+  // Update local state when selections data changes
+  useEffect(() => {
+    if (selectionsData?.favorites) {
+      setFavorites(new Set(selectionsData.favorites));
+    }
+    if (selectionsData?.comments) {
+      setComments(selectionsData.comments);
+    }
+  }, [selectionsData]);
 
   // Save selections mutation
   const saveSelectionsMutation = useMutation({

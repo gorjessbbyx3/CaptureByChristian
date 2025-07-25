@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 import { Navigation } from "@/components/navigation";
 import { BookingForm } from "@/components/booking-form";
 import { AIChat } from "@/components/ai-chat";

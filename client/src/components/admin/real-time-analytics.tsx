@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,16 +6,12 @@ import { Progress } from "@/components/ui/progress";
 import { 
   Activity, 
   Eye, 
-  Clock, 
   MapPin, 
   Smartphone, 
   Monitor, 
   Globe,
-  TrendingUp,
   Users,
-  MousePointer,
   Timer,
-  Wifi,
   Calendar,
   UserPlus,
   Camera

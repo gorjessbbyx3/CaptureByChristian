@@ -240,8 +240,8 @@ export class DatabaseStorage implements IStorage {
       const contractsData = await db
         .select()
         .from(contracts)
-        .leftJoin(clients, eq(contracts.clientid, clients.id))
-        .orderBy(desc(contracts.createdat));
+        .leftJoin(clients, eq(contracts.clientId, clients.id))
+        .orderBy(desc(contracts.createdAt));
       
       return contractsData.map(row => ({
         ...row.contracts,
@@ -488,7 +488,7 @@ export class DatabaseStorage implements IStorage {
     return { sessionToken, ...updates };
   }
 
-  async deleteClientPortalSession(sessionToken: string): Promise<void> {
+  async deleteClientPortalSession(_sessionToken: string): Promise<void> {
     // In a real implementation, this would expire/delete the session
   }
 

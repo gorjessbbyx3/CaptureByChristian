@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { 
   FileText, 
   Plus, 
@@ -28,11 +27,7 @@ import {
   Building,
   Calendar,
   DollarSign,
-  MapPin,
-  Camera,
-  AlertCircle,
   Copy,
-  ExternalLink,
   Brain
 } from "lucide-react";
 import { format } from "date-fns";
@@ -165,7 +160,6 @@ interface Contract {
 export function ContractManagement() {
   const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
   const [newContractOpen, setNewContractOpen] = useState(false);
-  const [editTemplateOpen, setEditTemplateOpen] = useState(false);
   const [viewContractOpen, setViewContractOpen] = useState(false);
   const [aiAssistOpen, setAiAssistOpen] = useState(false);
   const [aiPrompt, setAiPrompt] = useState('');
@@ -389,7 +383,7 @@ Base your recommendations on current photography industry standards and the spec
       ? INDIVIDUAL_CONTRACT_TEMPLATE 
       : BUSINESS_CONTRACT_TEMPLATE;
     
-    const selectedClient = clients.find(c => c.id === parseInt(contractForm.clientId));
+    const selectedClient = clients.find((c: any) => c.id === parseInt(contractForm.clientId));
     
     return template
       .replace(/\[DATE\]/g, new Date().toLocaleDateString())
@@ -412,7 +406,7 @@ Base your recommendations on current photography industry standards and the spec
   };
 
   const handleCreateContract = () => {
-    const selectedClient = clients.find(c => c.id === parseInt(contractForm.clientId));
+    const selectedClient = clients.find((c: any) => c.id === parseInt(contractForm.clientId));
     if (!selectedClient) {
       toast({ title: "Please select a client", variant: "destructive" });
       return;
@@ -538,7 +532,7 @@ Base your recommendations on current photography industry standards and the spec
                       <SelectValue placeholder="Select client" />
                     </SelectTrigger>
                     <SelectContent>
-                      {clients.map(client => (
+                      {clients.map((client: any) => (
                         <SelectItem key={client.id} value={client.id.toString()}>
                           {client.name} ({client.email})
                         </SelectItem>
@@ -708,7 +702,7 @@ Base your recommendations on current photography industry standards and the spec
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Pending Signature</p>
                 <p className="text-2xl font-bold">
-                  {contracts.filter(c => c.status === 'sent').length}
+                  {contracts.filter((c: any) => c.status === 'sent').length}
                 </p>
               </div>
               <Clock className="h-8 w-8 text-orange-500" />
@@ -721,7 +715,7 @@ Base your recommendations on current photography industry standards and the spec
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Signed Contracts</p>
                 <p className="text-2xl font-bold">
-                  {contracts.filter(c => c.status === 'signed').length}
+                  {contracts.filter((c: any) => c.status === 'signed').length}
                 </p>
               </div>
               <CheckCircle className="h-8 w-8 text-green-500" />
@@ -734,7 +728,7 @@ Base your recommendations on current photography industry standards and the spec
               <div>
                 <p className="text-sm font-medium text-muted-foreground">This Month</p>
                 <p className="text-2xl font-bold">
-                  {contracts.filter(c => 
+                  {contracts.filter((c: any) => 
                     new Date(c.createdAt).getMonth() === new Date().getMonth()
                   ).length}
                 </p>
@@ -794,7 +788,7 @@ Base your recommendations on current photography industry standards and the spec
                       )}
                       {/* E-signature status indicators */}
                       <div className="flex items-center space-x-1">
-                        {contract.clientSignedAt && (
+                        {(contract as any).clientSignedAt && (
                           <div className="flex items-center space-x-1 text-green-600">
                             <CheckCircle className="h-4 w-4" />
                             <span className="text-xs">Client Signed</span>
@@ -806,7 +800,7 @@ Base your recommendations on current photography industry standards and the spec
                             <span className="text-xs">Photographer Signed</span>
                           </div>
                         )}
-                        {contract.isFullySigned && (
+                        {(contract as any).isFullySigned && (
                           <Badge variant="default" className="bg-green-600">
                             <CheckCircle className="h-3 w-3 mr-1" />
                             Fully Executed

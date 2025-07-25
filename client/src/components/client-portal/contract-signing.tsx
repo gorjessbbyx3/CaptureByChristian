@@ -10,11 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { 
   FileText, 
   Pen, 
-  CheckCircle, 
-  Download,
-  AlertCircle,
   Calendar,
-  User,
   Shield
 } from "lucide-react";
 

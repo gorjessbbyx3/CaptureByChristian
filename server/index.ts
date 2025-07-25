@@ -1,9 +1,20 @@
 import "dotenv/config";
 import express, { type Request, Response, NextFunction } from "express";
+import cors from "cors";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { initializeDatabase } from "./database-init";
 
 const app = express();
+
+// Enable CORS for frontend-backend communication
+app.use(cors({
+  origin: true,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -41,6 +52,17 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Initialize database before starting the server
+  console.log('🔄 Initializing database...');
+  const dbInitSuccess = await initializeDatabase();
+  
+  if (!dbInitSuccess) {
+    console.error('❌ Database initialization failed. Exiting...');
+    process.exit(1);
+  }
+  
+  console.log('✅ Database initialization completed successfully');
+  
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

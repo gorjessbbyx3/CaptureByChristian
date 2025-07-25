@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import type { ReactNode } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,13 +33,13 @@ const contactSchema = z.object({
   phone: z.string().optional(),
   subject: z.string().min(5, "Subject must be at least 5 characters"),
   message: z.string().min(10, "Message must be at least 10 characters"),
-  priority: z.enum(["normal", "high", "urgent"]).default("normal"),
+  priority: z.enum(["normal", "high", "urgent"]),
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
 
 interface ContactFormProps {
-  trigger?: React.ReactNode;
+  trigger?: ReactNode;
 }
 
 export function ContactForm({ trigger }: ContactFormProps) {
@@ -101,7 +101,7 @@ export function ContactForm({ trigger }: ContactFormProps) {
         setIsSubmitted(false);
       }, 3000);
     },
-    onError: (error) => {
+    onError: () => {
       toast({
         title: "Failed to send message",
         description: "Please try again or call us directly.",

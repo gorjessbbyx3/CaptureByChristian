@@ -1,10 +1,9 @@
-import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchServices } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, Award, Brain, Palette, MessageSquare } from "lucide-react";
+import { Check, Award } from "lucide-react";
 import { Link } from "wouter";
 
 // Service features mapping for display

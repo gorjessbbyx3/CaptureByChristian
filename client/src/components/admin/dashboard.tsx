@@ -1,10 +1,9 @@
-import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAnalytics, fetchBookings, fetchClients } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Users, DollarSign, Camera, TrendingUp, Clock, AlertCircle, Sparkles, Zap, Star, Target } from "lucide-react";
+import { Calendar, DollarSign, Camera, TrendingUp, Clock, AlertCircle, Zap, Star, Target } from "lucide-react";
 import { RevenueChart } from "./revenue-chart";
 
 export function AdminDashboard() {
@@ -93,7 +92,6 @@ export function AdminDashboard() {
     },
   ];
 
-  const recentBookings = bookings?.slice(0, 5) || [];
 
   const getUpcomingBookings = () => {
     if (!bookings) return [];
@@ -160,7 +158,7 @@ export function AdminDashboard() {
                 </div>
                 <div className={`flex items-center text-sm font-medium ${
                   stat.changeType === 'positive' ? 'text-emerald-600' : 
-                  stat.changeType === 'negative' ? 'text-red-600' : 'text-amber-600'
+                  stat.changeType === 'neutral' ? 'text-red-600' : 'text-amber-600'
                 }`}>
                   <TrendingUp className="h-4 w-4 mr-1" />
                   {stat.change}
@@ -198,7 +196,7 @@ export function AdminDashboard() {
           <CardContent className="p-0">
             <div className="space-y-1">
               {upcomingBookings.length > 0 ? (
-                upcomingBookings.map((booking: any, index: number) => (
+                upcomingBookings.map((booking: any) => (
                   <div key={booking.id} className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors border-b last:border-b-0">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg flex items-center justify-center">

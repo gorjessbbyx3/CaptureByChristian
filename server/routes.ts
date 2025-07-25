@@ -25,6 +25,7 @@ import {
 } from "@shared/schema";
 import { z } from "zod";
 import { generateBookingResponse, analyzeImage } from "./openai";
+import { log } from "./vite";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Health check endpoint for Docker

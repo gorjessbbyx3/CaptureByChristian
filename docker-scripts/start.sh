@@ -1,16 +1,22 @@
 #!/bin/sh
 
-# CapturedCCollective Container Startup Script
+# Wait for PostgreSQL to be ready
+echo "Waiting for PostgreSQL to be ready..."
 
-echo "🚀 Starting CapturedCCollective application..."
+# Use Node.js script for better compatibility
+node docker-scripts/wait-for-db.js
 
-# Create necessary directories
-mkdir -p uploads logs
-
-# Wait a moment for database to be ready
-echo "⏳ Waiting for database to be ready..."
-sleep 5
-
-# Start the application
-echo "🌟 Starting Node.js application with automated database initialization..."
-exec npm start
+if [ $? -eq 0 ]; then
+  echo "Database is ready - proceeding with startup"
+  
+  # Run database migrations
+  echo "Running database migrations..."
+  npm run db:migrate
+  
+  # Start the application
+  echo "Starting application..."
+  npm start
+else
+  echo "Database connection failed - exiting"
+  exit 1
+fi

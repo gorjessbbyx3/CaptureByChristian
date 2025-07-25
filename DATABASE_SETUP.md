@@ -14,22 +14,26 @@ This guide covers the complete database setup for the CapturedCCollective photog
 ## Quick Start
 
 1. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 2. **Set up environment variables**
+
    ```bash
    cp .env.example .env
    # Edit .env with your database credentials
    ```
 
 3. **Deploy database schema**
+
    ```bash
    npm run db:push
    ```
 
 4. **Initialize with sample data** (optional)
+
    ```bash
    npm run db:seed
    ```
@@ -54,11 +58,12 @@ PGDATABASE=capturedccollective
 
 ### Connection String Format
 
-```
+```English
 postgresql://[user]:[password]@[host]:[port]/[database]?[options]
 ```
 
 Examples:
+
 - Local: `postgresql://postgres:password@localhost:5432/capturedccollective`
 - Neon: `postgresql://user:pass@ep-xxx.us-east-1.aws.neon.tech/capturedccollective?sslmode=require`
 - Supabase: `postgresql://postgres:pass@db.xxx.supabase.co:5432/postgres`
@@ -70,36 +75,43 @@ Examples:
 The platform uses the following main tables:
 
 #### Users & Authentication
+
 - `users` - Admin users and authentication
 - `profiles` - Business profile information
 
 #### Client Management
+
 - `clients` - Customer information and contact details
 - `client_messages` - Communication history
 - `contact_messages` - Website contact form submissions
 
 #### Business Operations
+
 - `services` - Photography packages and pricing
 - `bookings` - Session scheduling and management
 - `contracts` - Legal agreements and signatures
 - `invoices` - Billing and payment tracking
 
 #### Content Management
+
 - `gallery_images` - Portfolio and client galleries
 - `ai_chats` - AI booking assistant conversations
 
 #### Analytics & Tracking
+
 - `client_portal_sessions` - Client portal access tracking
 
 ### Schema Deployment
 
 #### Method 1: Drizzle Push (Recommended)
+
 ```bash
 # Deploy schema changes directly to database
 npm run db:push
 ```
 
 #### Method 2: Migration Files
+
 ```bash
 # Generate migration files
 npm run db:generate
@@ -109,6 +121,7 @@ npm run db:migrate
 ```
 
 #### Method 3: Manual SQL
+
 ```bash
 # Connect to database
 psql -d $DATABASE_URL
@@ -193,6 +206,7 @@ VALUES (
 ### Local PostgreSQL
 
 1. **Install PostgreSQL**
+
    ```bash
    # macOS
    brew install postgresql
@@ -207,11 +221,13 @@ VALUES (
    ```
 
 2. **Create database**
+
    ```bash
    createdb capturedccollective
    ```
 
 3. **Set connection string**
+
    ```env
    DATABASE_URL=postgresql://postgres:password@localhost:5432/capturedccollective
    ```
@@ -222,6 +238,7 @@ VALUES (
 2. **Create database project**
 3. **Copy connection string** from dashboard
 4. **Set environment variable**
+
    ```env
    DATABASE_URL=postgresql://user:pass@ep-xxx.us-east-1.aws.neon.tech/capturedccollective?sslmode=require
    ```
@@ -232,6 +249,7 @@ VALUES (
 2. **Go to Settings → Database**
 3. **Copy connection string**
 4. **Set environment variable**
+
    ```env
    DATABASE_URL=postgresql://postgres:pass@db.xxx.supabase.co:5432/postgres
    ```
@@ -256,6 +274,7 @@ The platform uses Drizzle ORM for type-safe database operations:
 ### Adding New Tables
 
 1. **Define schema** in `shared/schema.ts`:
+
    ```typescript
    export const newTable = pgTable('new_table', {
      id: serial('id').primaryKey(),
@@ -266,6 +285,7 @@ The platform uses Drizzle ORM for type-safe database operations:
 
 2. **Update storage interface** in `server/storage.ts`
 3. **Push schema changes**:
+
    ```bash
    npm run db:push
    ```
@@ -274,9 +294,11 @@ The platform uses Drizzle ORM for type-safe database operations:
 
 1. **Update schema** in `shared/schema.ts`
 2. **Push changes**:
+
    ```bash
    npm run db:push
    ```
+
 3. **Handle data migration** if needed
 
 ## Backup & Recovery
@@ -461,6 +483,7 @@ ORDER BY idx_scan DESC;
 6. Deploy to production environment
 
 For deployment-specific database configuration, see:
+
 - `DEPLOYMENT.md` - General deployment guide
 - `README.Vercel.md` - Vercel-specific setup
 - `README.Docker.md` - Docker container setup

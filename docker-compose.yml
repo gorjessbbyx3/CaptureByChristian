@@ -9,9 +9,9 @@ services:
       - "5000:5000"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgresql://postgres:password@db:5432/capturedcollective
+      - DATABASE_URL=postgresql://postgresusr:password@db:5432/capturedcollective
       - PORT=5000
-      - OPENAI_API_KEY=sk-your-openai-key-here
+      - OPENAI-API=open-ai-token-here
       - SESSION_SECRET=your-secure-session-secret-here
       - TWILIO_ACCOUNT_SID=your-twilio-account-sid
       - TWILIO_AUTH_TOKEN=your-twilio-auth-token
@@ -23,7 +23,7 @@ services:
     image: postgres:15-alpine
     restart: always
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER: postgresusr
       POSTGRES_PASSWORD: password
       POSTGRES_DB: capturedcollective
     volumes:

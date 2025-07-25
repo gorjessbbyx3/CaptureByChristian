@@ -1,6 +1,7 @@
 # 🚀 Complete Docker Deployment Guide for Render
 
 ## 📋 Prerequisites
+
 - ✅ Docker installed locally
 - ✅ Render account with PostgreSQL database created
 - ✅ Environment variables configured on Render
@@ -10,15 +11,18 @@
 I've created the following files to resolve the database connection timeout issue:
 
 ### 1. Database Readiness Check Script
+
 - `docker-scripts/wait-for-db.js` - Node.js script to wait for PostgreSQL
 - `docker-scripts/start.sh` - Updated startup script with database checks
 
 ### 2. Updated Dockerfile
+
 Your existing Dockerfile already includes the startup script.
 
 ## 🏗️ Local Testing with Docker
 
-### Build and Test Locally:
+### Build and Test Locally
+
 ```bash
 # Build the Docker image
 docker build -t capture-by-christian .
@@ -33,7 +37,9 @@ docker-compose exec app node docker-scripts/wait-for-db.js
 ## 🚀 Deploy to Render with Docker
 
 ### Option 1: GitHub Auto-Deploy (Recommended)
+
 1. **Push your code to GitHub**
+
    ```bash
    git add .
    git commit -m "Add database connection fixes"
@@ -50,6 +56,7 @@ docker-compose exec app node docker-scripts/wait-for-db.js
    - **Start Command**: `./start.sh`
 
 3. **Set Environment Variables**
+
    ```env
    NODE_ENV=production
    DATABASE_URL=postgresql://[username]:[password]@[host]:[port]/[database]
@@ -59,7 +66,9 @@ docker-compose exec app node docker-scripts/wait-for-db.js
    ```
 
 ### Option 2: Docker Registry
+
 1. **Build and Push to Docker Hub**
+
    ```bash
    # Build image
    docker build -t yourusername/capture-by-christian:latest .
@@ -75,7 +84,7 @@ docker-compose exec app node docker-scripts/wait-for-db.js
 
 ## 🔍 Troubleshooting Database Connection
 
-### Common Issues and Solutions:
+### Common Issues and Solutions
 
 1. **Connection Timeout**
    - ✅ Fixed with wait-for-db.js script
@@ -91,14 +100,16 @@ docker-compose exec app node docker-scripts/wait-for-db.js
 
 ## 📊 Verification Steps
 
-### After Deployment:
+### After Deployment
+
 1. **Health Check**: `https://your-app.onrender.com/api/health`
 2. **Database Connection**: Check Render logs for successful connection
 3. **Full App Test**: Navigate through all pages and features
 
 ## 🔄 Continuous Deployment
 
-### Auto-Deploy Setup:
+### Auto-Deploy Setup
+
 - Enable "Auto-Deploy" in Render settings
 - Push to main branch triggers automatic rebuild
 - Database migrations run automatically on startup
@@ -106,6 +117,7 @@ docker-compose exec app node docker-scripts/wait-for-db.js
 ## 📞 Support
 
 If issues persist:
+
 1. Check Render logs for detailed error messages
 2. Verify database credentials in environment variables
 3. Test database connection locally with the same credentials

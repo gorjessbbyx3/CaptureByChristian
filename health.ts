@@ -4,7 +4,7 @@ import { db } from './server/db'; // adjust path
 
 const router = Router();
 
-router.get('/health', async (req, res) => {
+router.get('/health', async (_req, res) => {
   try {
     await db.execute(sql`SELECT 1`);
     res.status(200).send('OK');

@@ -1,15 +1,31 @@
 import { build } from 'esbuild';
 
-// Build the server with proper module resolution
+// Build the server with proper module resolution and externalize built-in node modules
 build({
   entryPoints: ['server/index.ts'],
   bundle: true,
   platform: 'node',
-  target: 'node18',
+  target: 'node20',
   format: 'esm',
   outfile: 'dist/index.js',
   sourcemap: false,
   external: [
+    'fs',
+    'path',
+    'os',
+    'util',
+    'stream',
+    'events',
+    'http',
+    'https',
+    'url',
+    'crypto',
+    'zlib',
+    'tty',
+    'net',
+    'dns',
+    'tls',
+    'child_process',
     '@babel/preset-typescript',
     'lightningcss',
     'express',

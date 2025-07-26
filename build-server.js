@@ -26,8 +26,6 @@ build({
     'dns',
     'tls',
     'child_process',
-    '@babel/preset-typescript',
-    'lightningcss',
     'express',
     'cors',
     'dotenv',
@@ -39,10 +37,32 @@ build({
     'cheerio',
     'stripe',
     'node-cron',
-    'ws'
+    'ws',
+    '@babel/preset-typescript',
+    'lightningcss',
+    'rollup',
+    'vite'
   ],
   define: {
     'process.env.NODE_ENV': '"production"'
+  },
+  alias: {
+    'node:fs': 'fs',
+    'node:path': 'path',
+    'node:os': 'os',
+    'node:util': 'util',
+    'node:stream': 'stream',
+    'node:events': 'events',
+    'node:http': 'http',
+    'node:https': 'https',
+    'node:url': 'url',
+    'node:crypto': 'crypto',
+    'node:zlib': 'zlib',
+    'node:tty': 'tty',
+    'node:net': 'net',
+    'node:dns': 'dns',
+    'node:tls': 'tls',
+    'node:child_process': 'child_process'
   }
 }).then(() => {
   console.log('✅ Server build completed successfully');

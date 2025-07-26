@@ -4,8 +4,9 @@ import cors from "cors";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { initializeDatabase } from "./database-init";
-import { db } from "./db";
-import { sql } from "drizzle-orm";
+//import { db } from "./db";
+//import { sql } from "drizzle-orm";
+import healthRoutes from '../health';
 
 const app = express();
 const PORT = Number(process.env.PORT) || 7000;
@@ -16,6 +17,8 @@ console.log('🌐 PORT ENV:', process.env.PORT);
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+app.use(healthRoutes);
 
 // Enable CORS for frontend-backend communication
 app.use(cors({
@@ -28,14 +31,14 @@ app.use(cors({
 app.use(express.json());
 
 // Health check endpoint for the API
-app.get('/health', async (_req, res) => {
+/*app.get('/health', async (_req, res) => {
   try {
     await db.execute(sql`SELECT 1`); // or drizzle equivalent
     res.status(200).send('OK');
   } catch (err) {
     res.status(500).send('DB connection failed');
   }
-});
+});*/
 
 app.use(express.urlencoded({ extended: false }));
 

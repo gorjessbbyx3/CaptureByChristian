@@ -41,11 +41,17 @@ COPY --chown=nextjs:nodejs ./docker-scripts ./docker-scripts
 RUN chmod +x ./docker-scripts/start.sh
 
 # Create a simple start script that calls the docker-scripts version
+#RUN echo '#!/bin/sh' > /app/start.sh && \
+#    echo 'cd /app' >> /app/start.sh && \
+#    echo 'exec ./start.sh' >> /app/start.sh && \
+#    chmod +x /app/start.sh && \
+#    chown nextjs:nodejs /app/start.sh
+
 RUN echo '#!/bin/sh' > /app/start.sh && \
-    echo 'cd /app' >> /app/start.sh && \
-    echo 'exec ./start.sh' >> /app/start.sh && \
+    echo 'node dist/index.js' >> /app/start.sh && \
     chmod +x /app/start.sh && \
     chown nextjs:nodejs /app/start.sh
+
 
 # Switch to non-root user
 USER nextjs

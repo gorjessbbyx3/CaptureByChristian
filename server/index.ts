@@ -4,6 +4,8 @@ import cors from "cors";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { initializeDatabase } from "./database-init";
+import { db } from "./db";
+import { sql } from "drizzle-orm";
 
 const app = express();
 
@@ -16,6 +18,17 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+// Health check endpoint for the API
+app.get('/health', async (_req, res) => {
+  try {
+    await db.execute(sql`SELECT 1`); // or drizzle equivalent
+    res.status(200).send('OK');
+  } catch (err) {
+    res.status(500).send('DB connection failed');
+  }
+});
+
 app.use(express.urlencoded({ extended: false }));
 
 // Serve attached assets (videos, images, documents)

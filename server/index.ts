@@ -89,7 +89,13 @@ app.use((req, res, next) => {
     // this serves both the API and the client.
     // It is the only port that is not firewalled.
     const port = parseInt(process.env.PORT || '7000', 10);
-    server.listen(port, () => {
+    
+    // Add explicit host binding for Render compatibility
+    server.listen(port, '0.0.0.0', () => {
+      console.log(`🚀 Server successfully started and listening on port ${port}`);
+      console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🩺 Health check available at: http://localhost:${port}/api/health`);
+      console.log(`📊 Database status at: http://localhost:${port}/api/admin/database-status`);
       log(`serving on port ${port}`);
     });
   }

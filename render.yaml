@@ -14,6 +14,7 @@ services:
           name: capturedbychristian-app
           property: port
     healthCheckPath: /api/health
+    initialDeployDelay: 30
     
   # PostgreSQL Database
   - type: pserv

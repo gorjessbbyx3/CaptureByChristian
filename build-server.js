@@ -41,7 +41,9 @@ build({
     '@babel/preset-typescript',
     'lightningcss',
     'rollup',
-    'vite'
+    'vite',
+    'esbuild',
+    'typescript'
   ],
   define: {
     'process.env.NODE_ENV': '"production"'

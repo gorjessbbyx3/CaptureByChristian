@@ -12,7 +12,7 @@ COPY package*.json ./
 
 # Install dependencies with fallback to npm install if ci fails
 RUN npm install -g npm@latest && \
-    npm ci || npm install
+    npm ci --no-audit --no-fund --loglevel=error || npm install --no-audit --no-fund --loglevel=error
 
 # Copy source code
 COPY . .

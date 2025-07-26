@@ -8,6 +8,7 @@ import { db } from "./db";
 import { sql } from "drizzle-orm";
 
 const app = express();
+const PORT = Number(process.env.PORT) || 7000;
 
 // Enable CORS for frontend-backend communication
 app.use(cors({
@@ -27,6 +28,11 @@ app.get('/health', async (_req, res) => {
   } catch (err) {
     res.status(500).send('DB connection failed');
   }
+});
+
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
 });
 
 app.use(express.urlencoded({ extended: false }));

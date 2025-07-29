@@ -12,6 +12,7 @@ const app = express();
 const PORT = Number(process.env.PORT) || 7000;
 
 console.log('🌐 PORT ENV:', process.env.PORT);
+console.log('🚀 Starting server initialization...');
 
 app.use(healthRoutes);
 

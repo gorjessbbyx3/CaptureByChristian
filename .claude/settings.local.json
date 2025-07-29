@@ -41,7 +41,9 @@
       "Bash(PGPASSWORD=secure_password_123 psql -h localhost -U postgres -d capturedcollective -c \"SELECT version();\")",
       "Bash(docker logs:*)",
       "Bash(cd:*)",
-      "Bash(cd:*)"
+      "Bash(cd:*)",
+      "Bash(git push:*)",
+      "Bash(ls:*)"
     ],
     "deny": []
   }

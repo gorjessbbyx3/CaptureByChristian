@@ -43,7 +43,11 @@
       "Bash(cd:*)",
       "Bash(cd:*)",
       "Bash(git push:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(touch:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(find:*)"
     ],
     "deny": []
   }

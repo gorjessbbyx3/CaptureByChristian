@@ -8,6 +8,7 @@
     "dev": "tsx server/index.ts",
     "build": "node build-server.js && vite build --config vite.config.optimized.ts",
     "start": "node start-render.js",
+    "postinstall": "npm run build",
     "test": "vitest",
     "lint": "eslint client/src server shared --ext .ts,.tsx",
     "type-check": "tsc --noEmit",

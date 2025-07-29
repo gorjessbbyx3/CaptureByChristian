@@ -1,26 +1,21 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "noEmit": false,
-    "allowImportingTsExtensions": false,
     "outDir": "./dist",
     "rootDir": "./",
+    "noEmit": false,
     "declaration": false,
-    "declarationMap": false,
     "sourceMap": false,
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
+    "removeComments": true
   },
   "include": [
-    "server/**/*.ts",
-    "shared/**/*.ts"
+    "server/**/*",
+    "shared/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "build",
-    "client/**/*",
+    "client",
     "**/*.test.ts",
     "**/*.spec.ts"
   ]

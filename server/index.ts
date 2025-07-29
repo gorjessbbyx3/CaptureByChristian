@@ -1,125 +1,88 @@
-import "dotenv/config";
-import express, { type Request, Response, NextFunction } from "express";
-import cors from "cors";
-import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
-import { initializeDatabase } from "./database-init";
-//import { db } from "./db";
-//import { sql } from "drizzle-orm";
-import healthRoutes from '../health';
+import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+import { db } from './db.js';
+import { setupRoutes } from './routes.js';
+
+// Load environment variables
+dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = Number(process.env.PORT) || 7000;
+const PORT = process.env.PORT || 3000;
 
-console.log('🌐 PORT ENV:', process.env.PORT);
-console.log('🚀 Starting server initialization...');
-
-app.use(healthRoutes);
-
-// Enable CORS for frontend-backend communication
+// Middleware
 app.use(cors({
-  origin: true,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin: process.env.NODE_ENV === 'production' 
+    ? process.env.FRONTEND_URL || true
+    : 'http://localhost:5173',
+  credentials: true
 }));
 
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(cookieParser());
 
-// Health check endpoint for the API
-/*app.get('/health', async (_req, res) => {
-  try {
-    await db.execute(sql`SELECT 1`); // or drizzle equivalent
-    res.status(200).send('OK');
-  } catch (err) {
-    res.status(500).send('DB connection failed');
+// Session configuration
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your-secret-key-change-in-production',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
-});*/
+}));
 
-app.use(express.urlencoded({ extended: false }));
-
-// Serve attached assets (videos, images, documents)
-app.use('/attached_assets', express.static('attached_assets'));
-
-app.use((req, res, next) => {
-  const start = Date.now();
-  const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
-
-  const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
-  };
-
-  res.on("finish", () => {
-    const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
-
-      if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
-      }
-
-      log(logLine);
-    }
+// Health check endpoint for Render
+app.get('/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV 
   });
-
-  next();
 });
 
-(async () => {
-  // Initialize database before starting the server
-  console.log('🔄 Initializing database...');
-  const dbInitSuccess = await initializeDatabase();
-  
-  if (!dbInitSuccess) {
-    console.error('❌ Database initialization failed. Exiting...');
-    process.exit(1);
-  }
-  
-  console.log('✅ Database initialization completed successfully');
-  
-  const server = await registerRoutes(app);
+// API routes
+setupRoutes(app);
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+// Serve static files in production
+if (process.env.NODE_ENV === 'production') {
+  const clientDistPath = path.join(__dirname, '../../client/dist');
+  app.use(express.static(clientDistPath));
 
-    res.status(status).json({ message });
-    throw err;
+  // Handle client-side routing
+  app.get('*', (req, res) => {
+    // Skip API routes
+    if (req.path.startsWith('/api/')) {
+      return res.status(404).json({ error: 'API endpoint not found' });
+    }
+    res.sendFile(path.join(clientDistPath, 'index.html'));
   });
+}
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
-  }
+// Error handling middleware
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('Error:', err);
+  res.status(500).json({ 
+    error: process.env.NODE_ENV === 'production' 
+      ? 'Internal server error' 
+      : err.message 
+  });
+});
 
-  // Only start server if not running in Vercel environment
-  if (!process.env.VERCEL) {
-    // ALWAYS serve the app on the port specified in the environment variable PORT
-    // Other ports are firewalled. Default to 7000 if not specified.
-    // this serves both the API and the client.
-    // It is the only port that is not firewalled.
-    const port = parseInt(process.env.PORT || '7000', 10);
-    
-    // Add explicit host binding for Render compatibility
-    server.listen(port, '0.0.0.0', () => {
-      console.log(`🚀 Server successfully started and listening on port ${port}`);
-      console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`🩺 Health check available at: http://localhost:${port}/api/health`);
-      console.log(`📊 Database status at: http://localhost:${port}/api/admin/database-status`);
-      log(`serving on port ${port}`);
-    });
-  }
-})();
+// Start server
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📊 Environment: ${process.env.NODE_ENV}`);
+  console.log(`🗄️  Database: ${process.env.DATABASE_URL ? 'Connected' : 'Not configured'}`);
+});
 
-// Export the app for Vercel
-export { app };
+export default app;

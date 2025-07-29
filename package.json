@@ -2,7 +2,7 @@
   "name": "capture-by-christian",
   "version": "1.0.0",
   "description": "Photography business management system with AI-powered booking assistant",
-  "main": "dist/index.js",
+  "main": "start-render.js",
   "type": "module",
   "scripts": {
     "dev": "tsx server/index.ts",

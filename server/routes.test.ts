@@ -369,4 +369,11 @@ describe('API Routes', () => {
       vi.mocked(storage.createGalleryImage).mockResolvedValue(mockImage);
 
       const response = await request(app)
-        .post
+        .post('/api/gallery-images')
+        .send(imageData);
+      
+      expect(response.status).toBe(201);
+      expect(response.body).toEqual(mockImage);
+    });
+  });
+});

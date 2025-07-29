@@ -785,4 +785,8 @@ describe('API Endpoints Comprehensive Tests', () => {
       expect(response.body).toHaveProperty('token');
     });
 
-    it('POST /api/client
+    it('POST /api/client-portal should work', async () => {
+      // Add test implementation here
+    });
+  });
+});

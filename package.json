@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.66",
+    "@replit/vite-plugin-runtime-error-modal": "^0.0.3",
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.17",
@@ -34,15 +35,19 @@
     "@types/node": "^20.14.8",
     "@types/pg": "^8.11.6",
     "ai": "^3.4.32",
+    "autoprefixer": "^10.4.21",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "drizzle-orm": "^0.33.0",
+    "drizzle-orm": "^0.44.3",
+    "drizzle-zod": "^0.8.2",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "multer": "^1.4.5-lts.1",
     "pg": "^8.12.0",
+    "recharts": "^3.1.0",
+    "tailwindcss": "^4.1.11",
     "twilio": "^5.3.2",
     "typescript": "^5.5.2",
     "zod": "^3.23.8"
@@ -54,7 +59,7 @@
     "@typescript-eslint/parser": "^7.13.1",
     "@vitejs/plugin-react": "^4.3.1",
     "concurrently": "^8.2.2",
-    "drizzle-kit": "^0.24.0",
+    "drizzle-kit": "^0.25.0",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
@@ -65,5 +70,12 @@
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=8.0.0"
+  },
+  "overrides": {
+    "drizzle-orm": {
+      "@op-engineering/op-sqlite": false,
+      "expo-sqlite": false,
+      "react-native": false
+    }
   }
 }

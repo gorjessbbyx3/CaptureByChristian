@@ -6,7 +6,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { db } from './db.js';
-import { setupRoutes } from './routes.js';
+import { registerRoutes } from './routes';
 
 // Load environment variables
 dotenv.config();
@@ -15,7 +15,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 // Middleware
 app.use(cors({
@@ -51,7 +51,7 @@ app.get('/health', (req, res) => {
 });
 
 // API routes
-setupRoutes(app);
+registerRoutes(app);
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {

@@ -95,20 +95,20 @@ export function AdvancedAIChat() {
     await new Promise(resolve => setTimeout(resolve, 2000));
 
     // Calculate comprehensive business metrics from real data
-    const totalRevenue = bookingsData.reduce((sum: number, booking: any) => sum + (booking.totalPrice || 0), 0);
+    const totalRevenue = bookingsData.reduce((sum: number, booking: unknown) => sum + ((booking as any).totalPrice || 0), 0);
     const totalBookings = bookingsData.length;
     const avgBookingValue = totalBookings > 0 ? totalRevenue / totalBookings : 0;
-    const confirmedBookings = bookingsData.filter((b: any) => b.status === 'confirmed').length;
-    const pendingBookings = bookingsData.filter((b: any) => b.status === 'pending').length;
-    const unreadMessages = contactMessages.filter((m: any) => m.status === 'unread').length;
-    const urgentMessages = contactMessages.filter((m: any) => m.priority === 'urgent').length;
+    const confirmedBookings = bookingsData.filter((b: unknown) => (b as any).status === 'confirmed').length;
+    const pendingBookings = bookingsData.filter((b: unknown) => (b as any).status === 'pending').length;
+    const unreadMessages = contactMessages.filter((m: unknown) => (m as any).status === 'unread').length;
+    const urgentMessages = contactMessages.filter((m: unknown) => (m as any).priority === 'urgent').length;
     
     // Service performance analysis
-    const servicePerformance = servicesData.map((service: any) => {
-      const serviceBookings = bookingsData.filter((b: any) => b.serviceId === service.id);
-      const serviceRevenue = serviceBookings.reduce((sum: number, b: any) => sum + (b.totalPrice || 0), 0);
+    const servicePerformance = servicesData.map((service: unknown) => {
+      const serviceBookings = bookingsData.filter((b: unknown) => (b as any).serviceId === (service as any).id);
+      const serviceRevenue = serviceBookings.reduce((sum: number, b: unknown) => sum + ((b as any).totalPrice || 0), 0);
       return {
-        name: service.name,
+        name: (service as any).name,
         bookings: serviceBookings.length,
         revenue: serviceRevenue,
         avgValue: serviceBookings.length > 0 ? serviceRevenue / serviceBookings.length : 0

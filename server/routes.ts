@@ -195,30 +195,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/bookings", async (req, res) => {
     try {
-      console.log("Received booking data:", req.body);
+      // console.log("Received booking data:", req.body);
 
       // Validate the incoming request
       const requestData = bookingRequestSchema.parse(req.body);
-      console.log("Request validation passed:", requestData);
+      // console.log("Request validation passed:", requestData);
 
       // Create or find existing client first
       let client;
       try {
         client = await storage.getClientByEmail(requestData.clientEmail);
       } catch (error) {
-        console.log("Client lookup error:", error);
+        log("Client lookup error: " + error, "express");
         client = null;
       }
 
       if (!client) {
-        console.log("Creating new client...");
+        // console.log("Creating new client...");
         client = await storage.createClient({
           name: requestData.clientName,
           email: requestData.clientEmail,
           phone: requestData.clientPhone || null,
           notes: requestData.notes || null,
         });
-        console.log("Created client:", client);
+        // console.log("Created client:", client);
       }
 
       // Get service to extract duration
@@ -327,9 +327,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/contracts", async (req, res) => {
     try {
-      console.log('Received contract data:', req.body);
+      // console.log('Received contract data:', req.body);
       const contractData = insertContractSchema.parse(req.body);
-      console.log('Validated contract data:', contractData);
+      // console.log('Validated contract data:', contractData);
       const contract = await storage.createContract(contractData);
       res.json(contract);
     } catch (error) {
@@ -431,7 +431,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
         }
 
-        console.log(`Processing ${files.length} uploaded file(s)...`);
+        // console.log(`Processing ${files.length} uploaded file(s)...`);
 
         // Create database entries for uploaded images
         const uploadedImages = [];
@@ -461,7 +461,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const savedImage = await storage.createGalleryImage(imageData);
             uploadedImages.push(savedImage);
 
-            console.log(`Saved image ${i + 1}/${files.length}: ${file.originalname}`);
+            // console.log(`Saved image ${i + 1}/${files.length}: ${file.originalname}`);
           } catch (dbError) {
             console.error(`Failed to save image ${file.originalname}:`, dbError);
             // Continue with other images even if one fails
@@ -475,7 +475,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
         }
 
-        console.log(`Successfully uploaded ${uploadedImages.length} image(s) to gallery`);
+        // console.log(`Successfully uploaded ${uploadedImages.length} image(s) to gallery`);
 
         res.json({ 
           message: `${uploadedImages.length} image(s) uploaded successfully`,

@@ -12,6 +12,7 @@ import Admin from "@/pages/admin";
 import { AdminLogin } from "@/pages/admin-login";
 import Booking from "@/pages/booking";
 import { ClientPortalPage } from "@/pages/client-portal";
+import ErrorBoundary from "@/components/error-boundary";
 
 function Router() {
   return (
@@ -33,7 +34,9 @@ function App() {
       <ThemeProvider>
         <TooltipProvider>
           <Toaster />
-          <Router />
+          <ErrorBoundary>
+            <Router />
+          </ErrorBoundary>
         </TooltipProvider>
       </ThemeProvider>
     </QueryClientProvider>

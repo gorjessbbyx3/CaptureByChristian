@@ -47,7 +47,8 @@
       "Bash(touch:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(npm run:*)"
     ],
     "deny": []
   }

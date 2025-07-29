@@ -64,7 +64,7 @@ export async function generateBookingResponse(
     const lastMessage = messages[messages.length - 1]?.content || '';
 
     // Use Replit AI for intelligent responses
-    let aiMessage = await callReplitAI(lastMessage, conversationHistory, bookingData);
+    const aiMessage = await callReplitAI(lastMessage, conversationHistory, bookingData);
 
     // Extract booking data from the response
     const extractedBookingData = { ...bookingData };
@@ -289,12 +289,7 @@ function generateBlogContent(eventData: any, images: any[]): string {
   return `title: ${title}\ncontent: ${content}\nexcerpt: ${excerpt}\ntags: ${tags}\nsocial caption: ${socialCaption}`;
 }
 
-export async function analyzeImage(imageUrl: string): Promise<{
-  emotions?: string[];
-  style?: string;
-  composition?: string;
-  quality?: number;
-}> {
+export async function analyzeImage(imageUrl: string): Promise<string> {
   try {
     // Use Replit AI for image analysis
     const analysisPrompt = `Analyze this photography image: ${imageUrl}
@@ -337,28 +332,12 @@ export async function analyzeImage(imageUrl: string): Promise<{
       analysis = analyzeImageIntelligently(imageUrl);
     }
     
-    // Parse the response to extract structured data
-    const emotions = analysis.match(/emotions.*?:(.*?)(?:\n|$)/i)?.[1]?.split(',').map((e: string) => e.trim()) || ["joy", "serenity"];
-    const style = analysis.match(/style.*?:(.*?)(?:\n|$)/i)?.[1]?.trim() || "portrait";
-    const composition = analysis.match(/composition.*?:(.*?)(?:\n|$)/i)?.[1]?.trim() || "natural lighting, good framing";
-    const qualityMatch = analysis.match(/quality.*?:.*?(\d+)/i);
-    const quality = qualityMatch ? parseInt(qualityMatch[1]) : 8;
-
-    return {
-      emotions: emotions.slice(0, 3), // Limit to 3 emotions
-      style,
-      composition,
-      quality: Math.min(Math.max(quality, 1), 10) // Ensure 1-10 range
-    };
+    // Return the analysis as a string
+    return analysis;
 
   } catch (error) {
     console.error("Image analysis error:", error);
-    return {
-      emotions: ["joy", "serenity"],
-      style: "portrait",
-      composition: "natural lighting",
-      quality: 7,
-    };
+    return "Image analysis: Professional photography with natural lighting, good composition, and high quality. Emotions captured include joy and serenity.";
   }
 }
 

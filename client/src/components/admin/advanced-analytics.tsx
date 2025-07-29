@@ -77,12 +77,12 @@ export function AdvancedAnalytics() {
     if (!bookings.length) return { revenueData: [], serviceBreakdown: [], leadSourceData: [] };
 
     // Group bookings by month for revenue data
-    const monthlyData = bookings.reduce((acc: any, booking: any) => {
-      const month = new Date(booking.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    const monthlyData = bookings.reduce((acc: Record<string, any>, booking: unknown) => {
+      const month = new Date((booking as any).date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
       if (!acc[month]) {
         acc[month] = { month, revenue: 0, bookings: 0, leads: 0, conversion: 0 };
       }
-      acc[month].revenue += booking.totalPrice || 0;
+      acc[month].revenue += (booking as any).totalPrice || 0;
       acc[month].bookings += 1;
       return acc;
     }, {});
@@ -90,11 +90,11 @@ export function AdvancedAnalytics() {
     const revenueData = Object.values(monthlyData).slice(-12);
 
     // Calculate service breakdown from real bookings
-    const serviceData = services.map((service: any) => {
-      const serviceBookings = bookings.filter((b: any) => b.serviceId === service.id);
-      const revenue = serviceBookings.reduce((sum: number, b: any) => sum + (b.totalPrice || 0), 0);
+    const serviceData = services.map((service: unknown) => {
+      const serviceBookings = bookings.filter((b: unknown) => (b as any).serviceId === (service as any).id);
+      const revenue = serviceBookings.reduce((sum: number, b: unknown) => sum + ((b as any).totalPrice || 0), 0);
       return {
-        name: service.name,
+        name: (service as any).name,
         value: serviceBookings.length,
         revenue,
         count: serviceBookings.length
@@ -102,13 +102,13 @@ export function AdvancedAnalytics() {
     });
 
     // Calculate lead source data from real clients
-    const leadSources = clients.reduce((acc: any, client: any) => {
-      const source = client.source || 'Direct';
+    const leadSources = clients.reduce((acc: Record<string, any>, client: unknown) => {
+      const source = (client as any).source || 'Direct';
       if (!acc[source]) {
         acc[source] = { source, leads: 0, converted: 0, rate: 0, cost: 0 };
       }
       acc[source].leads += 1;
-      acc[source].converted += client.status === 'active' ? 1 : 0;
+      acc[source].converted += (client as any).status === 'active' ? 1 : 0;
       return acc;
     }, {});
 

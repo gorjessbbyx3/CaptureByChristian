@@ -25,7 +25,7 @@ interface Achievement {
   id: string;
   title: string;
   description: string;
-  icon: React.ComponentType<any>;
+  icon: React.ElementType;
   progress: number;
   maxProgress: number;
   unlocked: boolean;
@@ -64,10 +64,10 @@ export function GamifiedProgress() {
   });
 
   // Calculate real metrics
-  const confirmedBookings = (bookings as any[])?.filter((b: any) => b.status === 'confirmed').length || 0;
-  const totalRevenue = (invoiceStats as any)?.totalRevenue || 0;
-  const conversionRate = (clients as any[])?.length > 0 ? (confirmedBookings / (clients as any[]).length) * 100 : 0;
-  const portfolioRequests = (contactMessages as any[])?.filter((m: any) => m.source === 'portfolio_access').length || 0;
+  const confirmedBookings = Array.isArray(bookings) ? bookings.filter((b: { status: string }) => b.status === 'confirmed').length || 0 : 0;
+  const totalRevenue = (invoiceStats as { totalRevenue: number })?.totalRevenue || 0;
+  const conversionRate = Array.isArray(clients) && clients.length > 0 ? (confirmedBookings / clients.length) * 100 : 0;
+  const portfolioRequests = Array.isArray(contactMessages) ? contactMessages.filter((m: { source: string }) => m.source === 'portfolio_access').length || 0 : 0;
 
   // Define progress levels
   const progressLevels: ProgressLevel[] = [
@@ -235,9 +235,9 @@ export function GamifiedProgress() {
       title: 'Social Butterfly',
       description: 'Receive 5 contact messages',
       icon: MessageSquare,
-      progress: Math.min((contactMessages as any[])?.length || 0, 5),
+      progress: Math.min(Array.isArray(contactMessages) ? contactMessages.length || 0 : 0, 5),
       maxProgress: 5,
-      unlocked: ((contactMessages as any[])?.length || 0) >= 5,
+      unlocked: (Array.isArray(contactMessages) ? contactMessages.length || 0 : 0) >= 5,
       category: 'engagement',
       points: 150,
       color: 'text-pink-500'
@@ -247,9 +247,9 @@ export function GamifiedProgress() {
       title: 'Client Favorite',
       description: 'Build a client base of 20+ contacts',
       icon: Star,
-      progress: Math.min((clients as any[])?.length || 0, 20),
+      progress: Math.min(Array.isArray(clients) ? clients.length || 0 : 0, 20),
       maxProgress: 20,
-      unlocked: ((clients as any[])?.length || 0) >= 20,
+      unlocked: (Array.isArray(clients) ? clients.length || 0 : 0) >= 20,
       category: 'engagement',
       points: 600,
       color: 'text-indigo-500'
@@ -437,7 +437,7 @@ export function GamifiedProgress() {
         <Card>
           <CardContent className="p-4 text-center">
             <Users className="h-8 w-8 mx-auto mb-2 text-blue-500" />
-            <div className="text-2xl font-bold">{(clients as any[])?.length || 0}</div>
+            <div className="text-2xl font-bold">{Array.isArray(clients) ? clients.length || 0 : 0}</div>
             <div className="text-sm text-muted-foreground">Total Clients</div>
           </CardContent>
         </Card>

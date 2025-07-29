@@ -142,12 +142,13 @@
   }
 
   body {
-    @apply font-inter antialiased bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+    @apply antialiased bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-playfair;
+    font-family: 'Playfair Display', serif;
   }
 
   /* Ensure all text elements have proper contrast */

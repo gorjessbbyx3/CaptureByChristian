@@ -324,6 +324,13 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<string> {
 }
 
 export async function emailInvoice(invoiceData: InvoiceData, pdfPath: string): Promise<boolean> {
+  // Validate email address first
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!invoiceData.clientEmail || !emailRegex.test(invoiceData.clientEmail)) {
+    console.log(`Invalid email address: ${invoiceData.clientEmail}`);
+    return false;
+  }
+  
   // In a real implementation, you would integrate with:
   // - SendGrid, Mailgun, or AWS SES for email delivery
   // - Include the PDF as an attachment

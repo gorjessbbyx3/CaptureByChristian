@@ -4,9 +4,16 @@ import { ClientDashboard } from "@/components/client-portal/client-dashboard";
 import { GalleryViewer } from "@/components/client-portal/gallery-viewer";
 import { apiRequest } from "@/lib/queryClient";
 
+interface ClientData {
+  id: number;
+  name: string;
+  email: string;
+  // Add other properties as needed
+}
+
 export function ClientPortalPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [clientData, setClientData] = useState<any>(null);
+  const [clientData, setClientData] = useState<ClientData | null>(null);
   const [currentView, setCurrentView] = useState<'dashboard' | 'gallery'>('dashboard');
   const [selectedGalleryId, setSelectedGalleryId] = useState<string | null>(null);
 
@@ -44,7 +51,7 @@ export function ClientPortalPage() {
     }
   };
 
-  const handleLoginSuccess = (data: any) => {
+  const handleLoginSuccess = (data: ClientData) => {
     setClientData(data);
     setIsAuthenticated(true);
     localStorage.setItem('clientPortalData', JSON.stringify(data));
@@ -86,7 +93,7 @@ export function ClientPortalPage() {
           </div>
           <GalleryViewer 
             galleryId={selectedGalleryId} 
-            clientId={clientData.id}
+            clientId={clientData?.id.toString() || ''}
           />
         </div>
       </div>

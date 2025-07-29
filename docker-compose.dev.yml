@@ -13,7 +13,7 @@ services:
       - postgres_dev_data:/var/lib/postgresql/data
       - ./db-init:/docker-entrypoint-initdb.d
     ports:
-      - "5432:5432"
+      - "5433:5432"
     networks:
       - capturedcollective-dev-network
 
@@ -31,6 +31,7 @@ services:
       PORT: 7000
     ports:
       - "7000:7000"
+      - "5173:5173"
     volumes:
       - .:/app
       - /app/node_modules

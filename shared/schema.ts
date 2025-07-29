@@ -452,60 +452,60 @@ export const insertProfileSchema = createInsertSchema(profiles).omit({
   updatedAt: true,
 });
 
-// Types
+// Types - Use Drizzle inferred types for consistency
 export type User = typeof users.$inferSelect;
-export type InsertUser = any;
+export type InsertUser = typeof users.$inferInsert;
 
 export type Client = typeof clients.$inferSelect;
-export type InsertClient = any;
+export type InsertClient = typeof clients.$inferInsert;
 
 export type Service = typeof services.$inferSelect;
-export type InsertService = any;
+export type InsertService = typeof services.$inferInsert;
 
 export type Booking = typeof bookings.$inferSelect;
-export type InsertBooking = any;
+export type InsertBooking = typeof bookings.$inferInsert;
 
 export type Contract = typeof contracts.$inferSelect;
-export type InsertContract = any;
+export type InsertContract = typeof contracts.$inferInsert;
 
 export type Invoice = typeof invoices.$inferSelect;
-export type InsertInvoice = any;
+export type InsertInvoice = typeof invoices.$inferInsert;
 
 export type GalleryImage = typeof galleryImages.$inferSelect;
-export type InsertGalleryImage = any;
+export type InsertGalleryImage = typeof galleryImages.$inferInsert;
 
 export type AiChat = typeof aiChats.$inferSelect;
-export type InsertAiChat = any;
+export type InsertAiChat = typeof aiChats.$inferInsert;
 
 export type Lead = typeof leads.$inferSelect;
-export type InsertLead = any;
+export type InsertLead = typeof leads.$inferInsert;
 
 export type CommunicationLog = typeof communicationLog.$inferSelect;
-export type InsertCommunicationLog = any;
+export type InsertCommunicationLog = typeof communicationLog.$inferInsert;
 
 export type AutomationSequence = typeof automationSequences.$inferSelect;
-export type InsertAutomationSequence = any;
+export type InsertAutomationSequence = typeof automationSequences.$inferInsert;
 
 export type Questionnaire = typeof questionnaires.$inferSelect;
-export type InsertQuestionnaire = any;
+export type InsertQuestionnaire = typeof questionnaires.$inferInsert;
 
 export type ClientPortalSession = typeof clientPortalSessions.$inferSelect;
-export type InsertClientPortalSession = any;
+export type InsertClientPortalSession = typeof clientPortalSessions.$inferInsert;
 
 export type Product = typeof products.$inferSelect;
-export type InsertProduct = any;
+export type InsertProduct = typeof products.$inferInsert;
 
 export type Order = typeof orders.$inferSelect;
-export type InsertOrder = any;
+export type InsertOrder = typeof orders.$inferInsert;
 
 export type TeamMember = typeof teamMembers.$inferSelect;
-export type InsertTeamMember = any;
+export type InsertTeamMember = typeof teamMembers.$inferInsert;
 
 export type ContactMessage = typeof contactMessages.$inferSelect;
-export type InsertContactMessage = any;
+export type InsertContactMessage = typeof contactMessages.$inferInsert;
 
 export type ClientMessage = typeof clientMessages.$inferSelect;
-export type InsertClientMessage = any;
+export type InsertClientMessage = typeof clientMessages.$inferInsert;
 
 export type Profile = typeof profiles.$inferSelect;
-export type InsertProfile = any;
+export type InsertProfile = typeof profiles.$inferInsert;

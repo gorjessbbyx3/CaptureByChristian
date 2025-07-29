@@ -48,7 +48,16 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(find:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(npm test:*)",
+      "Bash(node:*)",
+      "Bash(echo \"🚀 APPLICATION READY FOR TESTING\n\n📋 SETUP OPTIONS FOR TESTING:\n\nOption 1 - Quick Online Database (Recommended):\n1. Go to https://neon.tech or https://supabase.com \n2. Create a free PostgreSQL database\n3. Copy the connection string\n4. Replace the DATABASE_URL in .env with your connection string\n5. Run: npm run db:push\n6. Run: npm run dev\n\nOption 2 - Local PostgreSQL:\n1. Install PostgreSQL locally\n2. Create database: createdb capturebychristian\n3. Update .env with your local credentials\n4. Run: npm run db:push  \n5. Run: npm run dev\n\nOption 3 - Test Production Build:\n1. Set up database (Option 1 or 2)\n2. Run: npm run build\n3. Run: npm start\n\nThe app will be available at:\n- Frontend: http://localhost:5173 (development)\n- Backend API: http://localhost:5000\n- Admin Panel: http://localhost:5173/admin\n\n✅ TypeScript compilation is working perfectly!\n✅ Production builds are ready for deployment!\")",
+      "Bash(npx drizzle-kit:*)",
+      "Bash(npm update:*)",
+      "Bash(echo \"✅ Database is running on Docker! \n\n🐳 DATABASE STATUS:\n- PostgreSQL container: ✅ Running on port 5433\n- Schema migration: In progress (needs user input)\n\n⚡ NEXT STEPS TO TEST:\n1. Complete the schema migration (press Enter for ''create column'')\n2. Server will start automatically after schema is ready\n3. Access the app at http://localhost:5173\n\nThe Docker database setup was there all along - you were right!\")",
+      "Bash(timeout:*)",
+      "Bash(docker-compose:*)",
+      "Bash(docker exec:*)"
     ],
     "deny": []
   }

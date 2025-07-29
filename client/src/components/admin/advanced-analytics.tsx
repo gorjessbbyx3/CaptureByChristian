@@ -72,17 +72,41 @@ export function AdvancedAnalytics() {
     }
   });
 
+  // Define interfaces for our data structures
+  interface MonthlyData {
+    month: string;
+    revenue: number;
+    bookings: number;
+    leads: number;
+    conversion: number;
+  }
+
+  interface ServiceData {
+    name: string;
+    value: number;
+    revenue: number;
+    count: number;
+  }
+
+  interface LeadSourceData {
+    source: string;
+    leads: number;
+    converted: number;
+    rate: number;
+    cost: number;
+  }
+
   // Calculate real analytics from database data
   const calculateAnalytics = () => {
     if (!bookings.length) return { revenueData: [], serviceBreakdown: [], leadSourceData: [] };
 
     // Group bookings by month for revenue data
-    const monthlyData = bookings.reduce((acc: Record<string, any>, booking: unknown) => {
-      const month = new Date((booking as any).date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    const monthlyData = bookings.reduce((acc: Record<string, MonthlyData>, booking: { date: string; totalPrice: number }) => {
+      const month = new Date(booking.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
       if (!acc[month]) {
         acc[month] = { month, revenue: 0, bookings: 0, leads: 0, conversion: 0 };
       }
-      acc[month].revenue += (booking as any).totalPrice || 0;
+      acc[month].revenue += booking.totalPrice || 0;
       acc[month].bookings += 1;
       return acc;
     }, {});
@@ -90,11 +114,11 @@ export function AdvancedAnalytics() {
     const revenueData = Object.values(monthlyData).slice(-12);
 
     // Calculate service breakdown from real bookings
-    const serviceData = services.map((service: unknown) => {
-      const serviceBookings = bookings.filter((b: unknown) => (b as any).serviceId === (service as any).id);
-      const revenue = serviceBookings.reduce((sum: number, b: unknown) => sum + ((b as any).totalPrice || 0), 0);
+    const serviceData = services.map((service: { id: number; name: string }): ServiceData => {
+      const serviceBookings = bookings.filter((b: { serviceId: number }) => b.serviceId === service.id);
+      const revenue = serviceBookings.reduce((sum: number, b: { totalPrice: number }) => sum + (b.totalPrice || 0), 0);
       return {
-        name: (service as any).name,
+        name: service.name,
         value: serviceBookings.length,
         revenue,
         count: serviceBookings.length
@@ -102,33 +126,28 @@ export function AdvancedAnalytics() {
     });
 
     // Calculate lead source data from real clients
-    const leadSources = clients.reduce((acc: Record<string, any>, client: unknown) => {
-      const source = (client as any).source || 'Direct';
+    const leadSources: Record<string, LeadSourceData> = clients.reduce((acc: Record<string, LeadSourceData>, client: { source: string; status: string }) => {
+      const source = client.source || 'Direct';
       if (!acc[source]) {
         acc[source] = { source, leads: 0, converted: 0, rate: 0, cost: 0 };
       }
       acc[source].leads += 1;
-      acc[source].converted += (client as any).status === 'active' ? 1 : 0;
+      acc[source].converted += client.status === 'active' ? 1 : 0;
       return acc;
     }, {});
 
-    Object.values(leadSources).forEach((source: any) => {
+    Object.values(leadSources).forEach((source: LeadSourceData) => {
       source.rate = source.leads > 0 ? Math.round((source.converted / source.leads) * 100) : 0;
     });
 
     return {
       revenueData,
       serviceBreakdown: serviceData,
-      leadSourceData: Object.values(leadSources)
+      leadSourceData: Object.values(leadSources) as LeadSourceData[]
     };
   };
 
-  const analytics = calculateAnalytics();
-
-  // Use only real data from analytics calculation
-  const revenueData = analytics.revenueData;
-  const serviceBreakdown = analytics.serviceBreakdown;
-  const leadSourceData = analytics.leadSourceData;
+  const { revenueData, serviceBreakdown, leadSourceData } = calculateAnalytics();
 
   // Use only real data from API endpoints
   const displayClientMetrics = {
@@ -157,8 +176,8 @@ export function AdvancedAnalytics() {
   };
 
   // Calculate growth only if we have data
-  const currentMonthRevenue = revenueData.length > 0 ? (revenueData[revenueData.length - 1] as any).revenue : 0;
-  const previousMonthRevenue = revenueData.length > 1 ? (revenueData[revenueData.length - 2] as any).revenue : 0;
+  const currentMonthRevenue = revenueData.length > 0 ? (revenueData[revenueData.length - 1] as { revenue: number }).revenue : 0;
+  const previousMonthRevenue = revenueData.length > 1 ? (revenueData[revenueData.length - 2] as { revenue: number }).revenue : 0;
   const revenueGrowth = previousMonthRevenue > 0 ? ((currentMonthRevenue - previousMonthRevenue) / previousMonthRevenue * 100).toFixed(1) : "0";
 
   return (
@@ -270,7 +289,7 @@ export function AdvancedAnalytics() {
               <XAxis dataKey="month" />
               <YAxis />
               <Tooltip 
-                formatter={(value: any, name: string) => [
+                formatter={(value: number, name: string) => [
                   metricType === 'revenue' ? formatCurrency(value) : value,
                   name.charAt(0).toUpperCase() + name.slice(1)
                 ]}
@@ -309,7 +328,7 @@ export function AdvancedAnalytics() {
                   fill="#8884d8"
                   dataKey="value"
                 >
-                  {serviceBreakdown.map((_entry: any, index: number) => (
+                  {serviceBreakdown.map((_entry: unknown, index: number) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -317,7 +336,7 @@ export function AdvancedAnalytics() {
               </PieChart>
             </ResponsiveContainer>
             <div className="mt-4 space-y-2">
-              {serviceBreakdown.map((service: any, index: number) => (
+              {serviceBreakdown.map((service: { name: string; revenue: number; count: number }, index: number) => (
                 <div key={service.name} className="flex justify-between items-center text-sm">
                   <div className="flex items-center">
                     <div 
@@ -346,7 +365,7 @@ export function AdvancedAnalytics() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {leadSourceData.map((source: any, _index: number) => (
+              {leadSourceData.map((source: LeadSourceData) => (
                 <div key={source.source} className="border rounded-lg p-3">
                   <div className="flex justify-between items-center mb-2">
                     <h4 className="font-medium">{source.source}</h4>

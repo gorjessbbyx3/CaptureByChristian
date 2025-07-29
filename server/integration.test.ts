@@ -8,7 +8,10 @@ vi.mock('./storage', () => ({
   storage: {
     getClients: vi.fn().mockResolvedValue([]),
     createClient: vi.fn().mockResolvedValue({ id: 1, name: 'Test', email: 'test@example.com' }),
-    getClient: vi.fn().mockResolvedValue({ id: 1, name: 'Test', email: 'test@example.com' }),
+    getClient: vi.fn().mockImplementation((id) => {
+      if (id === 999) return Promise.resolve(null);
+      return Promise.resolve({ id: 1, name: 'Test', email: 'test@example.com' });
+    }),
     getClientByEmail: vi.fn().mockResolvedValue({ id: 1, name: 'Test', email: 'test@example.com' }),
     updateClient: vi.fn().mockResolvedValue({ id: 1, name: 'Updated', email: 'test@example.com' }),
     
@@ -21,7 +24,7 @@ vi.mock('./storage', () => ({
     
     getBookings: vi.fn().mockResolvedValue([]),
     createBooking: vi.fn().mockResolvedValue({ id: 1, status: 'pending' }),
-    getBooking: vi.fn().mockResolvedValue({ id: 1, status: 'pending' }),
+    getBooking: vi.fn().mockResolvedValue({ id: 1, status: 'pending', totalPrice: '1500.00' }),
     updateBooking: vi.fn().mockResolvedValue({ id: 1, status: 'confirmed' }),
     getBookingsByDateRange: vi.fn().mockResolvedValue([]),
     
@@ -248,6 +251,8 @@ describe('Backend Integration Tests', () => {
 
     it('POST /api/gallery - should create gallery image', async () => {
       const imageData = {
+        filename: 'image.jpg',
+        originalName: 'image.jpg',
         url: 'https://example.com/image.jpg',
         category: 'wedding',
         featured: false

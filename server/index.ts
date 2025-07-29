@@ -1,15 +1,14 @@
+import dotenv from 'dotenv';
+// Load environment variables immediately
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import dotenv from 'dotenv';
-import { db } from './db.js';
 import { registerRoutes } from './routes';
-
-// Load environment variables
-dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -50,6 +49,9 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Serve static files for uploads (both dev and production)
+app.use('/attached_assets', express.static(path.join(__dirname, '../attached_assets')));
+
 // API routes
 registerRoutes(app);
 
@@ -69,12 +71,12 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // Error handling middleware
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err: unknown, req: express.Request, res: express.Response) => {
   console.error('Error:', err);
   res.status(500).json({ 
     error: process.env.NODE_ENV === 'production' 
       ? 'Internal server error' 
-      : err.message 
+      : (err as Error).message 
   });
 });
 

@@ -494,34 +494,24 @@ describe('External Integrations Tests', () => {
   });
 
   describe('Error Recovery and Resilience', () => {
-    it('should retry failed API calls', async () => {
-      let callCount = 0;
-      const mockOpenAI = await import('openai');
-      
-      vi.mocked(mockOpenAI.OpenAI).mockImplementation(() => ({
-        chat: {
-          completions: {
-            create: vi.fn().mockImplementation(() => {
-              callCount++;
-              if (callCount < 3) {
-                throw new Error('Temporary failure');
-              }
-              return Promise.resolve({
-                choices: [{ message: { content: 'Success after retry' } }]
-              });
-            })
-          }
-        }
-      } as any));
+    it('should fallback gracefully when external API fails', async () => {
+      // Mock fetch to simulate Replit AI API failure
+      const originalFetch = globalThis.fetch;
+      globalThis.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
 
       const messages = [
-        { role: 'user' as const, content: 'test', timestamp: Date.now() }
+        { role: 'user' as const, content: 'wedding photography pricing', timestamp: Date.now() }
       ];
 
       const response = await generateBookingResponse(messages, {});
       
+      // Should still return a response using fallback logic
       expect(response).toHaveProperty('message');
-      expect(callCount).toBeGreaterThanOrEqual(1);
+      expect(response.message).toContain('wedding');
+      expect(response.message.length).toBeGreaterThan(0);
+
+      // Restore original fetch
+      globalThis.fetch = originalFetch;
     });
 
     it('should provide fallback responses when all services fail', async () => {

@@ -95,25 +95,25 @@ export function AdvancedAIChat() {
     await new Promise(resolve => setTimeout(resolve, 2000));
 
     // Calculate comprehensive business metrics from real data
-    const totalRevenue = bookingsData.reduce((sum: number, booking: unknown) => sum + ((booking as any).totalPrice || 0), 0);
+    const totalRevenue = bookingsData.reduce((sum: number, booking: { totalPrice: number }) => sum + (booking.totalPrice || 0), 0);
     const totalBookings = bookingsData.length;
     const avgBookingValue = totalBookings > 0 ? totalRevenue / totalBookings : 0;
-    const confirmedBookings = bookingsData.filter((b: unknown) => (b as any).status === 'confirmed').length;
-    const pendingBookings = bookingsData.filter((b: unknown) => (b as any).status === 'pending').length;
-    const unreadMessages = contactMessages.filter((m: unknown) => (m as any).status === 'unread').length;
-    const urgentMessages = contactMessages.filter((m: unknown) => (m as any).priority === 'urgent').length;
+    const confirmedBookings = bookingsData.filter((b: { status: string }) => b.status === 'confirmed').length;
+    const pendingBookings = bookingsData.filter((b: { status: string }) => b.status === 'pending').length;
+    const unreadMessages = contactMessages.filter((m: { status: string }) => m.status === 'unread').length;
+    const urgentMessages = contactMessages.filter((m: { priority: string }) => m.priority === 'urgent').length;
     
     // Service performance analysis
-    const servicePerformance = servicesData.map((service: unknown) => {
-      const serviceBookings = bookingsData.filter((b: unknown) => (b as any).serviceId === (service as any).id);
-      const serviceRevenue = serviceBookings.reduce((sum: number, b: unknown) => sum + ((b as any).totalPrice || 0), 0);
+    const servicePerformance = servicesData.map((service: { id: number; name: string }) => {
+      const serviceBookings = bookingsData.filter((b: { serviceId: number }) => b.serviceId === service.id);
+      const serviceRevenue = serviceBookings.reduce((sum: number, b: { totalPrice: number }) => sum + (b.totalPrice || 0), 0);
       return {
-        name: (service as any).name,
+        name: service.name,
         bookings: serviceBookings.length,
         revenue: serviceRevenue,
         avgValue: serviceBookings.length > 0 ? serviceRevenue / serviceBookings.length : 0
       };
-    }).sort((a: any, b: any) => b.revenue - a.revenue);
+    }).sort((a: { revenue: number }, b: { revenue: number }) => b.revenue - a.revenue);
 
     const topService = servicePerformance[0];
     const conversionRate = clientsData.length > 0 ? (confirmedBookings / clientsData.length) * 100 : 0;

@@ -46,10 +46,14 @@ export function ProfileManagement() {
   const [isUploading, setIsUploading] = useState(false);
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   
-  // Fetch profile data from API
-  const { data: profile, isLoading } = useQuery({
-    queryKey: ["/api/profile"]
-  });
+    // Fetch profile data from API
+    const { data: profile, isLoading } = useQuery({
+      queryKey: ["/api/profile"],
+      queryFn: async () => {
+        const response = await apiRequest("GET", "/api/profile");
+        return response.json();
+      }
+    });
 
   // Update profile mutation
   const updateProfileMutation = useMutation({
@@ -77,7 +81,7 @@ export function ProfileManagement() {
   // Initialize profile data when loaded
   React.useEffect(() => {
     if (profile && !profileData) {
-      setProfileData(profile as ProfileData);
+      setProfileData(profile);
     }
   }, [profile, profileData]);
 
@@ -208,7 +212,7 @@ export function ProfileManagement() {
             <div className="flex justify-center">
               <div className="relative">
                 <img
-                  src={(profile as any)?.headshot}
+                  src={profileData?.headshot || profile?.headshot || ''}
                   alt="Profile headshot"
                   className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
                 />
@@ -259,11 +263,11 @@ export function ProfileManagement() {
                 {isEditing ? (
                   <Input
                     id="name"
-                    value={(profile as any)?.name || ''}
+                    value={profileData?.name || profile?.name || ''}
                     onChange={(e) => handleInputChange('name', e.target.value)}
                   />
                 ) : (
-                  <p className="p-2 bg-muted rounded-md">{(profile as any)?.name}</p>
+                  <p className="p-2 bg-muted rounded-md">{profileData?.name || profile?.name || ''}</p>
                 )}
               </div>
 
@@ -272,11 +276,11 @@ export function ProfileManagement() {
                 {isEditing ? (
                   <Input
                     id="title"
-                    value={(profile as any)?.title || ''}
+                    value={profileData?.title || profile?.title || ''}
                     onChange={(e) => handleInputChange('title', e.target.value)}
                   />
                 ) : (
-                  <p className="p-2 bg-muted rounded-md">{(profile as any)?.title}</p>
+                  <p className="p-2 bg-muted rounded-md">{profileData?.title || profile?.title || ''}</p>
                 )}
               </div>
             </div>
@@ -286,14 +290,14 @@ export function ProfileManagement() {
               {isEditing ? (
                 <Textarea
                   id="bio"
-                  value={(profile as any)?.bio || ''}
+                  value={profileData?.bio || profile?.bio || ''}
                   onChange={(e) => handleInputChange('bio', e.target.value)}
                   rows={4}
                   placeholder="Tell your story..."
                 />
               ) : (
                 <div className="p-3 bg-muted rounded-md">
-                  <p className="text-sm leading-relaxed">{(profile as any)?.bio}</p>
+                  <p className="text-sm leading-relaxed">{profileData?.bio || profile?.bio || ''}</p>
                 </div>
               )}
             </div>
@@ -314,13 +318,13 @@ export function ProfileManagement() {
               {isEditing ? (
                 <Input
                   id="phone"
-                  value={(profile as any)?.phone || ''}
+                  value={profileData?.phone || profile?.phone || ''}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
                 />
               ) : (
                 <div className="flex items-center space-x-2 p-2 bg-muted rounded-md">
                   <Phone className="h-4 w-4 text-muted-foreground" />
-                  <span>{(profile as any)?.phone}</span>
+                  <span>{profileData?.phone || profile?.phone || ''}</span>
                 </div>
               )}
             </div>
@@ -331,13 +335,13 @@ export function ProfileManagement() {
                 <Input
                   id="email"
                   type="email"
-                  value={(profile as any)?.email || ''}
+                  value={profileData?.email || profile?.email || ''}
                   onChange={(e) => handleInputChange('email', e.target.value)}
                 />
               ) : (
                 <div className="flex items-center space-x-2 p-2 bg-muted rounded-md">
                   <Mail className="h-4 w-4 text-muted-foreground" />
-                  <span>{(profile as any)?.email}</span>
+                  <span>{profileData?.email || profile?.email || ''}</span>
                 </div>
               )}
             </div>
@@ -347,13 +351,13 @@ export function ProfileManagement() {
               {isEditing ? (
                 <Input
                   id="address"
-                  value={(profile as any)?.address || ''}
+                  value={profileData?.address || profile?.address || ''}
                   onChange={(e) => handleInputChange('address', e.target.value)}
                 />
               ) : (
                 <div className="flex items-center space-x-2 p-2 bg-muted rounded-md">
                   <MapPin className="h-4 w-4 text-muted-foreground" />
-                  <span>{(profile as any)?.address}</span>
+                  <span>{profileData?.address || profile?.address || ''}</span>
                 </div>
               )}
             </div>
@@ -381,14 +385,14 @@ export function ProfileManagement() {
                 {isEditing ? (
                   <Input
                     id="instagram"
-                    value={(profile as any)?.socialMedia?.instagram || ''}
+                    value={profileData?.socialMedia?.instagram || profile?.socialMedia?.instagram || ''}
                     onChange={(e) => handleInputChange('socialMedia.instagram', e.target.value)}
                     placeholder="@username"
                   />
                 ) : (
                   <div className="flex items-center space-x-2 p-2 bg-muted rounded-md">
                     <Instagram className="h-4 w-4 text-muted-foreground" />
-                    <span>{(profile as any)?.socialMedia?.instagram}</span>
+                    <span>{profileData?.socialMedia?.instagram || profile?.socialMedia?.instagram || ''}</span>
                   </div>
                 )}
               </div>
@@ -398,14 +402,14 @@ export function ProfileManagement() {
                 {isEditing ? (
                   <Input
                     id="facebook"
-                    value={(profile as any)?.socialMedia?.facebook || ''}
+                    value={profileData?.socialMedia?.facebook || profile?.socialMedia?.facebook || ''}
                     onChange={(e) => handleInputChange('socialMedia.facebook', e.target.value)}
                     placeholder="Page name"
                   />
                 ) : (
                   <div className="flex items-center space-x-2 p-2 bg-muted rounded-md">
                     <Facebook className="h-4 w-4 text-muted-foreground" />
-                    <span>{(profile as any)?.socialMedia?.facebook}</span>
+                    <span>{profileData?.socialMedia?.facebook || profile?.socialMedia?.facebook || ''}</span>
                   </div>
                 )}
               </div>
@@ -415,14 +419,14 @@ export function ProfileManagement() {
                 {isEditing ? (
                   <Input
                     id="youtube"
-                    value={(profile as any)?.socialMedia?.youtube || ''}
+                    value={profileData?.socialMedia?.youtube || profile?.socialMedia?.youtube || ''}
                     onChange={(e) => handleInputChange('socialMedia.youtube', e.target.value)}
                     placeholder="Channel name"
                   />
                 ) : (
                   <div className="flex items-center space-x-2 p-2 bg-muted-foreground rounded-md">
                     <Youtube className="h-4 w-4 text-muted-foreground" />
-                    <span>{(profile as any)?.socialMedia?.youtube}</span>
+                    <span>{profileData?.socialMedia?.youtube || profile?.socialMedia?.youtube || ''}</span>
                   </div>
                 )}
               </div>

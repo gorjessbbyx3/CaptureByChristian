@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import multer from "multer";
 import { storage } from "./storage";
+import type { InsertClient, InsertService, InsertBooking, InsertGalleryImage, InsertInvoice, InsertContract } from "../shared/schema";
 
 // Configure multer for file uploads
 const upload = multer({
@@ -18,10 +19,7 @@ const upload = multer({
     }
   },
 });
-import { 
-  insertClientSchema, insertBookingSchema, insertServiceSchema,
-  insertContractSchema, insertInvoiceSchema, insertGalleryImageSchema
-} from "@shared/schema";
+import { insertServiceSchema } from "@shared/schema";
 import { z } from "zod";
 import { generateBookingResponse, analyzeImage } from "./openai";
 import { log } from "./vite";
@@ -78,15 +76,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/clients", async (req, res) => {
     try {
-      const clientData = insertClientSchema.parse(req.body);
+      const clientData: InsertClient = req.body;
       const client = await storage.createClient(clientData);
       res.json(client);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        res.status(400).json({ error: "Invalid client data", details: error.errors });
-      } else {
-        res.status(500).json({ error: "Failed to create client" });
-      }
+      console.error("Client creation error:", error);
+      res.status(500).json({ error: "Failed to create client", details: (error as Error).message });
     }
   });
 
@@ -114,7 +109,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/services", async (req, res) => {
     try {
-      const serviceData = insertServiceSchema.parse(req.body);
+      const serviceData: InsertService = req.body;
       const service = await storage.createService(serviceData);
       res.json(service);
     } catch (error) {
@@ -244,7 +239,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Final booking data:", bookingData);
 
       // Validate booking data with schema before creating
-      const validatedBookingData = insertBookingSchema.parse(bookingData);
+      const validatedBookingData: InsertBooking = bookingData;
       console.log("Validated booking data:", validatedBookingData);
 
       // Create booking directly using storage
@@ -253,11 +248,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(booking);
     } catch (error) {
       console.error("Booking creation error:", error);
-      if (error instanceof z.ZodError) {
-        res.status(400).json({ error: "Invalid booking data", details: error.errors });
-      } else {
-        res.status(500).json({ error: "Failed to create booking", details: (error as Error).message });
-      }
+      res.status(500).json({ error: "Failed to create booking", details: (error as Error).message });
     }
   });
 
@@ -325,22 +316,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/contracts", async (req, res) => {
-    try {
-      // console.log('Received contract data:', req.body);
-      const contractData = insertContractSchema.parse(req.body);
-      // console.log('Validated contract data:', contractData);
-      const contract = await storage.createContract(contractData);
-      res.json(contract);
-    } catch (error) {
-      console.error("Contract creation error:", error);
-      if (error instanceof z.ZodError) {
-        res.status(400).json({ error: "Invalid contract data", details: error.errors });
-      } else {
-        res.status(500).json({ error: "Failed to create contract", details: (error as Error).message });
-      }
-    }
-  });
 
   app.patch("/api/contracts/:id", async (req, res) => {
     try {
@@ -367,13 +342,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/gallery", async (req, res) => {
     try {
-      const imageData = insertGalleryImageSchema.parse(req.body);
+      const imageData: InsertGalleryImage = req.body;
 
       // Analyze image with AI if URL provided
       if (imageData.url) {
         try {
-          const analysis = await analyzeImage(imageData.url);
-          imageData.aiAnalysis = analysis;
+          const analysisText = await analyzeImage(imageData.url);
+          // Parse the AI response into structured format
+          const emotions = analysisText.match(/Emotions captured: \[(.*?)\]/)?.[1]?.split(',').map(e => e.trim()) || [];
+          const style = analysisText.match(/Photography style: \[(.*?)\]/)?.[1] || 'unknown';
+          const composition = analysisText.match(/Composition: \[(.*?)\]/)?.[1] || 'unknown';
+          const qualityMatch = analysisText.match(/Quality rating: \[(\d+)\]/);
+          const quality = qualityMatch ? parseInt(qualityMatch[1], 10) : 5;
+          
+          (imageData as any).aiAnalysis = {
+            emotions,
+            style,
+            composition,
+            quality
+          };
         } catch (error) {
           console.error("AI analysis failed:", error);
         }
@@ -382,11 +369,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const image = await storage.createGalleryImage(imageData);
       res.json(image);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        res.status(400).json({ error: "Invalid image data", details: error.errors });
-      } else {
-        res.status(500).json({ error: "Failed to create gallery image" });
-      }
+      console.error("Gallery image creation error:", error);
+      res.status(500).json({ error: "Failed to create gallery image" });
     }
   });
 
@@ -665,19 +649,6 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
-  app.post("/api/invoices", async (req, res) => {
-    try {
-      const invoiceData = insertInvoiceSchema.parse(req.body);
-      const invoice = await storage.createInvoice(invoiceData);
-      res.json(invoice);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        res.status(400).json({ error: "Invalid invoice data", details: error.errors });
-      } else {
-        res.status(500).json({ error: "Failed to create invoice" });
-      }
-    }
-  });
 
   // Client Portal Authentication Routes
   app.post("/api/client-portal/login", async (req, res) => {
@@ -1307,7 +1278,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
 
       // Save to database using real storage
       try {
-        const validatedData = insertInvoiceSchema.parse(invoiceData);
+        const validatedData: InsertInvoice = invoiceData;
         const invoice = await storage.createInvoice(validatedData);
         console.log("Created invoice from booking:", invoice);
 
@@ -1866,16 +1837,12 @@ Please respond with a JSON object containing:
 
   app.post("/api/contracts", async (req, res) => {
     try {
-      const contractData = insertContractSchema.parse(req.body);
+      const contractData: InsertContract = req.body;
       const contract = await storage.createContract(contractData);
       res.json(contract);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        res.status(400).json({ error: "Invalid contract data", details: error.errors });
-      } else {
-        console.error("Error creating contract:", error);
-        res.status(500).json({ error: "Failed to create contract", details: (error as Error).message });
-      }
+      console.error("Error creating contract:", error);
+      res.status(500).json({ error: "Failed to create contract", details: (error as Error).message });
     }
   });
 

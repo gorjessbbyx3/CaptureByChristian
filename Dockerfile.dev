@@ -7,14 +7,12 @@ RUN apk add --no-cache curl
 # Set working directory
 WORKDIR /app
 
-# Copy package files
+# Copy package files and source code first
 COPY package*.json ./
+COPY . .
 
 # Install all dependencies (including dev dependencies)
 RUN npm install
-
-# Copy source code
-COPY . .
 
 # Expose port
 EXPOSE 7000

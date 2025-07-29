@@ -2,245 +2,121 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Development Commands
+## Essential Commands
 
-### Database Management
+### Development
 ```bash
-# Deploy schema changes to database
-npm run db:push
-
-# Open database studio GUI
-npm run db:studio
-
-# Generate migration files
-npm run db:generate
-
-# Apply migrations
-npm run db:migrate
-
-# Test database connection
-node -e "const { Pool } = require('pg'); const pool = new Pool({ connectionString: process.env.DATABASE_URL }); pool.query('SELECT NOW()').then(res => console.log('Connected:', res.rows[0]));"
-```
-
-### Development Server
-```bash
-# Start development server (includes frontend and backend)
+# Start development servers (client + server)
 npm run dev
 
-# Run TypeScript compiler check
-npm run type-check
+# Start individual services
+npm run dev:server    # Server only (port 3000)
+npm run dev:client     # Client only (port 5173)
 
-# Run ESLint
-npm run lint
-
-# Run tests
-npm test
+# Code quality
+npm run lint           # ESLint check
+npm run typecheck      # TypeScript validation
 ```
 
-### Build and Deploy
+### Database Operations
 ```bash
-# Build for production
-npm run build
-
-# Start production server
-npm start
-
-# Deploy to Vercel
-./deploy-vercel.sh
-# or manually: vercel --prod
-
-# Docker development
-docker-compose -f docker-compose.dev.yml up
-
-# Docker production
-docker-compose up --build
+npm run db:push        # Deploy schema changes to database
+npm run db:generate    # Generate migration files
+npm run db:migrate     # Apply pending migrations
+npm run db:studio      # Open Drizzle Studio (database GUI)
+npm run db:seed        # Seed database with sample data
 ```
 
-## Project Architecture
-
-### Technology Stack
-- **Frontend**: React 18 + TypeScript, Vite build tool, Wouter for routing
-- **Backend**: Express.js + TypeScript, Drizzle ORM
-- **Database**: PostgreSQL with Drizzle schema
-- **UI**: Tailwind CSS + shadcn/ui components
-- **AI Integration**: OpenAI API for booking assistant and image analysis
-- **File Storage**: Local filesystem with multer for uploads
-- **Deployment**: Vercel (recommended) or Docker
-
-### Directory Structure
+### Testing & Building
+```bash
+npm test              # Run Vitest tests
+npm test:ui           # Run tests with UI
+npm run build         # Build for production
+npm start             # Start production server
 ```
-CaptureByChristian/
+
+## Architecture Overview
+
+### Tech Stack Foundation
+- **Full-stack TypeScript** with ES modules (`"type": "module"`)
+- **Frontend**: React 18 + Vite, Wouter for routing, Tailwind CSS + shadcn/ui
+- **Backend**: Express.js with session-based authentication
+- **Database**: PostgreSQL with Drizzle ORM, comprehensive schema in `shared/schema.ts`
+- **AI Integration**: OpenAI API for chat, lead analysis, and business insights
+
+### Project Structure
+```
 ├── client/src/          # React frontend
-│   ├── components/      # UI components (admin/, client-portal/, ui/)
-│   ├── pages/          # Route components
-│   ├── hooks/          # Custom React hooks
-│   └── lib/            # Utilities, API client, types
-├── server/             # Express backend
-│   ├── index.ts        # Server entry point
-│   ├── routes.ts       # API route definitions
-│   ├── db.ts          # Database connection
-│   ├── storage.ts     # Data access layer
-│   └── openai.ts      # AI integration
-├── shared/             # Shared TypeScript types and schemas
-├── api/               # Vercel serverless function entry
-├── migrations/        # Database migration files
-└── attached_assets/   # File uploads storage
+│   ├── components/
+│   │   ├── admin/       # Admin dashboard components
+│   │   ├── client-portal/ # Client-facing portal
+│   │   └── ui/          # shadcn/ui components
+│   ├── pages/           # Route components
+│   ├── hooks/           # Custom React hooks
+│   └── lib/             # API client, utilities, types
+├── server/              # Express backend
+│   ├── index.ts         # Server entry with middleware setup
+│   ├── routes.ts        # API route definitions
+│   ├── storage.ts       # Data access layer (Drizzle queries)
+│   ├── db.ts            # Database connection
+│   └── openai.ts        # AI integration
+├── shared/schema.ts     # Drizzle database schema & types
+└── migrations/          # Database migration files
 ```
 
-### Core Database Schema
-Main tables defined in `shared/schema.ts`:
-- **users**: Admin authentication
-- **clients**: Customer management with lead scoring
-- **services**: Photography packages and pricing
-- **bookings**: Session scheduling
-- **contracts**: Digital contract signing
-- **invoices**: Billing with PDF generation
-- **gallery_images**: Portfolio and client galleries
-- **contact_messages**: Website form submissions with AI analysis
-- **ai_chats**: Booking assistant conversations
+### Core Business Domain
+This is a **photography business management platform** with:
+- **CRM**: Client management, lead scoring, communication tracking
+- **Booking System**: Service scheduling with calendar integration
+- **Client Portal**: Gallery access, contract signing, communications
+- **Business Operations**: Invoice generation, contract management, analytics
+- **AI Features**: Booking assistant, lead analysis, business insights
 
-### API Architecture
-The application uses a hybrid approach:
-- **Development**: Express server with Vite dev middleware (`server/index.ts`)
-- **Production**: Vercel serverless functions (`api/index.ts`)
+### Database Architecture
+The schema (`shared/schema.ts`) implements a comprehensive CRM with:
+- **Core entities**: `clients`, `bookings`, `services`, `contracts`, `invoices`
+- **Advanced CRM**: `leads`, `communicationLog`, `automationSequences`
+- **Client engagement**: `galleryImages`, `clientPortalSessions`, `aiChats`
+- **Business features**: `products`, `orders`, `questionnaires`, `profiles`
 
-Key API patterns:
-- RESTful endpoints in `server/routes.ts`
-- Zod schema validation for all inputs
-- File upload handling with multer (50MB limit, images only)
-- AI integration for booking responses and image analysis
+All tables use Drizzle ORM with proper relations and Zod validation schemas.
 
-### Frontend Architecture
-- **Routing**: Wouter for client-side routing
-- **State Management**: TanStack Query for server state, React hooks for local state
-- **UI Framework**: shadcn/ui components with Tailwind CSS
-- **Forms**: React Hook Form with Zod validation
-- **Authentication**: Custom hook (`useAuth`) with session management
+### Authentication & Sessions
+- Express sessions with cookie-parser for admin auth
+- Client portal uses token-based access (`clientPortalSessions` table)
+- CORS configured for development (localhost:5173) and production
 
-### Business Logic Components
-The application serves both admin users and clients:
+### API Patterns
+- RESTful endpoints under `/api/` prefix
+- All routes defined in `server/routes.ts`
+- Data access layer in `server/storage.ts` using Drizzle queries
+- Comprehensive error handling with environment-aware responses
 
-**Admin Dashboard** (`client/src/pages/admin.tsx`):
-- Client management with CRM features
-- Booking calendar and scheduling
-- Service management
-- Invoice generation with PDF export
-- Portfolio management
-- Analytics and revenue tracking
+### Development Workflow
+1. **Database First**: Schema changes in `shared/schema.ts`
+2. **API Layer**: Update `server/storage.ts` and `server/routes.ts`
+3. **Frontend**: Components in appropriate directories, API calls via `lib/api.ts`
+4. **Always run** `npm run lint` and `npm run typecheck` before committing
 
-**Client Portal** (`client/src/pages/client-portal.tsx`):
-- Gallery viewing for booked sessions
-- Contract signing
-- Booking management
+### Environment Requirements
+- `DATABASE_URL`: PostgreSQL connection string (required)
+- `OPENAI_API_KEY`: For AI features (required)
+- `SESSION_SECRET`: Session security (defaults provided)
+- `TWILIO_*`: SMS notifications (optional)
 
-**Public Website**:
-- Portfolio showcase with password protection
-- AI-powered booking assistant
-- Contact form with lead capture
+### File Upload Handling
+- Images stored in `attached_assets/` directory
+- Multer middleware for file processing
+- Gallery images linked to bookings via `galleryImages` table
 
-## Environment Configuration
-
-Required environment variables in `.env`:
-```env
-DATABASE_URL=postgresql://user:pass@host:5432/capturedccollective
-OPENAI_API_KEY=sk-...
-NODE_ENV=development
+### Production Deployment
+- Supports Vercel (primary), Docker, and Render
+- Static files served from `client/dist` in production
+- Health check endpoint at `/health`
+- Node.js 18+ required
 ```
 
-Optional variables:
-```env
-TWILIO_ACCOUNT_SID=...
-TWILIO_AUTH_TOKEN=...
-TWILIO_PHONE_NUMBER=...
-VERCEL=1  # Set in Vercel deployment
-```
+## Development Guidelines
 
-## Database Operations
-
-### Schema Management
-- Schema defined in `shared/schema.ts` using Drizzle ORM
-- Use `npm run db:push` for development schema changes
-- Use `npm run db:generate` and `npm run db:migrate` for production migrations
-- Database connection and queries handled in `server/storage.ts`
-
-### Connection Setup
-The application supports multiple database providers:
-- **Local PostgreSQL**: For development
-- **Neon**: Recommended for production (configured in docs)
-- **Supabase**: Alternative cloud provider
-- **Railway**: Another deployment option
-
-## Key Integration Points
-
-### OpenAI Integration
-- Booking assistant in `server/openai.ts`
-- Image analysis for uploaded photos
-- Business insights and recommendations
-- Natural language booking form processing
-
-### File Upload System
-- 50MB limit for high-resolution photography
-- Images only (validation in multer config)
-- Stored in `attached_assets/` directory
-- Served via Express static middleware
-
-### Business Operations
-Core business functionality:
-- Invoice generation with PDF export
-- Digital contract signing system
-- Revenue tracking and analytics
-- Service package management
-
-## Testing and Quality
-
-### Type Safety
-- Strict TypeScript configuration in `tsconfig.json`
-- Zod schemas for runtime validation
-- Drizzle ORM for type-safe database operations
-
-### Linting and Formatting
-- ESLint configuration for TypeScript and React
-- Run `npm run lint` before commits
-- Run `npm run type-check` for TypeScript validation
-
-## Deployment Notes
-
-### Vercel Deployment (Recommended)
-- Uses `api/index.ts` as serverless function entry point
-- Environment variables configured in Vercel dashboard
-- Static files served from `dist/public/`
-- Database schema deployed before deployment
-
-### Docker Deployment
-- Development: `docker-compose.dev.yml`
-- Production: `docker-compose.yml`
-- Includes PostgreSQL service and application container
-
-### Database Deployment
-Always run database operations before application deployment:
-1. Set `DATABASE_URL` environment variable
-2. Run `npm run db:push` to deploy schema
-3. Verify connection with test command
-4. Deploy application code
-
-## Common Workflows
-
-### Adding New Features
-1. Define database schema changes in `shared/schema.ts`
-2. Run `npm run db:push` to update database
-3. Update storage layer in `server/storage.ts`
-4. Add API routes in `server/routes.ts`
-5. Create frontend components in `client/src/components/`
-6. Add routing in `client/src/App.tsx`
-
-### Database Schema Changes
-1. Modify schema in `shared/schema.ts`
-2. For development: `npm run db:push`
-3. For production: `npm run db:generate` then `npm run db:migrate`
-4. Update storage interfaces and API routes as needed
-
-### AI Feature Development
-- OpenAI integration in `server/openai.ts`
-- Use existing patterns for new AI features
-- Configure API keys in environment variables
-- Test AI responses in development before deployment
+### Commit Message Guidelines
+- Do not add your signature to commit messages

@@ -5,7 +5,64 @@ import { registerRoutes } from './routes';
 import { storage } from './storage';
 
 // Mock all external dependencies
-vi.mock('./storage');
+vi.mock('./storage', () => ({
+  storage: {
+    getClients: vi.fn().mockResolvedValue([]),
+    createClient: vi.fn(),
+    getClient: vi.fn(),
+    updateClient: vi.fn(),
+    getClientByEmail: vi.fn(),
+    
+    getServices: vi.fn().mockResolvedValue([]),
+    getActiveServices: vi.fn().mockResolvedValue([]),
+    createService: vi.fn(),
+    getService: vi.fn(),
+    updateService: vi.fn(),
+    deleteService: vi.fn(),
+    
+    getBookings: vi.fn().mockResolvedValue([]),
+    createBooking: vi.fn(),
+    getBooking: vi.fn(),
+    updateBooking: vi.fn(),
+    getBookingsByDateRange: vi.fn().mockResolvedValue([]),
+    
+    getGalleryImages: vi.fn().mockResolvedValue([]),
+    getFeaturedImages: vi.fn().mockResolvedValue([]),
+    createGalleryImage: vi.fn(),
+    updateGalleryImage: vi.fn(),
+    deleteGalleryImage: vi.fn(),
+    getImagesByBooking: vi.fn().mockResolvedValue([]),
+    
+    getContracts: vi.fn().mockResolvedValue([]),
+    createContract: vi.fn(),
+    getContract: vi.fn(),
+    updateContract: vi.fn(),
+    sendContractToPortal: vi.fn(),
+    
+    getInvoice: vi.fn(),
+    createInvoice: vi.fn(),
+    getInvoicesByBooking: vi.fn().mockResolvedValue([]),
+    getInvoiceStats: vi.fn(),
+    
+    getContactMessages: vi.fn().mockResolvedValue([]),
+    createContactMessage: vi.fn(),
+    updateContactMessage: vi.fn(),
+    deleteContactMessage: vi.fn(),
+    
+    getAiChat: vi.fn(),
+    createAiChat: vi.fn(),
+    updateAiChat: vi.fn(),
+    
+    getProfile: vi.fn(),
+    updateProfile: vi.fn(),
+    
+    getBookingStats: vi.fn(),
+    getMonthlyRevenue: vi.fn(),
+    getBusinessKPIs: vi.fn(),
+    getClientMetrics: vi.fn(),
+    getRealTimeAnalytics: vi.fn(),
+  }
+}));
 vi.mock('./database-init', () => ({
   getDatabaseInitializer: vi.fn(() => ({
     getInitializationStatus: vi.fn().mockReturnValue(true),
@@ -30,12 +87,11 @@ vi.mock('./twilio', () => ({
 
 describe('API Endpoints Comprehensive Tests', () => {
   let app: express.Express;
-  let server: any;
 
   beforeEach(async () => {
     app = express();
     app.use(express.json());
-    server = await registerRoutes(app);
+    await registerRoutes(app);
     vi.clearAllMocks();
   });
 
@@ -69,7 +125,21 @@ describe('API Endpoints Comprehensive Tests', () => {
       name: 'John Doe',
       email: 'john@example.com',
       phone: '123-456-7890',
-      createdAt: new Date().toISOString()
+      notes: null,
+      tags: null,
+      status: 'lead',
+      leadSource: null,
+      leadScore: 0,
+      instagramHandle: null,
+      anniversaryDate: null,
+      preferredCommunication: 'email',
+      timezone: 'America/New_York',
+      lastContact: null,
+      nextFollowUp: null,
+      lifetimeValue: '0.00',
+      referralSource: null,
+      customFields: {},
+      createdAt: new Date(),
     };
 
     it('GET /api/clients - should get all clients', async () => {
@@ -89,7 +159,25 @@ describe('API Endpoints Comprehensive Tests', () => {
         phone: '987-654-3210'
       };
       
-      vi.mocked(storage.createClient).mockResolvedValue({ id: 2, ...newClient, createdAt: new Date().toISOString() });
+      vi.mocked(storage.createClient).mockResolvedValue({ 
+        id: 2, 
+        ...newClient, 
+        notes: null,
+        tags: null,
+        status: 'lead',
+        leadSource: null,
+        leadScore: 0,
+        instagramHandle: null,
+        anniversaryDate: null,
+        preferredCommunication: 'email',
+        timezone: 'America/New_York',
+        lastContact: null,
+        nextFollowUp: null,
+        lifetimeValue: '0.00',
+        referralSource: null,
+        customFields: {},
+        createdAt: new Date(),
+      });
 
       const response = await request(app)
         .post('/api/clients')
@@ -143,7 +231,9 @@ describe('API Endpoints Comprehensive Tests', () => {
       price: '2500.00',
       duration: 480,
       category: 'wedding',
-      active: true
+      active: true,
+      addOns: null,
+      images: null,
     };
 
     it('GET /api/services - should get active services', async () => {
@@ -216,14 +306,47 @@ describe('API Endpoints Comprehensive Tests', () => {
       id: 1,
       clientId: 1,
       serviceId: 1,
-      date: '2024-06-15T10:00:00Z',
+      date: new Date('2024-06-15T10:00:00Z'),
       duration: 240,
       location: 'Honolulu Beach',
       totalPrice: '1500.00',
+      depositPaid: false,
       status: 'pending',
-      createdAt: new Date().toISOString(),
-      client: { id: 1, name: 'John Doe', email: 'john@example.com' },
-      service: { id: 1, name: 'Portrait Session', price: '1500.00' }
+      notes: null,
+      addOns: null,
+      createdAt: new Date(),
+      client: { 
+        id: 1, 
+        name: 'John Doe', 
+        email: 'john@example.com',
+        phone: '123-456-7890',
+        notes: null,
+        tags: null,
+        status: 'lead',
+        leadSource: null,
+        leadScore: 0,
+        instagramHandle: null,
+        anniversaryDate: null,
+        preferredCommunication: 'email',
+        timezone: 'America/New_York',
+        lastContact: null,
+        nextFollowUp: null,
+        lifetimeValue: '0.00',
+        referralSource: null,
+        customFields: {},
+        createdAt: new Date(),
+      },
+      service: { 
+        id: 1, 
+        name: 'Portrait Session', 
+        description: 'Individual portrait photography',
+        price: '1500.00',
+        duration: 240,
+        category: 'portrait',
+        active: true,
+        addOns: null,
+        images: null,
+      }
     };
 
     it('GET /api/bookings - should get all bookings', async () => {
@@ -247,8 +370,38 @@ describe('API Endpoints Comprehensive Tests', () => {
         clientPhone: '555-0123'
       };
 
-      const mockClient = { id: 2, name: 'New Client', email: 'new@example.com' };
-      const mockService = { id: 1, duration: 120 };
+      const mockClient = { 
+        id: 2, 
+        name: 'New Client', 
+        email: 'new@example.com',
+        phone: null,
+        notes: null,
+        tags: null,
+        status: 'lead',
+        leadSource: null,
+        leadScore: 0,
+        instagramHandle: null,
+        anniversaryDate: null,
+        preferredCommunication: 'email',
+        timezone: 'America/New_York',
+        lastContact: null,
+        nextFollowUp: null,
+        lifetimeValue: '0.00',
+        referralSource: null,
+        customFields: {},
+        createdAt: new Date(),
+      };
+      const mockService = { 
+        id: 1, 
+        name: 'Portrait Session',
+        description: 'Individual portrait photography',
+        price: '500.00',
+        duration: 120,
+        category: 'portrait',
+        active: true,
+        addOns: null,
+        images: null,
+      };
       
       vi.mocked(storage.getClientByEmail).mockResolvedValue(null);
       vi.mocked(storage.createClient).mockResolvedValue(mockClient);
@@ -315,12 +468,16 @@ describe('API Endpoints Comprehensive Tests', () => {
   describe('Gallery Management Endpoints', () => {
     const mockImage = {
       id: 1,
+      bookingId: null,
       filename: 'wedding-photo-1.jpg',
       originalName: 'IMG_001.jpg',
       url: 'https://example.com/images/wedding-photo-1.jpg',
+      thumbnailUrl: null,
       category: 'wedding',
+      tags: null,
+      aiAnalysis: null,
       featured: false,
-      uploadedAt: new Date().toISOString()
+      uploadedAt: new Date()
     };
 
     it('GET /api/gallery - should get all gallery images', async () => {
@@ -345,6 +502,8 @@ describe('API Endpoints Comprehensive Tests', () => {
 
     it('POST /api/gallery - should create gallery image', async () => {
       const imageData = {
+        filename: 'new-image.jpg',
+        originalName: 'new-image.jpg',
         url: 'new-image.jpg',
         category: 'portfolio',
         featured: false

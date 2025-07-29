@@ -147,6 +147,8 @@ interface Contract {
   photographerSignedAt?: string;
   signatureRequestSent?: string;
   portalAccessToken?: string;
+  clientSignedAt?: string;
+  isFullySigned?: boolean;
   createdAt: string;
   updatedAt: string;
   client?: {
@@ -163,7 +165,7 @@ export function ContractManagement() {
   const [viewContractOpen, setViewContractOpen] = useState(false);
   const [aiAssistOpen, setAiAssistOpen] = useState(false);
   const [aiPrompt, setAiPrompt] = useState('');
-  const [aiSuggestions, setAiSuggestions] = useState<any>(null);
+  const [aiSuggestions, setAiSuggestions] = useState<string | null>(null);
   const [contractForm, setContractForm] = useState({
     contractType: 'individual' as 'individual' | 'business',
     clientId: '',
@@ -207,7 +209,7 @@ export function ContractManagement() {
 
   // Create contract mutation
   const createContractMutation = useMutation({
-    mutationFn: async (contractData: any) => {
+    mutationFn: async (contractData: Record<string, unknown>) => {
       console.log('Sending contract data:', contractData);
       const response = await fetch('/api/contracts', {
         method: 'POST',
@@ -218,7 +220,7 @@ export function ContractManagement() {
         const errorData = await response.json();
         console.error('Server validation errors:', errorData.details);
         const errorMessage = errorData.details 
-          ? `Validation errors: ${errorData.details.map((d: any) => `${d.path.join('.')}: ${d.message}`).join(', ')}`
+          ? `Validation errors: ${errorData.details.map((d: { path: string[]; message: string }) => `${d.path.join('.')}: ${d.message}`).join(', ')}`
           : errorData.error || 'Failed to create contract';
         throw new Error(errorMessage);
       }
@@ -233,7 +235,7 @@ export function ContractManagement() {
         description: `Contract "${newContract.title}" has been created and is ready to send.`
       });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error("Contract creation error:", error);
       toast({ 
         title: "Failed to create contract", 
@@ -379,11 +381,11 @@ Base your recommendations on current photography industry standards and the spec
   };
 
   const generateContractContent = () => {
-    const template = contractForm.contractType === 'individual' 
-      ? INDIVIDUAL_CONTRACT_TEMPLATE 
-      : BUSINESS_CONTRACT_TEMPLATE;
-    
-    const selectedClient = clients.find((c: any) => c.id === parseInt(contractForm.clientId));
+      const template = contractForm.contractType === 'individual' 
+        ? INDIVIDUAL_CONTRACT_TEMPLATE 
+        : BUSINESS_CONTRACT_TEMPLATE;
+      
+      const selectedClient = clients.find((c: { id: number }) => c.id === parseInt(contractForm.clientId));
     
     return template
       .replace(/\[DATE\]/g, new Date().toLocaleDateString())
@@ -406,7 +408,7 @@ Base your recommendations on current photography industry standards and the spec
   };
 
   const handleCreateContract = () => {
-    const selectedClient = clients.find((c: any) => c.id === parseInt(contractForm.clientId));
+    const selectedClient = clients.find((c: { id: number }) => c.id === parseInt(contractForm.clientId));
     if (!selectedClient) {
       toast({ title: "Please select a client", variant: "destructive" });
       return;
@@ -532,7 +534,7 @@ Base your recommendations on current photography industry standards and the spec
                       <SelectValue placeholder="Select client" />
                     </SelectTrigger>
                     <SelectContent>
-                      {clients.map((client: any) => (
+                      {clients.map((client: { id: number; name: string; email: string }) => (
                         <SelectItem key={client.id} value={client.id.toString()}>
                           {client.name} ({client.email})
                         </SelectItem>
@@ -702,7 +704,7 @@ Base your recommendations on current photography industry standards and the spec
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Pending Signature</p>
                 <p className="text-2xl font-bold">
-                  {contracts.filter((c: any) => c.status === 'sent').length}
+                  {contracts.filter((c: Contract) => c.status === 'sent').length}
                 </p>
               </div>
               <Clock className="h-8 w-8 text-orange-500" />
@@ -715,7 +717,7 @@ Base your recommendations on current photography industry standards and the spec
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Signed Contracts</p>
                 <p className="text-2xl font-bold">
-                  {contracts.filter((c: any) => c.status === 'signed').length}
+                  {contracts.filter((c: Contract) => c.status === 'signed').length}
                 </p>
               </div>
               <CheckCircle className="h-8 w-8 text-green-500" />
@@ -728,7 +730,7 @@ Base your recommendations on current photography industry standards and the spec
               <div>
                 <p className="text-sm font-medium text-muted-foreground">This Month</p>
                 <p className="text-2xl font-bold">
-                  {contracts.filter((c: any) => 
+                  {contracts.filter((c: Contract) => 
                     new Date(c.createdAt).getMonth() === new Date().getMonth()
                   ).length}
                 </p>
@@ -788,7 +790,7 @@ Base your recommendations on current photography industry standards and the spec
                       )}
                       {/* E-signature status indicators */}
                       <div className="flex items-center space-x-1">
-                        {(contract as any).clientSignedAt && (
+                        {contract.clientSignedAt && (
                           <div className="flex items-center space-x-1 text-green-600">
                             <CheckCircle className="h-4 w-4" />
                             <span className="text-xs">Client Signed</span>
@@ -800,7 +802,7 @@ Base your recommendations on current photography industry standards and the spec
                             <span className="text-xs">Photographer Signed</span>
                           </div>
                         )}
-                        {(contract as any).isFullySigned && (
+                        {contract.isFullySigned && (
                           <Badge variant="default" className="bg-green-600">
                             <CheckCircle className="h-3 w-3 mr-1" />
                             Fully Executed

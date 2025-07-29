@@ -6,7 +6,13 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react({
+      // Add React refresh and improve error handling
+      fastRefresh: false, // Disable in production
+      jsxRuntime: 'automatic' // Use new JSX transform
+    })
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "client", "src"),
@@ -18,18 +24,19 @@ export default defineConfig({
   build: {
     outDir: path.resolve(__dirname, "dist/public"),
     emptyOutDir: true,
-    chunkSizeWarningLimit: 1000, // Increase limit temporarily
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
+            // Keep React and React-DOM together in the same chunk
             if (id.includes('react') || id.includes('react-dom')) {
               return 'vendor-react';
             }
             if (id.includes('@radix-ui') || id.includes('lucide-react')) {
               return 'vendor-ui';
             }
-            if (id.includes('axios') || id.includes('date-fns')) {
+            if (id.includes('axios') || id.includes('date-fns') || id.includes('@tanstack')) {
               return 'vendor-utils';
             }
             return 'vendor';

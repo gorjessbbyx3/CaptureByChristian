@@ -1,18 +1,18 @@
-# Multi-stage build for Render deployment
-FROM node:22-alpine AS builder
+FROM node:18-alpine
 
 # Set working directory
 WORKDIR /app
 
-# Install build dependencies
-RUN apk add --no-cache python3 make g++
+# Install system dependencies
+RUN apk add --no-cache     python3     make     g++     postgresql-client
 
 # Copy package files
 COPY package*.json ./
+COPY client/package*.json ./client/
 
-# Install dependencies with fallback to npm install if ci fails
-RUN npm install -g npm@latest && \
-    npm ci --no-audit --no-fund --loglevel=error || npm install --no-audit --no-fund --loglevel=error
+# Install dependencies
+RUN npm ci --only=production
+RUN cd client && npm ci --only=production
 
 # Copy source code
 COPY . .
@@ -20,52 +20,14 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Production stage optimized for Render
-FROM node:20-alpine AS production
+# Create uploads directory
+RUN mkdir -p /tmp/uploads && chmod 755 /tmp/uploads
 
-# Install dumb-init for proper signal handling
-RUN apk add --no-cache dumb-init
+# Expose port
+EXPOSE 10000
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nextjs -u 1001
-
-# Set working directory
-WORKDIR /app
-
-# Copy package files and install production dependencies
-COPY package*.json ./
-RUN npm ci --only=production --no-audit --no-fund && npm cache clean --force
-
-# Copy built application from builder stage
-COPY --from=builder --chown=nextjs:nodejs /app/dist ./dist
-COPY --from=builder --chown=nextjs:nodejs /app/client ./client
-COPY --from=builder --chown=nextjs:nodejs /app/server ./server
-COPY --from=builder --chown=nextjs:nodejs /app/shared ./shared
-COPY --from=builder --chown=nextjs:nodejs /app/migrations ./migrations
-COPY --from=builder --chown=nextjs:nodejs /app/drizzle.config.ts ./drizzle.config.ts
-
-# Copy environment and configuration files
-COPY --from=builder --chown=nextjs:nodejs /app/.env.example ./.env.example
-COPY --from=builder --chown=nextjs:nodejs /app/render.yaml ./render.yaml
-
-# Copy start script
-COPY --from=builder --chown=nextjs:nodejs /app/docker-scripts/start.sh ./start.sh
-RUN chmod +x ./start.sh
-
-# Create necessary directories
-RUN mkdir -p uploads logs && chown -R nextjs:nodejs uploads logs
-
-# Switch to non-root user
-USER nextjs
-
-# Expose port (Render will set this via $PORT env var)
-EXPOSE 7000
-
-# Health check endpoint
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:' + (process.env.PORT || 7000) + '/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })" || exit 1
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3   CMD curl -f http://localhost:10000/health || exit 1
 
 # Start the application
-ENTRYPOINT ["dumb-init", "--"]
-CMD ["./start.sh"]
+CMD ["npm", "start"]

@@ -289,7 +289,7 @@ export function AdvancedAnalytics() {
               <XAxis dataKey="month" />
               <YAxis />
               <Tooltip 
-                formatter={(value: number, name: string) => [
+                formatter={(value: any, name: any) => [
                   metricType === 'revenue' ? formatCurrency(value) : value,
                   name.charAt(0).toUpperCase() + name.slice(1)
                 ]}
@@ -323,7 +323,7 @@ export function AdvancedAnalytics() {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, value }) => `${name}: ${value}%`}
+                  label={({ name, value }: any) => `${name}: ${value}%`}
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"

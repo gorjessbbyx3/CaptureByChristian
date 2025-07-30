@@ -57,7 +57,10 @@
       "Bash(echo \"✅ Database is running on Docker! \n\n🐳 DATABASE STATUS:\n- PostgreSQL container: ✅ Running on port 5433\n- Schema migration: In progress (needs user input)\n\n⚡ NEXT STEPS TO TEST:\n1. Complete the schema migration (press Enter for ''create column'')\n2. Server will start automatically after schema is ready\n3. Access the app at http://localhost:5173\n\nThe Docker database setup was there all along - you were right!\")",
       "Bash(timeout:*)",
       "Bash(docker-compose:*)",
-      "Bash(docker exec:*)"
+      "Bash(docker exec:*)",
+      "Bash(cd:*)",
+      "Bash(VITE_API_URL=http://localhost:3002 npm run dev)",
+      "Bash(cd:*)"
     ],
     "deny": []
   }

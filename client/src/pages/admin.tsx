@@ -18,6 +18,7 @@ import { ClientCredentials } from "@/components/admin/client-credentials";
 import { ProfileManagement } from "@/components/admin/profile-management";
 import { ClientPortal } from "@/components/admin/client-portal";
 import { ServiceManagement } from "@/components/admin/service-management";
+import PropertyResearch from "@/components/admin/property-research";
 import { Button } from "@/components/ui/button";
 // Card components removed - not used in current implementation
 // import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -47,7 +48,8 @@ import {
   TrendingUp,
   Zap,
   LogOut,
-  Key
+  Key,
+  Search
 } from "lucide-react";
 import ErrorBoundary from "@/components/error-boundary";
 
@@ -78,6 +80,7 @@ const menuSections = [
       { id: "inbox", label: "Messages", icon: Mail },
       { id: "contracts", label: "Contracts", icon: FileText },
       { id: "invoices", label: "Invoices", icon: FileText },
+      { id: "property-research", label: "Property Research", icon: Search },
     ]
   },
   {
@@ -362,6 +365,8 @@ export default function Admin() {
         return <ClientCredentials />;
       case "profile":
         return <ProfileManagement />;
+      case "property-research":
+        return <PropertyResearch />;
       default:
         return <AdminDashboard />;
     }

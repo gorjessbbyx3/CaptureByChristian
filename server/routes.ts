@@ -1881,6 +1881,39 @@ Please respond with a JSON object containing:
     }
   });
 
+  // Property Research endpoint
+  app.post("/api/property-research", async (req, res) => {
+    try {
+      const propertyData = req.body;
+      
+      // Log the received data for debugging
+      console.log("Property research request received:", propertyData);
+      
+      // Here you would implement the actual property research logic
+      // This could involve:
+      // 1. Validating the input data
+      // 2. Calling external APIs (MLS, property data services, etc.)
+      // 3. Using AI to analyze the property information
+      // 4. Storing the research request in the database
+      // 5. Returning research results or scheduling background processing
+      
+      // For now, we'll just acknowledge receipt and return success
+      res.json({ 
+        success: true, 
+        message: "Property research request submitted successfully",
+        data: propertyData,
+        timestamp: new Date().toISOString()
+      });
+      
+    } catch (error) {
+      console.error("Error processing property research request:", error);
+      res.status(500).json({ 
+        error: "Failed to process property research request",
+        details: (error as Error).message 
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

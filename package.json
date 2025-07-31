@@ -9,7 +9,7 @@
     "dev:server": "tsx watch server/index.ts",
     "dev:client": "cd client && npm run dev",
     "build": "npm run build:client && npm run build:server",
-    "build:client": "cd client && npm install && npm run build",
+    "build:client": "cd client && npm install --include=dev && npm run build",
     "build:server": "tsc -p tsconfig.build.json",
     "start": "node dist/server/index.js",
     "db:generate": "drizzle-kit generate:pg",

@@ -3,18 +3,19 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Area,
-  AreaChart
-} from "recharts";
+// Charts temporarily disabled for deployment
+// import { 
+//   XAxis, 
+//   YAxis, 
+//   CartesianGrid, 
+//   Tooltip, 
+//   ResponsiveContainer,
+//   PieChart,
+//   Pie,
+//   Cell,
+//   Area,
+//   AreaChart
+// } from "recharts";
 import { 
   TrendingUp, 
   DollarSign, 
@@ -283,26 +284,9 @@ export function AdvancedAnalytics() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer width="100%" height={400}>
-            <AreaChart data={revenueData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip 
-                formatter={(value: any, name: any) => [
-                  metricType === 'revenue' ? formatCurrency(value) : value,
-                  name.charAt(0).toUpperCase() + name.slice(1)
-                ]}
-              />
-              <Area 
-                type="monotone" 
-                dataKey={metricType} 
-                stroke="#D4A574" 
-                fill="#D4A574" 
-                fillOpacity={0.3}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+          <div className="flex items-center justify-center h-96 text-muted-foreground">
+            <p>Charts temporarily disabled for deployment. Will be restored soon.</p>
+          </div>
         </CardContent>
       </Card>
 
@@ -316,25 +300,9 @@ export function AdvancedAnalytics() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={serviceBreakdown}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, value }: any) => `${name}: ${value}%`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {serviceBreakdown.map((_entry: unknown, index: number) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
+            <div className="flex items-center justify-center h-72 text-muted-foreground">
+              <p>Service breakdown chart temporarily disabled for deployment.</p>
+            </div>
             <div className="mt-4 space-y-2">
               {serviceBreakdown.map((service: { name: string; revenue: number; count: number }, index: number) => (
                 <div key={service.name} className="flex justify-between items-center text-sm">

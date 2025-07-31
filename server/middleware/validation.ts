@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 
-export const validateParams = (schema: z.ZodType<any, any, any>) => {
+export const validateParams = (schema: z.ZodTypeAny) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       req.params = schema.parse(req.params);
@@ -15,7 +15,7 @@ export const validateParams = (schema: z.ZodType<any, any, any>) => {
   };
 };
 
-export const validateBody = (schema: z.ZodType<any, any, any>) => {
+export const validateBody = (schema: z.ZodTypeAny) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       req.body = schema.parse(req.body);
@@ -29,7 +29,7 @@ export const validateBody = (schema: z.ZodType<any, any, any>) => {
   };
 };
 
-export const validateQuery = (schema: z.ZodType<any, any, any>) => {
+export const validateQuery = (schema: z.ZodTypeAny) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       req.query = schema.parse(req.query);

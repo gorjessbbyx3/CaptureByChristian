@@ -89,7 +89,7 @@ const addClientFormSchema = z.object({
   lifetimeValue: z.string().optional(),
   notes: z.string().optional(),
   source: z.string().optional(),
-  customFields: z.record(z.any()).optional(),
+  customFields: z.record(z.string(), z.any()).optional(),
 });
 
 function AddClientForm({ onSuccess }: { onSuccess?: () => void }) {

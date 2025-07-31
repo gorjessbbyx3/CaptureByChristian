@@ -342,12 +342,12 @@ export const galleryImagesRelations = relations(galleryImages, ({ one }) => ({
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
-  created_at: true,
+  createdAt: true,
 });
 
 export const insertClientSchema = createInsertSchema(clients).omit({
   id: true,
-  created_at: true,
+  createdAt: true,
 });
 
 export const insertServiceSchema = createInsertSchema(services).omit({
@@ -356,7 +356,7 @@ export const insertServiceSchema = createInsertSchema(services).omit({
 
 export const insertBookingSchema = createInsertSchema(bookings).omit({
   id: true,
-  created_at: true,
+  createdAt: true,
 });
 
 // Contract schema - custom definition to handle date strings properly
@@ -398,17 +398,17 @@ export const insertAiChatSchema = createInsertSchema(aiChats).omit({
 
 export const insertLeadSchema = createInsertSchema(leads).omit({
   id: true,
-  created_at: true,
+  createdAt: true,
 });
 
 export const insertCommunicationLogSchema = createInsertSchema(communicationLog).omit({
   id: true,
-  created_at: true,
+  createdAt: true,
 });
 
 export const insertAutomationSequenceSchema = createInsertSchema(automationSequences).omit({
   id: true,
-  created_at: true,
+  createdAt: true,
 });
 
 export const insertQuestionnaireSchema = createInsertSchema(questionnaires).omit({

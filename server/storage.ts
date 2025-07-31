@@ -6,8 +6,8 @@ import {
   type GalleryImage, type InsertGalleryImage, type AiChat, type InsertAiChat,
   type ContactMessage, type InsertContactMessage, type ClientMessage, type InsertClientMessage,
   type Profile, type InsertProfile
-} from "@shared/schema";
-import { db } from "./db";
+} from "../shared/schema.js";
+import { db } from "./db.js";
 import { eq, desc, and, gte, lte, sql } from "drizzle-orm";
 
 export interface IStorage {
@@ -178,8 +178,8 @@ export class DatabaseStorage implements IStorage {
     return await db
       .select()
       .from(bookings)
-      .leftJoin(clients, eq(bookings.clientId, clients.id))
-      .leftJoin(services, eq(bookings.serviceId, services.id))
+      .leftJoin(clients, eq(bookings.client_id, clients.id))
+      .leftJoin(services, eq(bookings.service_id, services.id))
       .orderBy(desc(bookings.date))
       .then(rows => 
         rows.map(row => ({
@@ -194,8 +194,8 @@ export class DatabaseStorage implements IStorage {
     const [result] = await db
       .select()
       .from(bookings)
-      .leftJoin(clients, eq(bookings.clientId, clients.id))
-      .leftJoin(services, eq(bookings.serviceId, services.id))
+      .leftJoin(clients, eq(bookings.client_id, clients.id))
+      .leftJoin(services, eq(bookings.service_id, services.id))
       .where(eq(bookings.id, id));
     
     if (!result) return undefined;
@@ -211,8 +211,8 @@ export class DatabaseStorage implements IStorage {
     return await db
       .select()
       .from(bookings)
-      .leftJoin(clients, eq(bookings.clientId, clients.id))
-      .leftJoin(services, eq(bookings.serviceId, services.id))
+      .leftJoin(clients, eq(bookings.client_id, clients.id))
+      .leftJoin(services, eq(bookings.service_id, services.id))
       .where(and(gte(bookings.date, start), lte(bookings.date, end)))
       .orderBy(bookings.date)
       .then(rows => 
@@ -240,8 +240,8 @@ export class DatabaseStorage implements IStorage {
       const contractsData = await db
         .select()
         .from(contracts)
-        .leftJoin(clients, eq(contracts.clientId, clients.id))
-        .orderBy(desc(contracts.createdAt));
+        .leftJoin(clients, eq(contracts.client_id, clients.id))
+        .orderBy(desc(contracts.created_at));
       
       return contractsData.map(row => ({
         ...row.contracts,
@@ -259,7 +259,7 @@ export class DatabaseStorage implements IStorage {
       const [contractData] = await db
         .select()
         .from(contracts)
-        .leftJoin(clients, eq(contracts.clientId, clients.id))
+        .leftJoin(clients, eq(contracts.client_id, clients.id))
         .where(eq(contracts.id, id));
       
       if (!contractData) return undefined;
@@ -278,7 +278,7 @@ export class DatabaseStorage implements IStorage {
     const [contract] = await db
       .select()
       .from(contracts)
-      .where(eq(contracts.bookingId, bookingId));
+      .where(eq(contracts.booking_id, bookingId));
     return contract || undefined;
   }
 
@@ -581,13 +581,13 @@ export class DatabaseStorage implements IStorage {
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     
     const newClientsThisMonth = allClients.filter(client => 
-      new Date(client.createdAt) >= thirtyDaysAgo
+      new Date(client.created_at) >= thirtyDaysAgo
     );
     
     const clientsWithMultipleBookings = await db
-      .select({ clientId: bookings.clientId, count: sql<number>`count(*)` })
+      .select({ clientId: bookings.client_id, count: sql<number>`count(*)` })
       .from(bookings)
-      .groupBy(bookings.clientId)
+      .groupBy(bookings.client_id)
       .having(sql`count(*) > 1`);
     
     const avgLifetimeValue = await this.getMonthlyRevenue(new Date().getFullYear(), new Date().getMonth() + 1) / allClients.length || 0;
@@ -602,8 +602,8 @@ export class DatabaseStorage implements IStorage {
 
   async getClientMessages(clientId: number): Promise<ClientMessage[]> {
     const messages = await db.select().from(clientMessages)
-      .where(eq(clientMessages.clientId, clientId))
-      .orderBy(desc(clientMessages.createdAt));
+      .where(eq(clientMessages.client_id, clientId))
+      .orderBy(desc(clientMessages.created_at));
     return messages;
   }
 

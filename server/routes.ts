@@ -1,29 +1,17 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import multer from "multer";
-import { storage } from "./storage";
-import type { InsertClient, InsertService, InsertBooking, InsertGalleryImage, InsertInvoice, InsertContract } from "../shared/schema";
+import { storage } from "./storage.js";
+import type { InsertClient, InsertService, InsertBooking, InsertGalleryImage, InsertInvoice, InsertContract } from "../shared/schema.js";
+import { validateParams, validateBody, idParamSchema } from "./middleware/validation.js";
+import { createSecureUpload, validateUploadedFiles } from "./middleware/fileValidation.js";
 
-// Configure multer for file uploads
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: {
-    fileSize: 50 * 1024 * 1024, // 50MB limit for high-resolution photography
-    files: 10, // Maximum 10 files per upload
-  },
-  fileFilter: (_req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) {
-      cb(null, true);
-    } else {
-      cb(new Error('Only image files are allowed'));
-    }
-  },
-});
-import { insertServiceSchema } from "@shared/schema";
+// Configure secure multer for file uploads
+const upload = createSecureUpload();
+import { insertServiceSchema, insertClientSchema } from "../shared/schema.js";
 import { z } from "zod";
-import { generateBookingResponse, analyzeImage } from "./openai";
-import { log } from "./vite";
-import { getDatabaseInitializer } from "./database-init";
+import { generateBookingResponse, analyzeImage } from "./openai.js";
+import { log } from "./vite.js";
+import { getDatabaseInitializer } from "./database-init.js";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Health check endpoint for Docker
@@ -74,7 +62,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/clients", async (req, res) => {
+  app.post("/api/clients", validateBody(insertClientSchema), async (req, res) => {
     try {
       const clientData: InsertClient = req.body;
       const client = await storage.createClient(clientData);
@@ -85,9 +73,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/clients/:id", async (req, res) => {
+  app.get("/api/clients/:id", validateParams(idParamSchema), async (req, res) => {
     try {
-      const client = await storage.getClient(parseInt(req.params.id));
+      const client = await storage.getClient(req.params.id);
       if (!client) {
         return res.status(404).json({ error: "Client not found" });
       }
@@ -107,7 +95,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/services", async (req, res) => {
+  app.post("/api/services", validateBody(insertServiceSchema), async (req, res) => {
     try {
       const serviceData: InsertService = req.body;
       const service = await storage.createService(serviceData);
@@ -415,6 +403,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
         }
 
+        // Validate uploaded files with enhanced security checks
+        try {
+          validateUploadedFiles(req, res, () => {});
+        } catch (validationError) {
+          return res.status(400).json({
+            error: "File validation failed",
+            message: "One or more files failed security validation"
+          });
+        }
+
         // console.log(`Processing ${files.length} uploaded file(s)...`);
 
         // Create database entries for uploaded images
@@ -700,7 +698,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     try {
       const clientId = parseInt(req.query.clientId as string);
       const bookings = await storage.getBookings();
-      const clientBookings = bookings.filter(b => b.clientId === clientId);
+      const clientBookings = bookings.filter(b => b.client_id === clientId);
 
       res.json(clientBookings);
     } catch (error) {
@@ -717,10 +715,10 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       const bookings = await storage.getBookings();
       const galleryImages = await storage.getGalleryImages();
 
-      const clientBookings = bookings.filter(b => b.clientId === clientId);
+      const clientBookings = bookings.filter(b => b.client_id === clientId);
 
       const galleries = clientBookings.map(booking => {
-        const bookingImages = galleryImages.filter(img => img.bookingId === booking.id);
+        const bookingImages = galleryImages.filter(img => img.booking_id === booking.id);
         return {
           id: booking.id.toString(),
           name: `${booking.service?.name || 'Photography Session'} - ${new Date(booking.date).toLocaleDateString()}`,
@@ -728,13 +726,13 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
           status: bookingImages.length > 0 ? 'proofing' : 'pending',
           coverImage: bookingImages.length > 0 ? bookingImages[0].url : "/api/placeholder/400/300",
           photoCount: bookingImages.length,
-          createdAt: booking.createdAt
+          createdAt: booking.created_at
         };
       });
 
       // Also include galleries that have images but no specific booking
       const unbookedImages = galleryImages.filter(img => 
-        !img.bookingId && img.tags?.includes('client_gallery')
+        !img.booking_id && img.tags?.includes('client_gallery')
       );
       
       if (unbookedImages.length > 0) {
@@ -769,7 +767,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
         // Handle unbooked images
         const allImages = await storage.getGalleryImages();
         galleryImages = allImages.filter(img => 
-          !img.bookingId && img.tags?.includes('client_gallery')
+          !img.booking_id && img.tags?.includes('client_gallery')
         );
         galleryName = "Additional Photos";
       } else {
@@ -784,7 +782,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
 
         galleryName = `${booking.service?.name || 'Photography Session'} - ${new Date(booking.date).toLocaleDateString()}`;
         galleryStatus = galleryImages.length > 0 ? 'proofing' : 'pending';
-        createdAt = booking.createdAt;
+        createdAt = booking.created_at;
       }
 
       const gallery = {
@@ -852,7 +850,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
 
       // Get contracts directly by client ID
       const allContracts = await storage.getContracts();
-      const clientContracts = allContracts.filter(contract => contract.clientId === clientId);
+      const clientContracts = allContracts.filter(contract => contract.client_id === clientId);
 
       const contracts = clientContracts.map(contract => ({
         id: contract.id,
@@ -1017,7 +1015,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
 
       // Get client bookings and generate invoice data
       const bookings = await storage.getBookings();
-      const clientBookings = bookings.filter(b => b.clientId === clientId);
+      const clientBookings = bookings.filter(b => b.client_id === clientId);
 
       const invoices = clientBookings.map(booking => ({
         id: `INV-${booking.id}`,
@@ -1026,7 +1024,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
         amount: booking.totalPrice,
         status: booking.status === 'confirmed' ? 'paid' : 'pending',
         dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-        createdDate: booking.createdAt || new Date().toISOString(),
+        createdDate: booking.created_at || new Date().toISOString(),
         description: `${booking.service?.name || 'Photography Service'} - ${new Date(booking.date).toLocaleDateString()}`,
         downloadUrl: `/api/invoices/pdf/INV-${booking.id}`
       }));

@@ -3,13 +3,9 @@ import fs from "fs";
 import path from "path";
 import { type Server } from "http";
 import { nanoid } from "nanoid";
+import { fileURLToPath } from "url";
 
 // Dynamic imports to avoid compilation errors in production
-const viteLogger = {
-  info: console.log,
-  warn: console.warn, 
-  error: console.error
-};
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
@@ -42,7 +38,7 @@ export async function setupVite(app: Express, server: Server) {
       configFile: false,
       customLogger: {
         ...logger,
-        error: (msg: string, options?: any) => {
+        error: (msg: string, options?: { error?: Error; timestamp?: boolean; clear?: boolean }) => {
           logger.error(msg, options);
           process.exit(1);
         },
@@ -56,9 +52,9 @@ export async function setupVite(app: Express, server: Server) {
       const url = req.originalUrl;
 
       try {
-        const currentDir = path.dirname(new URL(import.meta.url).pathname);
+        const currentDir = path.dirname(fileURLToPath(import.meta.url));
         const clientTemplate = path.resolve(
-          decodeURIComponent(currentDir),
+          currentDir,
           "..",
           "client",
           "index.html",
@@ -84,8 +80,8 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-const currentDir = path.dirname(new URL(import.meta.url).pathname);
-const distPath = path.resolve(decodeURIComponent(currentDir), "../dist/public");
+  const currentDir = path.dirname(fileURLToPath(import.meta.url));
+  const distPath = path.resolve(currentDir, "../dist/public");
 
   if (!fs.existsSync(distPath)) {
     throw new Error(

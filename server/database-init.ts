@@ -5,7 +5,9 @@ import { promises as fs } from 'fs';
 import * as path from 'path';
 
 // Get the directory name for ES modules
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export class DatabaseInitializer {
   private pool: Pool;

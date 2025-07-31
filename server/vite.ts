@@ -5,7 +5,17 @@ import * as path from "path";
 import { type Server } from "http";
 import { nanoid } from "nanoid";
 
-// Dynamic imports to avoid compilation errors in production
+// Type definitions for dynamic imports to avoid compilation errors
+type ViteDevServer = {
+  middlewares: any;
+  transformIndexHtml: (url: string, html: string) => Promise<string>;
+  ssrFixStacktrace: (error: Error) => void;
+};
+
+type ViteModule = {
+  createServer: (config: any) => Promise<ViteDevServer>;
+  createLogger: () => any;
+};
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
@@ -20,16 +30,17 @@ export function log(message: string, source = "express") {
 
 export async function setupVite(app: Express, server: Server) {
   try {
-    // Dynamic import to avoid build-time errors
-    const viteModule = await import('vite');
+    // Dynamic import to avoid build-time errors in production
+    const viteModule: ViteModule = await import('vite') as any;
     const { createServer: createViteServer, createLogger } = viteModule;
+    
     // Use empty config to avoid module declaration issues
     const viteConfig = {};
     
     const logger = createLogger();
     
     const serverOptions = {
-      middlewareMode: true,
+      middlewareMode: true as const,
       hmr: { server },
       allowedHosts: true as const,
     };
@@ -45,7 +56,7 @@ export async function setupVite(app: Express, server: Server) {
         },
       },
       server: serverOptions,
-      appType: "custom",
+      appType: "custom" as const,
     });
 
     app.use(vite.middlewares);

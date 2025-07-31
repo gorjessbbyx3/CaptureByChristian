@@ -25,6 +25,7 @@
     "client",
     "**/*.test.ts",
     "**/*.spec.ts",
-    "vite.config.js"
+    "vite.config.js",
+    "server/vite.ts"
   ]
 }

@@ -4,8 +4,6 @@ import * as fs from "fs";
 import * as path from "path";
 import { type Server } from "http";
 import { nanoid } from "nanoid";
-// We need to add the type import for vite
-import type { InlineConfig, ViteDevServer } from 'vite';
 
 // Dynamic imports to avoid compilation errors in production
 

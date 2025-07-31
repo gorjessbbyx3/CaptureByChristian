@@ -1,0 +1,101 @@
+version: 2
+updates:
+  # Main package.json
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "09:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "robertsn808"
+    assignees:
+      - "robertsn808"
+    commit-message:
+      prefix: "chore"
+      prefix-development: "chore"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "security"
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "indirect"
+    groups:
+      # Group all React-related updates
+      react:
+        patterns:
+          - "react*"
+          - "@types/react*"
+      # Group all testing dependencies
+      testing:
+        patterns:
+          - "*test*"
+          - "*jest*"
+          - "*vitest*"
+          - "@testing-library/*"
+      # Group TypeScript and related tools
+      typescript:
+        patterns:
+          - "typescript"
+          - "@types/*"
+          - "@typescript-eslint/*"
+      # Group Tailwind and styling
+      styling:
+        patterns:
+          - "tailwind*"
+          - "postcss*"
+          - "autoprefixer"
+      # Group build tools
+      build-tools:
+        patterns:
+          - "vite*"
+          - "@vitejs/*"
+          - "esbuild"
+          - "rollup*"
+
+  # Client package.json
+  - package-ecosystem: "npm"
+    directory: "/client"
+    schedule:
+      interval: "daily"
+      time: "09:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "robertsn808"
+    assignees:
+      - "robertsn808"
+    commit-message:
+      prefix: "chore(client)"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "frontend"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/New_York"
+    commit-message:
+      prefix: "chore(ci)"
+    labels:
+      - "dependencies"
+      - "deployment"
+
+  # Docker dependencies
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+    commit-message:
+      prefix: "chore(docker)"
+    labels:
+      - "dependencies"
+      - "deployment"

@@ -29,8 +29,50 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 
+// Type definitions
+interface Booking {
+  id: number;
+  status: string;
+  totalPrice: number;
+  clientId: number;
+  serviceId: number;
+  date: string;
+}
+
+interface WorkflowStep {
+  delay: number;
+  type: string;
+  template: string;
+  subject: string;
+  content: string;
+}
+
+interface WorkflowStats {
+  triggered: number;
+  completed: number;
+  openRate: number;
+  clickRate: number;
+}
+
+interface Workflow {
+  id: number;
+  name: string;
+  trigger: string;
+  active: boolean;
+  steps: WorkflowStep[];
+  stats: WorkflowStats;
+  createdAt: string;
+}
+
+interface WorkflowData {
+  name: string;
+  trigger: string;
+  active: boolean;
+  steps: WorkflowStep[];
+}
+
 export function AutomationWorkflows() {
-  const [selectedWorkflow, setSelectedWorkflow] = useState<any>(null);
+  const [selectedWorkflow, setSelectedWorkflow] = useState<Workflow | null>(null);
   const [newWorkflowOpen, setNewWorkflowOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -56,8 +98,8 @@ export function AutomationWorkflows() {
   // Calculate workflow statistics from real booking data
   const calculateWorkflowStats = () => {
     const totalBookings = bookings.length;
-    const confirmedBookings = bookings.filter((b: any) => b.status === 'confirmed').length;
-    const pendingBookings = bookings.filter((b: any) => b.status === 'pending').length;
+    const confirmedBookings = bookings.filter((b: Booking) => b.status === 'confirmed').length;
+    const pendingBookings = bookings.filter((b: Booking) => b.status === 'pending').length;
     
     return {
       totalWorkflows: workflows.length || 1,
@@ -71,7 +113,7 @@ export function AutomationWorkflows() {
 
   // Create workflow mutation for adding new workflows
   const createWorkflowMutation = useMutation({
-    mutationFn: async (workflowData: any) => {
+    mutationFn: async (workflowData: WorkflowData) => {
       const response = await fetch('/api/automation-sequences', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -250,11 +292,11 @@ export function AutomationWorkflows() {
     return `${Math.floor(hours / 24)} days`;
   };
 
-  const totalStats = displayWorkflows.reduce((acc: any, workflow: any) => ({
+  const totalStats = displayWorkflows.reduce((acc: { triggered: number; completed: number; avgOpenRate: number; avgClickRate: number }, workflow: Workflow) => ({
     triggered: acc.triggered + (workflow.stats?.triggered || 0),
     completed: acc.completed + (workflow.stats?.completed || 0),
-    avgOpenRate: Math.round(displayWorkflows.reduce((sum: any, w: any) => sum + (w.stats?.openRate || 0), 0) / displayWorkflows.length),
-    avgClickRate: Math.round(displayWorkflows.reduce((sum: any, w: any) => sum + (w.stats?.clickRate || 0), 0) / displayWorkflows.length)
+    avgOpenRate: Math.round(displayWorkflows.reduce((sum: number, w: Workflow) => sum + (w.stats?.openRate || 0), 0) / displayWorkflows.length),
+    avgClickRate: Math.round(displayWorkflows.reduce((sum: number, w: Workflow) => sum + (w.stats?.clickRate || 0), 0) / displayWorkflows.length)
   }), { triggered: 0, completed: 0, avgOpenRate: 0, avgClickRate: 0 });
 
   if (isLoading) {
@@ -279,7 +321,7 @@ export function AutomationWorkflows() {
             <div className="flex items-center space-x-2">
               <Zap className="h-4 w-4 text-bronze" />
               <div>
-                <p className="text-2xl font-bold">{displayWorkflows.filter((w: any) => w.active).length}</p>
+                <p className="text-2xl font-bold">{displayWorkflows.filter((w: Workflow) => w.active).length}</p>
                 <p className="text-xs text-muted-foreground">Active Workflows</p>
               </div>
             </div>
@@ -351,7 +393,7 @@ export function AutomationWorkflows() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {displayWorkflows.map((workflow: any) => (
+            {displayWorkflows.map((workflow: Workflow) => (
               <div key={workflow.id} className="border rounded-lg p-4">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
@@ -386,7 +428,7 @@ export function AutomationWorkflows() {
 
                     {/* Workflow Steps Visualization */}
                     <div className="flex flex-wrap items-center gap-2">
-                      {workflow.steps.map((step: any, index: number) => (
+                      {workflow.steps.map((step: WorkflowStep, index: number) => (
                         <React.Fragment key={index}>
                           <div className="flex items-center space-x-2 bg-muted/50 px-3 py-1 rounded-lg">
                             {getStepIcon(step.type)}

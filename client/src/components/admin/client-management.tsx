@@ -39,6 +39,44 @@ import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
+// Type definitions
+interface Client {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  notes: string;
+  tags: string[];
+  status: string;
+  leadSource: string;
+  leadScore: number;
+  instagramHandle: string;
+  anniversaryDate: string;
+  preferredCommunication: string;
+  timezone: string;
+  lastContact: Date | null;
+  nextFollowUp: Date | null;
+  lifetimeValue: string;
+  referralSource: string;
+  customFields: Record<string, unknown>;
+  createdAt: Date;
+}
+
+interface Booking {
+  id: number;
+  clientId: number;
+  serviceId: number;
+  date: string;
+  duration: number;
+  location: string;
+  totalPrice: string;
+  depositPaid: boolean;
+  status: string;
+  notes: string;
+  addOns: Array<{id: string, name: string, price: number}>;
+  createdAt: Date;
+}
+
 const addClientFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Valid email is required"),
@@ -85,7 +123,7 @@ function AddClientForm({ onSuccess }: { onSuccess?: () => void }) {
       form.reset();
       onSuccess?.();
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({
         title: "Error",
         description: error.message || "Failed to add client",
@@ -223,18 +261,18 @@ export function ClientManagement() {
     queryFn: fetchBookings,
   });
 
-  const filteredClients = clients?.filter((client: any) =>
+  const filteredClients = clients?.filter((client: Client) =>
     client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     client.email.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
   const getClientBookings = (clientId: number) => {
-    return bookings?.filter((booking: any) => booking.clientId === clientId) || [];
+    return bookings?.filter((booking: Booking) => booking.clientId === clientId) || [];
   };
 
   const getClientStats = (clientId: number) => {
     const clientBookings = getClientBookings(clientId);
-    const totalSpent = clientBookings.reduce((sum: number, booking: any) => 
+    const totalSpent = clientBookings.reduce((sum: number, booking: Booking) => 
       sum + parseFloat(booking.totalPrice), 0
     );
     
@@ -242,7 +280,7 @@ export function ClientManagement() {
       totalBookings: clientBookings.length,
       totalSpent,
       lastBooking: clientBookings.length > 0 
-        ? new Date(Math.max(...clientBookings.map((b: any) => new Date(b.date).getTime())))
+        ? new Date(Math.max(...clientBookings.map((b: Booking) => new Date(b.date).getTime())))
         : null,
     };
   };
@@ -318,7 +356,7 @@ export function ClientManagement() {
             </TableHeader>
             <TableBody>
               {filteredClients.length > 0 ? (
-                filteredClients.map((client: any) => {
+                filteredClients.map((client: Client) => {
                   const stats = getClientStats(client.id);
                   
                   return (
@@ -414,7 +452,7 @@ export function ClientManagement() {
   );
 }
 
-function ClientDetails({ client, bookings }: { client: any; bookings: any[] }) {
+function ClientDetails({ client, bookings }: { client: Client; bookings: Booking[] }) {
   const totalSpent = bookings.reduce((sum, booking) => sum + parseFloat(booking.totalPrice), 0);
 
   return (
@@ -460,7 +498,7 @@ function ClientDetails({ client, bookings }: { client: any; bookings: any[] }) {
         <h4 className="font-semibold mb-2">Booking History</h4>
         {bookings.length > 0 ? (
           <div className="space-y-3">
-            {bookings.slice(0, 5).map((booking: any) => (
+            {bookings.slice(0, 5).map((booking: Booking) => (
               <div key={booking.id} className="flex items-center justify-between p-3 bg-muted/50 rounded">
                 <div>
                   <p className="font-medium">{booking.service?.name}</p>

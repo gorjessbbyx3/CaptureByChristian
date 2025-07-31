@@ -1,0 +1,84 @@
+documentation:
+  - '**/*.md'
+  - 'docs/**/*'
+  - 'README*'
+  - 'CHANGELOG*'
+  - 'LICENSE*'
+
+frontend:
+  - 'client/**/*'
+  - '**/*.tsx'
+  - '**/*.jsx'
+  - '**/components/**/*'
+  - '**/pages/**/*'
+  - '**/hooks/**/*'
+  - 'tailwind.config.*'
+  - 'vite.config.*'
+  - 'postcss.config.*'
+
+backend:
+  - 'server/**/*'
+  - 'api/**/*'
+  - '**/*.ts'
+  - 'routes/**/*'
+  - 'middleware/**/*'
+
+database:
+  - 'shared/schema.ts'
+  - 'migrations/**/*'
+  - 'drizzle.config.*'
+  - '**/*database*'
+  - '**/*db*'
+
+deployment:
+  - 'Dockerfile*'
+  - 'docker-compose*'
+  - '.github/workflows/**/*'
+  - 'deploy*'
+  - 'vercel.json'
+  - 'render.yaml'
+  - '**/build*'
+
+security:
+  - '.env*'
+  - '**/auth*'
+  - '**/security*'
+  - '**/cors*'
+  - '**/validation*'
+
+dependencies:
+  - 'package*.json'
+  - 'yarn.lock'
+  - 'pnpm-lock.yaml'
+
+testing:
+  - '**/*.test.*'
+  - '**/*.spec.*'
+  - 'test/**/*'
+  - 'tests/**/*'
+  - 'vitest.config.*'
+  - 'jest.config.*'
+
+config:
+  - '*.config.*'
+  - '.*rc.*'
+  - '.env*'
+  - 'tsconfig*.json'
+  - '.eslintrc*'
+  - '.prettierrc*'
+  - '.gitignore'
+
+enhancement:
+  - any: ['feat:', 'feature:']
+
+bug:
+  - any: ['fix:', 'bug:', 'hotfix:']
+
+refactor:
+  - any: ['refactor:', 'refact:']
+
+performance:
+  - any: ['perf:', 'performance:']
+
+style:
+  - any: ['style:', 'ui:', 'css:']

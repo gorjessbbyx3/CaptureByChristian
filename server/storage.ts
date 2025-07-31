@@ -178,8 +178,8 @@ export class DatabaseStorage implements IStorage {
     return await db
       .select()
       .from(bookings)
-      .leftJoin(clients, eq(bookings.client_id, clients.id))
-      .leftJoin(services, eq(bookings.service_id, services.id))
+      .leftJoin(clients, eq(bookings.clientId, clients.id))
+      .leftJoin(services, eq(bookings.serviceId, services.id))
       .orderBy(desc(bookings.date))
       .then(rows => 
         rows.map(row => ({
@@ -194,8 +194,8 @@ export class DatabaseStorage implements IStorage {
     const [result] = await db
       .select()
       .from(bookings)
-      .leftJoin(clients, eq(bookings.client_id, clients.id))
-      .leftJoin(services, eq(bookings.service_id, services.id))
+      .leftJoin(clients, eq(bookings.clientId, clients.id))
+      .leftJoin(services, eq(bookings.serviceId, services.id))
       .where(eq(bookings.id, id));
     
     if (!result) return undefined;
@@ -211,8 +211,8 @@ export class DatabaseStorage implements IStorage {
     return await db
       .select()
       .from(bookings)
-      .leftJoin(clients, eq(bookings.client_id, clients.id))
-      .leftJoin(services, eq(bookings.service_id, services.id))
+      .leftJoin(clients, eq(bookings.clientId, clients.id))
+      .leftJoin(services, eq(bookings.serviceId, services.id))
       .where(and(gte(bookings.date, start), lte(bookings.date, end)))
       .orderBy(bookings.date)
       .then(rows => 
@@ -295,7 +295,7 @@ export class DatabaseStorage implements IStorage {
   async updateContract(id: number, updateContract: Partial<InsertContract>): Promise<Contract> {
     const [contract] = await db
       .update(contracts)
-      .set({ ...updateContract, updatedAt: new Date() })
+      .set({ ...updateContract, updated_at: new Date() })
       .where(eq(contracts.id, id))
       .returning();
     return contract;
@@ -310,9 +310,9 @@ export class DatabaseStorage implements IStorage {
       .update(contracts)
       .set({
         status: 'sent',
-        portalAccessToken: portalToken,
-        signatureRequestSent: new Date(),
-        updatedAt: new Date()
+        portal_access_token: portalToken,
+        signature_request_sent: new Date(),
+        updated_at: new Date()
       })
       .where(eq(contracts.id, contractId));
     
@@ -327,7 +327,7 @@ export class DatabaseStorage implements IStorage {
 
   // Invoices
   async getInvoice(bookingId: number): Promise<Invoice | undefined> {
-    const [invoice] = await db.select().from(invoices).where(eq(invoices.bookingId, bookingId));
+    const [invoice] = await db.select().from(invoices).where(eq(invoices.booking_id, bookingId));
     return invoice || undefined;
   }
 
@@ -343,15 +343,15 @@ export class DatabaseStorage implements IStorage {
 
   // Gallery
   async getGalleryImages(): Promise<GalleryImage[]> {
-    return await db.select().from(galleryImages).orderBy(desc(galleryImages.uploadedAt));
+    return await db.select().from(galleryImages).orderBy(desc(galleryImages.uploaded_at));
   }
 
   async getFeaturedImages(): Promise<GalleryImage[]> {
-    return await db.select().from(galleryImages).where(eq(galleryImages.featured, true)).orderBy(desc(galleryImages.uploadedAt));
+    return await db.select().from(galleryImages).where(eq(galleryImages.featured, true)).orderBy(desc(galleryImages.uploaded_at));
   }
 
   async getImagesByBooking(bookingId: number): Promise<GalleryImage[]> {
-    return await db.select().from(galleryImages).where(eq(galleryImages.bookingId, bookingId)).orderBy(desc(galleryImages.uploadedAt));
+    return await db.select().from(galleryImages).where(eq(galleryImages.booking_id, bookingId)).orderBy(desc(galleryImages.uploaded_at));
   }
 
   async createGalleryImage(insertImage: InsertGalleryImage): Promise<GalleryImage> {
@@ -370,7 +370,7 @@ export class DatabaseStorage implements IStorage {
 
   // AI Chats
   async getAiChat(sessionId: string): Promise<AiChat | undefined> {
-    const [chat] = await db.select().from(aiChats).where(eq(aiChats.sessionId, sessionId));
+    const [chat] = await db.select().from(aiChats).where(eq(aiChats.session_id, sessionId));
     return chat || undefined;
   }
 
@@ -382,8 +382,8 @@ export class DatabaseStorage implements IStorage {
   async updateAiChat(sessionId: string, updateChat: Partial<InsertAiChat>): Promise<AiChat> {
     const [chat] = await db.update(aiChats).set({
       ...updateChat,
-      updatedAt: new Date(),
-    }).where(eq(aiChats.sessionId, sessionId)).returning();
+      updated_at: new Date(),
+    }).where(eq(aiChats.session_id, sessionId)).returning();
     return chat;
   }
 
@@ -442,7 +442,7 @@ export class DatabaseStorage implements IStorage {
 
   // Contact Messages
   async getContactMessages(): Promise<ContactMessage[]> {
-    return await db.select().from(contactMessages).orderBy(desc(contactMessages.createdAt));
+    return await db.select().from(contactMessages).orderBy(desc(contactMessages.created_at));
   }
 
   async getContactMessage(id: number): Promise<ContactMessage | undefined> {
@@ -581,13 +581,13 @@ export class DatabaseStorage implements IStorage {
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     
     const newClientsThisMonth = allClients.filter(client => 
-      new Date(client.created_at) >= thirtyDaysAgo
+      new Date(client.createdAt) >= thirtyDaysAgo
     );
     
     const clientsWithMultipleBookings = await db
-      .select({ clientId: bookings.client_id, count: sql<number>`count(*)` })
+      .select({ clientId: bookings.clientId, count: sql<number>`count(*)` })
       .from(bookings)
-      .groupBy(bookings.client_id)
+      .groupBy(bookings.clientId)
       .having(sql`count(*) > 1`);
     
     const avgLifetimeValue = await this.getMonthlyRevenue(new Date().getFullYear(), new Date().getMonth() + 1) / allClients.length || 0;
@@ -613,7 +613,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getProfile(): Promise<Profile | undefined> {
-    const profileList = await db.select().from(profiles).where(eq(profiles.isActive, true)).limit(1);
+    const profileList = await db.select().from(profiles).where(eq(profiles.is_active, true)).limit(1);
     return profileList[0];
   }
 
@@ -621,7 +621,7 @@ export class DatabaseStorage implements IStorage {
     const existingProfile = await this.getProfile();
     if (existingProfile) {
       const [profile] = await db.update(profiles)
-        .set({ ...updateProfile, updatedAt: new Date() })
+        .set({ ...updateProfile, updated_at: new Date() })
         .where(eq(profiles.id, existingProfile.id))
         .returning();
       return profile;

@@ -7,6 +7,7 @@ import { createSecureUpload, validateUploadedFiles } from "./middleware/fileVali
 
 // Configure secure multer for file uploads
 const upload = createSecureUpload();
+import multer from "multer";
 import { insertServiceSchema, insertClientSchema } from "../shared/schema.js";
 import { z } from "zod";
 import { generateBookingResponse, analyzeImage } from "./openai.js";
@@ -75,7 +76,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/clients/:id", validateParams(idParamSchema), async (req, res) => {
     try {
-      const client = await storage.getClient(req.params.id);
+      const client = await storage.getClient(req.params.id as unknown as number);
       if (!client) {
         return res.status(404).json({ error: "Client not found" });
       }
@@ -430,13 +431,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           try {
             const imageData = {
               filename,
-              originalName: file.originalname,
+              original_name: file.originalname,
               url: dataUrl, // Base64 data URL containing the actual image
-              thumbnailUrl: dataUrl, // Using same image as thumbnail for demo
+              thumbnail_url: dataUrl, // Using same image as thumbnail for demo
               category,
               tags: [category, "uploaded"],
               featured: false,
-              bookingId: bookingId ? parseInt(bookingId) : null,
+              booking_id: bookingId ? parseInt(bookingId) : null,
             };
 
             // Save to database
@@ -518,10 +519,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       if (!chat) {
         chat = await storage.createAiChat({
-          sessionId,
-          clientEmail: clientEmail || null,
+          session_id: sessionId,
+          client_email: clientEmail || null,
           messages: [],
-          bookingData: {},
+          booking_data: {},
         });
       }
 
@@ -536,7 +537,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       ];
 
       // Generate AI response
-      const aiResponse = await generateBookingResponse(messages, chat.bookingData);
+      const aiResponse = await generateBookingResponse(messages, chat.booking_data);
 
       // Add AI response
       messages.push({
@@ -548,8 +549,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Update chat
       await storage.updateAiChat(sessionId, {
         messages,
-        bookingData: { ...chat.bookingData, ...aiResponse.bookingData },
-        clientEmail: clientEmail || chat.clientEmail,
+        booking_data: { ...chat.booking_data, ...aiResponse.bookingData },
+        client_email: clientEmail || chat.client_email,
       });
 
       res.json({
@@ -698,7 +699,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     try {
       const clientId = parseInt(req.query.clientId as string);
       const bookings = await storage.getBookings();
-      const clientBookings = bookings.filter(b => b.client_id === clientId);
+      const clientBookings = bookings.filter(b => b.clientId === clientId);
 
       res.json(clientBookings);
     } catch (error) {
@@ -715,7 +716,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       const bookings = await storage.getBookings();
       const galleryImages = await storage.getGalleryImages();
 
-      const clientBookings = bookings.filter(b => b.client_id === clientId);
+      const clientBookings = bookings.filter(b => b.clientId === clientId);
 
       const galleries = clientBookings.map(booking => {
         const bookingImages = galleryImages.filter(img => img.booking_id === booking.id);
@@ -726,7 +727,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
           status: bookingImages.length > 0 ? 'proofing' : 'pending',
           coverImage: bookingImages.length > 0 ? bookingImages[0].url : "/api/placeholder/400/300",
           photoCount: bookingImages.length,
-          createdAt: booking.created_at
+          createdAt: booking.createdAt
         };
       });
 

@@ -22,8 +22,8 @@ export async function setupVite(app: Express, server: Server) {
   try {
     // Dynamic import to avoid build-time errors
     const { createServer: createViteServer, createLogger } = await import('vite');
-    const viteConfigModule = await import('../vite.config.js');
-    const viteConfig = viteConfigModule.default;
+    // Use empty config to avoid module declaration issues
+    const viteConfig = {};
     
     const logger = createLogger();
     

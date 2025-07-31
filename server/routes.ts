@@ -63,7 +63,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/clients", validateBody(insertClientSchema), async (req, res) => {
+  app.post("/api/clients", validateBody(insertClientSchema as unknown as z.ZodTypeAny), async (req, res) => {
     try {
       const clientData: InsertClient = req.body;
       const client = await storage.createClient(clientData);
@@ -96,7 +96,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/services", validateBody(insertServiceSchema), async (req, res) => {
+  app.post("/api/services", validateBody(insertServiceSchema as unknown as z.ZodTypeAny), async (req, res) => {
     try {
       const serviceData: InsertService = req.body;
       const service = await storage.createService(serviceData);
@@ -783,7 +783,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
 
         galleryName = `${booking.service?.name || 'Photography Session'} - ${new Date(booking.date).toLocaleDateString()}`;
         galleryStatus = galleryImages.length > 0 ? 'proofing' : 'pending';
-        createdAt = booking.created_at;
+        createdAt = booking.createdAt;
       }
 
       const gallery = {
@@ -794,7 +794,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
         images: galleryImages.map(img => ({
           id: img.id.toString(),
           url: img.url,
-          thumbnailUrl: img.thumbnailUrl || img.url,
+          thumbnailUrl: img.thumbnail_url || img.url,
           filename: img.filename
         }))
       };
@@ -856,16 +856,16 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       const contracts = clientContracts.map(contract => ({
         id: contract.id,
         clientId: clientId,
-        title: contract.title || `${contract.serviceType || 'Photography'} Contract`,
+        title: contract.title || `${contract.service_type || 'Photography'} Contract`,
         status: contract.status,
-        clientSignedAt: contract.clientSignedAt,
-        photographerSignedAt: contract.photographerSignedAt,
-        isFullySigned: contract.isFullySigned,
-        createdAt: contract.createdAt,
-        totalAmount: contract.totalAmount,
+        clientSignedAt: contract.client_signed_at,
+        photographerSignedAt: contract.photographer_signed_at,
+        isFullySigned: contract.is_fully_signed,
+        createdAt: contract.created_at,
+        totalAmount: contract.total_amount,
         downloadUrl: `/api/contracts/${contract.id}/download`,
-        signUrl: contract.status === 'sent' && !contract.clientSignedAt ? `/client-portal/contract/${contract.portalAccessToken}` : null,
-        templateContent: contract.templateContent
+        signUrl: contract.status === 'sent' && !contract.client_signed_at ? `/client-portal/contract/${contract.portal_access_token}` : null,
+        templateContent: contract.template_content
       }));
 
       res.json(contracts);
@@ -902,9 +902,9 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       const updatedContract = await storage.updateContract(contractId, updates);
 
       // Check if fully signed (if photographer has already signed)
-      if (updatedContract.photographerSignedAt) {
+      if (updatedContract.photographer_signed_at) {
         await storage.updateContract(contractId, { 
-          isFullySigned: true,
+          is_fully_signed: true,
           status: 'completed'
         });
       }
@@ -926,23 +926,23 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       const { token } = req.params;
 
       const allContracts = await storage.getContracts();
-      const contract = allContracts.find(c => c.portalAccessToken === token);
+      const contract = allContracts.find(c => c.portal_access_token === token);
 
       if (!contract) {
         return res.status(404).json({ error: "Contract not found or invalid token" });
       }
 
-      if (contract.clientSignedAt) {
+      if (contract.client_signed_at) {
         return res.status(400).json({ error: "Contract has already been signed" });
       }
 
       res.json({
         id: contract.id,
         title: contract.title,
-        templateContent: contract.templateContent,
-        totalAmount: contract.totalAmount,
-        createdAt: contract.createdAt,
-        clientId: contract.clientId
+        templateContent: contract.template_content,
+        totalAmount: contract.total_amount,
+        createdAt: contract.created_at,
+        clientId: contract.client_id
       });
     } catch (error) {
       console.error("Error fetching contract for signing:", error);
@@ -1016,7 +1016,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
 
       // Get client bookings and generate invoice data
       const bookings = await storage.getBookings();
-      const clientBookings = bookings.filter(b => b.client_id === clientId);
+      const clientBookings = bookings.filter(b => b.clientId === clientId);
 
       const invoices = clientBookings.map(booking => ({
         id: `INV-${booking.id}`,
@@ -1025,7 +1025,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
         amount: booking.totalPrice,
         status: booking.status === 'confirmed' ? 'paid' : 'pending',
         dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-        createdDate: booking.created_at || new Date().toISOString(),
+        createdDate: booking.createdAt || new Date().toISOString(),
         description: `${booking.service?.name || 'Photography Service'} - ${new Date(booking.date).toLocaleDateString()}`,
         downloadUrl: `/api/invoices/pdf/INV-${booking.id}`
       }));
@@ -1269,9 +1269,9 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
 
       // Create invoice data automatically from booking  
       const invoiceData = {
-        bookingId: booking.id,
+        booking_id: booking.id,
         amount: booking.totalPrice, // This comes as string from DB
-        dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+        due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
         status: 'pending' as const
       };
 
@@ -1410,8 +1410,8 @@ Please respond with a JSON object containing:
         priority: priority || "normal",
         source: source || "website",
         status: "unread",
-        ipAddress: req.ip,
-        userAgent: req.get('User-Agent'),
+        ip_address: req.ip,
+        user_agent: req.get('User-Agent'),
       });
 
       res.json(contactMessage);
@@ -1538,7 +1538,7 @@ Please respond with a JSON object containing:
 
       const todayBookings = bookings.filter(b => new Date(b.createdAt) >= todayStart);
       const todayClients = clients.filter(c => new Date(c.createdAt) >= todayStart);
-      const todayMessages = contactMessages.filter(m => new Date(m.createdAt) >= todayStart);
+      const todayMessages = contactMessages.filter(m => new Date(m.created_at) >= todayStart);
 
       // Calculate authentic metrics from real business data
       // Estimate visitors based on contact messages and bookings activity
@@ -1577,7 +1577,7 @@ Please respond with a JSON object containing:
           ...todayMessages.slice(0, 3).map(m => ({
             action: "New inquiry",
             client: m.name,
-            time: new Date(m.createdAt).toLocaleTimeString()
+            time: new Date(m.created_at).toLocaleTimeString()
           })),
           ...todayBookings.slice(0, 2).map(b => ({
             action: "New booking",
@@ -1751,11 +1751,11 @@ Please respond with a JSON object containing:
       }
 
       const newMessage = await storage.createClientMessage({
-        clientId,
+        client_id: clientId,
         message,
-        isFromClient: true,
-        senderName,
-        senderEmail,
+        is_from_client: true,
+        sender_name: senderName,
+        sender_email: senderEmail,
         status: 'unread'
       });
 

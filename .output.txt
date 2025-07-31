@@ -1,749 +1,2010 @@
-server/database.test.ts:156:51 - error TS2345: Argument of type '{ set: Mock<any, any>; }' is not assignable to parameter of type 'PgUpdateBuilder<PgTable<TableConfig>, NodePgQueryResultHKT>'.
-  Type '{ set: Mock<any, any>; }' is missing the following properties from type 'PgUpdateBuilder<PgTable<TableConfig>, NodePgQueryResultHKT>': table, session, dialect, _, setToken
-156       vi.mocked(mockDb.db.update).mockReturnValue({
-                                                      ~
-157         set: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-161         })
-    ~~~~~~~~~~
-162       });
-    ~~~~~~~
-server/database.test.ts:182:51 - error TS2345: Argument of type '{ values: Mock<any, any>; }' is not assignable to parameter of type 'PgInsertBuilder<PgTable<TableConfig>, NodePgQueryResultHKT, false>'.
-  Type '{ values: Mock<any, any>; }' is missing the following properties from type 'PgInsertBuilder<PgTable<TableConfig>, NodePgQueryResultHKT, false>': table, session, dialect, overridingSystemValue, select
-182       vi.mocked(mockDb.db.insert).mockReturnValue({
-                                                      ~
-183         values: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-185         })
-    ~~~~~~~~~~
-186       });
-    ~~~~~~~
-server/database.test.ts:201:51 - error TS2345: Argument of type '{ from: Mock<an
-y, any>; }' is not assignable to parameter of type 'PgSelectBuilder<SelectedFields, "db">'.
-  Type '{ from: Mock<any, any>; }' is missing the following properties from type
- 'PgSelectBuilder<SelectedFields, "db">': fields, session, dialect, withList, distinct
-201       vi.mocked(mockDb.db.select).mockReturnValue({
-                                                      ~
-202         from: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-206         })
-    ~~~~~~~~~~
-207       });
-    ~~~~~~~
-server/database.test.ts:216:51 - error TS2345: Argument of type '{ set: Mock<any
-, any>; }' is not assignable to parameter of type 'PgUpdateBuilder<PgTable<TableConfig>, NodePgQueryResultHKT>'.
-  Type '{ set: Mock<any, any>; }' is missing the following properties from type
-'PgUpdateBuilder<PgTable<TableConfig>, NodePgQueryResultHKT>': table, session, dialect, _, setToken
-216       vi.mocked(mockDb.db.update).mockReturnValue({
-                                                      ~
-217         set: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-221         })
-    ~~~~~~~~~~
-222       });
-    ~~~~~~~
-server/database.test.ts:230:51 - error TS2345: Argument of type '{ where: Mock<a
-ny, any>; }' is not assignable to parameter of type 'PgDeleteBase<PgTable<TableConfig>, NodePgQueryResultHKT, undefined, undefined, false, never>'.
-  Type '{ where: Mock<any, any>; }' is missing the following properties from typ
-e 'PgDeleteBase<PgTable<TableConfig>, NodePgQueryResultHKT, undefined, undefined, false, never>': _, session, dialect, config, and 10 more.
-230       vi.mocked(mockDb.db.delete).mockReturnValue({
-                                                      ~
-231         where: vi.fn().mockResolvedValue(undefined)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-232       });
-    ~~~~~~~
-server/database.test.ts:255:51 - error TS2345: Argument of type '{ values: Mock<
-any, any>; }' is not assignable to parameter of type 'PgInsertBuilder<PgTable<TableConfig>, NodePgQueryResultHKT, false>'.
-  Type '{ values: Mock<any, any>; }' is missing the following properties from ty
-pe 'PgInsertBuilder<PgTable<TableConfig>, NodePgQueryResultHKT, false>': table, session, dialect, overridingSystemValue, select
-255       vi.mocked(mockDb.db.insert).mockReturnValue({
-                                                      ~
-256         values: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-258         })
-    ~~~~~~~~~~
-259       });
-    ~~~~~~~
-server/database.test.ts:275:51 - error TS2345: Argument of type '{ from: Mock<an
-y, any>; }' is not assignable to parameter of type 'PgSelectBuilder<SelectedFields, "db">'.
-  Type '{ from: Mock<any, any>; }' is missing the following properties from type
- 'PgSelectBuilder<SelectedFields, "db">': fields, session, dialect, withList, distinct
-275       vi.mocked(mockDb.db.select).mockReturnValue({
-                                                      ~
-276         from: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-288         })
-    ~~~~~~~~~~
-289       });
-    ~~~~~~~
-server/database.test.ts:297:51 - error TS2345: Argument of type '{ from: Mock<an
-y, any>; }' is not assignable to parameter of type 'PgSelectBuilder<SelectedFields, "db">'.
-  Type '{ from: Mock<any, any>; }' is missing the following properties from type
- 'PgSelectBuilder<SelectedFields, "db">': fields, session, dialect, withList, distinct
-297       vi.mocked(mockDb.db.select).mockReturnValue({
-                                                      ~
-298         from: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-308         })
-    ~~~~~~~~~~
-309       });
-    ~~~~~~~
-server/database.test.ts:322:51 - error TS2345: Argument of type '{ from: Mock<an
-y, any>; }' is not assignable to parameter of type 'PgSelectBuilder<SelectedFields, "db">'.
-  Type '{ from: Mock<any, any>; }' is missing the following properties from type
- 'PgSelectBuilder<SelectedFields, "db">': fields, session, dialect, withList, distinct
-322       vi.mocked(mockDb.db.select).mockReturnValue({
-                                                      ~
-323         from: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-337         })
-    ~~~~~~~~~~
-338       });
-    ~~~~~~~
-server/database.test.ts:347:51 - error TS2345: Argument of type '{ set: Mock<any
-, any>; }' is not assignable to parameter of type 'PgUpdateBuilder<PgTable<TableConfig>, NodePgQueryResultHKT>'.
-  Type '{ set: Mock<any, any>; }' is missing the following properties from type
-'PgUpdateBuilder<PgTable<TableConfig>, NodePgQueryResultHKT>': table, session, dialect, _, setToken
-347       vi.mocked(mockDb.db.update).mockReturnValue({
-                                                      ~
-348         set: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-352         })
-    ~~~~~~~~~~
-353       });
-    ~~~~~~~
-server/database.test.ts:376:51 - error TS2345: Argument of type '{ values: Mock<
-any, any>; }' is not assignable to parameter of type 'PgInsertBuilder<PgTable<TableConfig>, NodePgQueryResultHKT, false>'.
-  Type '{ values: Mock<any, any>; }' is missing the following properties from ty
-pe 'PgInsertBuilder<PgTable<TableConfig>, NodePgQueryResultHKT, false>': table, session, dialect, overridingSystemValue, select
-376       vi.mocked(mockDb.db.insert).mockReturnValue({
-                                                      ~
-377         values: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-379         })
-    ~~~~~~~~~~
-380       });
-    ~~~~~~~
-server/database.test.ts:384:9 - error TS2561: Object literal may only specify kn
-own properties, but 'originalName' does not exist in type '{ url: string; filena
-me: string; original_name: string; id?: number | undefined; featured?: boolean |
- null | undefined; category?: string | null | undefined; tags?: string[] | null
-| undefined; booking_id?: number | ... 1 more ... | undefined; thumbnail_url?: s
-tring | ... 1 more ... | undefined; ai_analysis?: { ...;...'. Did you mean to write 'original_name'?
-384         originalName: 'IMG_001.jpg',
-            ~~~~~~~~~~~~
-server/database.test.ts:394:51 - error TS2345: Argument of type '{ from: Mock<an
-y, any>; }' is not assignable to parameter of type 'PgSelectBuilder<SelectedFields, "db">'.
-  Type '{ from: Mock<any, any>; }' is missing the following properties from type
- 'PgSelectBuilder<SelectedFields, "db">': fields, session, dialect, withList, distinct
-394       vi.mocked(mockDb.db.select).mockReturnValue({
-                                                      ~
-395         from: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-397         })
-    ~~~~~~~~~~
-398       });
-    ~~~~~~~
-server/database.test.ts:407:51 - error TS2345: Argument of type '{ from: Mock<an
-y, any>; }' is not assignable to parameter of type 'PgSelectBuilder<SelectedFields, "db">'.
-  Type '{ from: Mock<any, any>; }' is missing the following properties from type
- 'PgSelectBuilder<SelectedFields, "db">': fields, session, dialect, withList, distinct
-407       vi.mocked(mockDb.db.select).mockReturnValue({
-                                                      ~
-408         from: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-412         })
-    ~~~~~~~~~~
-413       });
-    ~~~~~~~
-server/database.test.ts:421:51 - error TS2345: Argument of type '{ from: Mock<an
-y, any>; }' is not assignable to parameter of type 'PgSelectBuilder<SelectedFields, "db">'.
-  Type '{ from: Mock<any, any>; }' is missing the following properties from type
- 'PgSelectBuilder<SelectedFields, "db">': fields, session, dialect, withList, distinct
-421       vi.mocked(mockDb.db.select).mockReturnValue({
-                                                      ~
-422         from: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-426         })
-    ~~~~~~~~~~
-427       });
-    ~~~~~~~
-server/database.test.ts:436:51 - error TS2345: Argument of type '{ set: Mock<any
-, any>; }' is not assignable to parameter of type 'PgUpdateBuilder<PgTable<TableConfig>, NodePgQueryResultHKT>'.
-  Type '{ set: Mock<any, any>; }' is missing the following properties from type
-'PgUpdateBuilder<PgTable<TableConfig>, NodePgQueryResultHKT>': table, session, dialect, _, setToken
-436       vi.mocked(mockDb.db.update).mockReturnValue({
-                                                      ~
-437         set: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-441         })
-    ~~~~~~~~~~
-442       });
-    ~~~~~~~
-server/database.test.ts:450:51 - error TS2345: Argument of type '{ where: Mock<a
-ny, any>; }' is not assignable to parameter of type 'PgDeleteBase<PgTable<TableConfig>, NodePgQueryResultHKT, undefined, undefined, false, never>'.
-  Type '{ where: Mock<any, any>; }' is missing the following properties from typ
-e 'PgDeleteBase<PgTable<TableConfig>, NodePgQueryResultHKT, undefined, undefined, false, never>': _, session, dialect, config, and 10 more.
-450       vi.mocked(mockDb.db.delete).mockReturnValue({
-                                                      ~
-451         where: vi.fn().mockResolvedValue(undefined)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-452       });
-    ~~~~~~~
-server/database.test.ts:461:51 - error TS2345: Argument of type '{ from: Mock<an
-y, any>; }' is not assignable to parameter of type 'PgSelectBuilder<SelectedFields, "db">'.
-  Type '{ from: Mock<any, any>; }' is missing the following properties from type
- 'PgSelectBuilder<SelectedFields, "db">': fields, session, dialect, withList, distinct
-461       vi.mocked(mockDb.db.select).mockReturnValue({
-                                                      ~
-462         from: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-464         })
-    ~~~~~~~~~~
-465       });
-    ~~~~~~~
-server/database.test.ts:473:51 - error TS2345: Argument of type '{ from: Mock<an
-y, any>; }' is not assignable to parameter of type 'PgSelectBuilder<SelectedFields, "db">'.
-  Type '{ from: Mock<any, any>; }' is missing the following properties from type
- 'PgSelectBuilder<SelectedFields, "db">': fields, session, dialect, withList, distinct
-473       vi.mocked(mockDb.db.select).mockReturnValue({
-                                                      ~
-474         from: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-476         })
-    ~~~~~~~~~~
-477       });
-    ~~~~~~~
-server/database.test.ts:488:51 - error TS2345: Argument of type '{ from: Mock<an
-y, any>; }' is not assignable to parameter of type 'PgSelectBuilder<SelectedFields, "db">'.
-  Type '{ from: Mock<any, any>; }' is missing the following properties from type
- 'PgSelectBuilder<SelectedFields, "db">': fields, session, dialect, withList, distinct
-488       vi.mocked(mockDb.db.select).mockReturnValue({
-                                                      ~
-489         from: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-491         })
-    ~~~~~~~~~~
-492       });
-    ~~~~~~~
-server/database.test.ts:503:51 - error TS2345: Argument of type '{ from: Mock<an
-y, any>; }' is not assignable to parameter of type 'PgSelectBuilder<SelectedFields, "db">'.
-  Type '{ from: Mock<any, any>; }' is missing the following properties from type
- 'PgSelectBuilder<SelectedFields, "db">': fields, session, dialect, withList, distinct
-503       vi.mocked(mockDb.db.select).mockReturnValue({
-                                                      ~
-504         from: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-508         })
-    ~~~~~~~~~~
-509       });
-    ~~~~~~~
-server/database.test.ts:536:51 - error TS2345: Argument of type '{ values: Mock<
-any, any>; }' is not assignable to parameter of type 'PgInsertBuilder<PgTable<TableConfig>, NodePgQueryResultHKT, false>'.
-  Type '{ values: Mock<any, any>; }' is missing the following properties from ty
-pe 'PgInsertBuilder<PgTable<TableConfig>, NodePgQueryResultHKT, false>': table, session, dialect, overridingSystemValue, select
-536       vi.mocked(mockDb.db.insert).mockReturnValue({
-                                                      ~
-537         values: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-539         })
-    ~~~~~~~~~~
-540       });
-    ~~~~~~~
-server/database.test.ts:543:9 - error TS2561: Object literal may only specify kn
-own properties, but 'clientId' does not exist in type '{ title: string; client_i
-d: number; contract_type: string; template_content: string; id?: number | undefi
-ned; status?: string | undefined; location?: string | null | undefined; delivera
-bles?: string | ... 1 more ... | undefined; ... 23 more ...; updated_at?: Date | ... 1 more ... | undefined; }'. Did you mean to write 'client_id'?
-543         clientId: 1,
-            ~~~~~~~~
-server/database.test.ts:554:51 - error TS2345: Argument of type '{ from: Mock<an
-y, any>; }' is not assignable to parameter of type 'PgSelectBuilder<SelectedFields, "db">'.
-  Type '{ from: Mock<any, any>; }' is missing the following properties from type
- 'PgSelectBuilder<SelectedFields, "db">': fields, session, dialect, withList, distinct
-554       vi.mocked(mockDb.db.select).mockReturnValue({
-                                                      ~
-555         from: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-562         })
-    ~~~~~~~~~~
-563       });
-    ~~~~~~~
-server/database.test.ts:572:51 - error TS2345: Argument of type '{ set: Mock<any
-, any>; }' is not assignable to parameter of type 'PgUpdateBuilder<PgTable<TableConfig>, NodePgQueryResultHKT>'.
-  Type '{ set: Mock<any, any>; }' is missing the following properties from type
-'PgUpdateBuilder<PgTable<TableConfig>, NodePgQueryResultHKT>': table, session, dialect, _, setToken
-572       vi.mocked(mockDb.db.update).mockReturnValue({
-                                                      ~
-573         set: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-577         })
-    ~~~~~~~~~~
-578       });
-    ~~~~~~~
-server/database.test.ts:586:51 - error TS2345: Argument of type '{ set: Mock<any
-, any>; }' is not assignable to parameter of type 'PgUpdateBuilder<PgTable<TableConfig>, NodePgQueryResultHKT>'.
-  Type '{ set: Mock<any, any>; }' is missing the following properties from type
-'PgUpdateBuilder<PgTable<TableConfig>, NodePgQueryResultHKT>': table, session, dialect, _, setToken
-586       vi.mocked(mockDb.db.update).mockReturnValue({
-                                                      ~
-587         set: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-589         })
-    ~~~~~~~~~~
-590       });
-    ~~~~~~~
-server/database.test.ts:614:51 - error TS2345: Argument of type '{ values: Mock<
-any, any>; }' is not assignable to parameter of type 'PgInsertBuilder<PgTable<TableConfig>, NodePgQueryResultHKT, false>'.
-  Type '{ values: Mock<any, any>; }' is missing the following properties from ty
-pe 'PgInsertBuilder<PgTable<TableConfig>, NodePgQueryResultHKT, false>': table, session, dialect, overridingSystemValue, select
-614       vi.mocked(mockDb.db.insert).mockReturnValue({
-                                                      ~
-615         values: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-617         })
-    ~~~~~~~~~~
-618       });
-    ~~~~~~~
-server/database.test.ts:632:51 - error TS2345: Argument of type '{ from: Mock<an
-y, any>; }' is not assignable to parameter of type 'PgSelectBuilder<SelectedFields, "db">'.
-  Type '{ from: Mock<any, any>; }' is missing the following properties from type
- 'PgSelectBuilder<SelectedFields, "db">': fields, session, dialect, withList, distinct
-632       vi.mocked(mockDb.db.select).mockReturnValue({
-                                                      ~
-633         from: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-635         })
-    ~~~~~~~~~~
-636       });
-    ~~~~~~~
-server/database.test.ts:645:51 - error TS2345: Argument of type '{ set: Mock<any
-, any>; }' is not assignable to parameter of type 'PgUpdateBuilder<PgTable<TableConfig>, NodePgQueryResultHKT>'.
-  Type '{ set: Mock<any, any>; }' is missing the following properties from type
-'PgUpdateBuilder<PgTable<TableConfig>, NodePgQueryResultHKT>': table, session, dialect, _, setToken
-645       vi.mocked(mockDb.db.update).mockReturnValue({
-                                                      ~
-646         set: vi.fn().mockReturnValue({
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-...
-650         })
-    ~~~~~~~~~~
-651       });
-    ~~~~~~~
-server/database.test.ts:659:51 - error TS2345: Argument of type '{ where: Mock<a
-ny, any>; }' is not assignable to parameter of type 'PgDeleteBase<PgTable<TableConfig>, NodePgQueryResultHKT, undefined, undefined, false, never>'.
-  Type '{ where: Mock<any, any>; }' is missing the following properties from typ
-e 'PgDeleteBase<PgTable<TableConfig>, NodePgQueryResultHKT, undefined, undefined, false, never>': _, session, dialect, config, and 10 more.
-659       vi.mocked(mockDb.db.delete).mockReturnValue({
-                                                      ~
-660         where: vi.fn().mockResolvedValue(undefined)
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-661       });
-    ~~~~~~~
-server/index.ts:63:21 - error TS6133: 'req' is declared but its value is never read.
-63 app.get('/health', (req, res) => {
-                       ~~~
-server/index.ts:94:24 - error TS6133: 'req' is declared but its value is never read.
-94 app.use((err: unknown, req: express.Request, res: express.Response, next: express.NextFunction) => {
-                          ~~~
-server/index.ts:94:69 - error TS6133: 'next' is declared but its value is never read.
-94 app.use((err: unknown, req: express.Request, res: express.Response, next: express.NextFunction) => {
-                                                                       ~~~~
-server/middleware/fileValidation.ts:52:18 - error TS6133: 'req' is declared but its value is never read.
-52     fileFilter: (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-                    ~~~
-server/routes.test.ts:86:7 - error TS6133: 'server' is declared but its value is never read.
-86   let server: any;
-         ~~~~~~
-server/routes.test.ts:127:55 - error TS2345: Argument of type '{ id: number; nam
-e: string; title: string; bio: string; phone: string; email: string; address: st
-ring; headshot: null; socialMedia: null; isActive: boolean; createdAt: Date; upd
-atedAt: Date; }' is not assignable to parameter of type '{ address: string; titl
-e: string; id: number; name: string; email: string; phone: string; bio: string;
-headshot: string | null; created_at: Date; updated_at: Date; social_media: { ins
-tagram: string; facebook: string; youtube: string; } | null; is_active: boolean; }'.
-  Type '{ id: number; name: string; title: string; bio: string; phone: string; e
-mail: string; address: string; headshot: null; socialMedia: null; isActive: bool
-ean; createdAt: Date; updatedAt: Date; }' is missing the following properties fr
-om type '{ address: string; title: string; id: number; name: string; email: stri
-ng; phone: string; bio: string; headshot: string | null; created_at: Date; updat
-ed_at: Date; social_media: { instagram: string; facebook: string; youtube: strin
-g; } | null; is_active: boolean; }': created_at, updated_at, social_media, is_active
-127       vi.mocked(storage.getProfile).mockResolvedValue(mockProfile);
-                                                          ~~~~~~~~~~~
-server/routes.test.ts:135:55 - error TS2345: Argument of type 'null' is not assi
-gnable to parameter of type '{ address: string; title: string; id: number; name:
- string; email: string; phone: string; bio: string; headshot: string | null; cre
-ated_at: Date; updated_at: Date; social_media: { ...; } | null; is_active: boolean; } | undefined'.
-135       vi.mocked(storage.getProfile).mockResolvedValue(null);
-                                                          ~~~~
-server/routes.test.ts:162:58 - error TS2345: Argument of type '{ createdAt: Date
-; updatedAt: Date; name: string; title: string; bio: string; phone: string; emai
-l: string; address: string; headshot: null; socialMedia: null; isActive: boolean
-; id: number; }' is not assignable to parameter of type '{ address: string; titl
-e: string; id: number; name: string; email: string; phone: string; bio: string;
-headshot: string | null; created_at: Date; updated_at: Date; social_media: { ins
-tagram: string; facebook: string; youtube: string; } | null; is_active: boolean; }'.
-  Type '{ createdAt: Date; updatedAt: Date; name: string; title: string; bio: st
-ring; phone: string; email: string; address: string; headshot: null; socialMedia
-: null; isActive: boolean; id: number; }' is missing the following properties fr
-om type '{ address: string; title: string; id: number; name: string; email: stri
-ng; phone: string; bio: string; headshot: string | null; created_at: Date; updat
-ed_at: Date; social_media: { instagram: string; facebook: string; youtube: strin
-g; } | null; is_active: boolean; }': created_at, updated_at, social_media, is_active
-162       vi.mocked(storage.updateProfile).mockResolvedValue(updatedProfile);
-                                                             ~~~~~~~~~~~~~~
-server/routes.test.ts:187:13 - error TS6133: 'mockFile' is declared but its value is never read.
-187       const mockFile = {
-                ~~~~~~~~
-server/routes.test.ts:203:63 - error TS2345: Argument of type '{ id: number; fil
-ename: string; url: string; category: string; }' is not assignable to parameter
-of type '{ id: number; url: string; featured: boolean | null; category: string |
- null; tags: string[] | null; booking_id: number | null; filename: string; origi
-nal_name: string; thumbnail_url: string | null; ai_analysis: { ...; } | null; uploaded_at: Date; }'.
-  Type '{ id: number; filename: string; url: string; category: string; }' is mis
-sing the following properties from type '{ id: number; url: string; featured: bo
-olean | null; category: string | null; tags: string[] | null; booking_id: number
- | null; filename: string; original_name: string; thumbnail_url: string | null;
-ai_analysis: { ...; } | null; uploaded_at: Date; }': featured, tags, booking_id, original_name, and 3 more.
-203       vi.mocked(storage.createGalleryImage).mockResolvedValue(mockImage);
-                                                                  ~~~~~~~~~
-server/routes.test.ts:233:55 - error TS2345: Argument of type '{ id: number; nam
-e: string; email: string; }[]' is not assignable to parameter of type '{ id: num
-ber; name: string; status: string; email: string; phone: string | null; notes: s
-tring | null; leadSource: string | null; preferredCommunication: string | null; timezone: string | null; ... 9 more ...; referralSource: string | null; }[]'.
-  Type '{ id: number; name: string; email: string; }' is missing the following p
-roperties from type '{ id: number; name: string; status: string; email: string;
-phone: string | null; notes: string | null; leadSource: string | null; preferred
-Communication: string | null; timezone: string | null; ... 9 more ...; referralSource: string | null; }': status, phone, notes, leadSource, and 12 more.
-233       vi.mocked(storage.getClients).mockResolvedValue(mockClients);
-                                                          ~~~~~~~~~~~
-server/routes.test.ts:248:57 - error TS2345: Argument of type '{ name: string; e
-mail: string; phone: string; id: number; }' is not assignable to parameter of ty
-pe '{ id: number; name: string; status: string; email: string; phone: string | n
-ull; notes: string | null; leadSource: string | null; preferredCommunication: st
-ring | null; timezone: string | null; ... 9 more ...; referralSource: string | null; }'.
-  Type '{ name: string; email: string; phone: string; id: number; }' is missing
-the following properties from type '{ id: number; name: string; status: string;
-email: string; phone: string | null; notes: string | null; leadSource: string |
-null; preferredCommunication: string | null; timezone: string | null; ... 9 more
- ...; referralSource: string | null; }': status, notes, leadSource, preferredCommunication, and 11 more.
-248       vi.mocked(storage.createClient).mockResolvedValue(mockClient);
-                                                            ~~~~~~~~~~
-server/routes.test.ts:266:62 - error TS2345: Argument of type '{ id: number; nam
-e: string; price: number; active: boolean; }[]' is not assignable to parameter o
-f type '{ id: number; name: string; duration: number; description: string | null
-; category: string; images: string[] | null; active: boolean | null; price: string; addOns: { id: string; name: string; price: number; }[] | null; }[]'.
-  Type '{ id: number; name: string; price: number; active: boolean; }' is missin
-g the following properties from type '{ id: number; name: string; duration: numb
-er; description: string | null; category: string; images: string[] | null; activ
-e: boolean | null; price: string; addOns: { id: string; name: string; price: number; }[] | null; }': duration, description, category, images, addOns
-266       vi.mocked(storage.getActiveServices).mockResolvedValue(mockServices);
-                                                                 ~~~~~~~~~~~~
-server/routes.test.ts:282:58 - error TS2345: Argument of type '{ name: string; p
-rice: number; duration: number; description: string; id: number; }' is not assig
-nable to parameter of type '{ id: number; name: string; duration: number; descri
-ption: string | null; category: string; images: string[] | null; active: boolean
- | null; price: string; addOns: { id: string; name: string; price: number; }[] | null; }'.
-  Type '{ name: string; price: number; duration: number; description: string; id
-: number; }' is missing the following properties from type '{ id: number; name:
-string; duration: number; description: string | null; category: string; images:
-string[] | null; active: boolean | null; price: string; addOns: { id: string; name: string; price: number; }[] | null; }': category, images, active, addOns
-282       vi.mocked(storage.createService).mockResolvedValue(mockService);
-                                                             ~~~~~~~~~~~
-server/routes.test.ts:296:58 - error TS2345: Argument of type '{ name: string; p
-rice: number; id: number; }' is not assignable to parameter of type '{ id: numbe
-r; name: string; duration: number; description: string | null; category: string;
- images: string[] | null; active: boolean | null; price: string; addOns: { id: string; name: string; price: number; }[] | null; }'.
-  Type '{ name: string; price: number; id: number; }' is missing the following p
-roperties from type '{ id: number; name: string; duration: number; description:
-string | null; category: string; images: string[] | null; active: boolean | null
-; price: string; addOns: { id: string; name: string; price: number; }[] | null; }': duration, description, category, images, and 2 more.
-296       vi.mocked(storage.updateService).mockResolvedValue(mockService);
-                                                             ~~~~~~~~~~~
-server/routes.test.ts:314:56 - error TS2345: Argument of type '{ id: number; cli
-entId: number; serviceId: number; date: string; status: string; }[]' is not assi
-gnable to parameter of type '({ id: number; duration: number; status: string; lo
-cation: string | null; date: Date; serviceId: number; notes: string | null; tota
-lPrice: string; clientId: number; addOns: { id: string; name: string; price: number; }[] | null; createdAt: Date; depositPaid: boolean | null; } & { ...; })[]'.
-  Type '{ id: number; clientId: number; serviceId: number; date: string; status:
- string; }' is not assignable to type '{ id: number; duration: number; status: s
-tring; location: string | null; date: Date; serviceId: number; notes: string | n
-ull; totalPrice: string; clientId: number; addOns: { id: string; name: string; p
-rice: number; }[] | null; createdAt: Date; depositPaid: boolean | null; } & { ...; }'.
-    Type '{ id: number; clientId: number; serviceId: number; date: string; statu
-s: string; }' is missing the following properties from type '{ id: number; durat
-ion: number; status: string; location: string | null; date: Date; serviceId: num
-ber; notes: string | null; totalPrice: string; clientId: number; addOns: { id: s
-tring; name: string; price: number; }[] | null; createdAt: Date; depositPaid: boolean | null; }': duration, location, notes, totalPrice, and 3 more.
-314       vi.mocked(storage.getBookings).mockResolvedValue(mockBookings);
-                                                           ~~~~~~~~~~~~
-server/routes.test.ts:334:61 - error TS2345: Argument of type 'null' is not assi
-gnable to parameter of type '{ id: number; name: string; status: string; email:
-string; phone: string | null; notes: string | null; leadSource: string | null; p
-referredCommunication: string | null; timezone: string | null; ... 9 more ...; referralSource: string | null; } | undefined'.
-334       vi.mocked(storage.getClientByEmail).mockResolvedValue(null);
-                                                                ~~~~
-server/routes.test.ts:335:57 - error TS2345: Argument of type '{ id: number; nam
-e: string; email: string; }' is not assignable to parameter of type '{ id: numbe
-r; name: string; status: string; email: string; phone: string | null; notes: str
-ing | null; leadSource: string | null; preferredCommunication: string | null; timezone: string | null; ... 9 more ...; referralSource: string | null; }'.
-  Type '{ id: number; name: string; email: string; }' is missing the following p
-roperties from type '{ id: number; name: string; status: string; email: string;
-phone: string | null; notes: string | null; leadSource: string | null; preferred
-Communication: string | null; timezone: string | null; ... 9 more ...; referralSource: string | null; }': status, phone, notes, leadSource, and 12 more.
-335       vi.mocked(storage.createClient).mockResolvedValue(mockClient);
-                                                            ~~~~~~~~~~
-server/routes.test.ts:336:58 - error TS2345: Argument of type '{ serviceId: numb
-er; date: string; location: string; totalPrice: string; clientName: string; clie
-ntEmail: string; id: number; }' is not assignable to parameter of type '{ id: nu
-mber; duration: number; status: string; location: string | null; date: Date; ser
-viceId: number; notes: string | null; totalPrice: string; clientId: number; addO
-ns: { id: string; name: string; price: number; }[] | null; createdAt: Date; depositPaid: boolean | null; }'.
-  Type '{ serviceId: number; date: string; location: string; totalPrice: string;
- clientName: string; clientEmail: string; id: number; }' is missing the followin
-g properties from type '{ id: number; duration: number; status: string; location
-: string | null; date: Date; serviceId: number; notes: string | null; totalPrice
-: string; clientId: number; addOns: { id: string; name: string; price: number; }
-[] | null; createdAt: Date; depositPaid: boolean | null; }': duration, status, notes, clientId, and 3 more.
-336       vi.mocked(storage.createBooking).mockResolvedValue(mockBooking);
-                                                             ~~~~~~~~~~~
-server/routes.test.ts:354:61 - error TS2345: Argument of type '{ id: number; url
-: string; category: string; }[]' is not assignable to parameter of type '{ id: n
-umber; url: string; featured: boolean | null; category: string | null; tags: str
-ing[] | null; booking_id: number | null; filename: string; original_name: string
-; thumbnail_url: string | null; ai_analysis: { ...; } | null; uploaded_at: Date; }[]'.
-  Type '{ id: number; url: string; category: string; }' is missing the following
- properties from type '{ id: number; url: string; featured: boolean | null; cate
-gory: string | null; tags: string[] | null; booking_id: number | null; filename:
- string; original_name: string; thumbnail_url: string | null; ai_analysis: { ...
-; } | null; uploaded_at: Date; }': featured, tags, booking_id, filename, and 4 more.
-354       vi.mocked(storage.getGalleryImages).mockResolvedValue(mockImages);
-                                                                ~~~~~~~~~~
-server/routes.test.ts:369:63 - error TS2345: Argument of type '{ url: string; ca
-tegory: string; featured: boolean; id: number; }' is not assignable to parameter
- of type '{ id: number; url: string; featured: boolean | null; category: string
-| null; tags: string[] | null; booking_id: number | null; filename: string; orig
-inal_name: string; thumbnail_url: string | null; ai_analysis: { ...; } | null; uploaded_at: Date; }'.
-  Type '{ url: string; category: string; featured: boolean; id: number; }' is mi
-ssing the following properties from type '{ id: number; url: string; featured: b
-oolean | null; category: string | null; tags: string[] | null; booking_id: numbe
-r | null; filename: string; original_name: string; thumbnail_url: string | null;
- ai_analysis: { ...; } | null; uploaded_at: Date; }': tags, booking_id, filename, original_name, and 3 more.
-369       vi.mocked(storage.createGalleryImage).mockResolvedValue(mockImage);
-                                                                  ~~~~~~~~~
-server/routes.ts:66:41 - error TS2345: Argument of type 'ZodObject<{ name: ZodSt
-ring; status: ZodOptional<ZodString>; email: ZodString; phone: ZodOptional<ZodNu
-llable<ZodString>>; ... 13 more ...; referralSource: ZodOptional<...>; }, { ...; }>' is not assignable to parameter of type 'ZodType<any, any, any>'.
-  Type 'ZodObject<{ name: ZodString; status: ZodOptional<ZodString>; email: ZodS
-tring; phone: ZodOptional<ZodNullable<ZodString>>; ... 13 more ...; referralSour
-ce: ZodOptional<...>; }, { ...; }>' is missing the following properties from typ
-e 'ZodType<any, any, any>': _type, _parse, _getType, _getOrReturnCtx, and 7 more.
-66   app.post("/api/clients", validateBody(insertClientSchema), async (req, res) => {
-                                           ~~~~~~~~~~~~~~~~~~
-server/routes.ts:99:42 - error TS2345: Argument of type 'ZodObject<{ name: ZodSt
-ring; duration: ZodInt; description: ZodOptional<ZodNullable<ZodString>>; catego
-ry: ZodString; images: ZodOptional<...>; active: ZodOptional<...>; price: ZodStr
-ing; addOns: ZodOptional<...>; }, { ...; }>' is not assignable to parameter of type 'ZodType<any, any, any>'.
-  Type 'ZodObject<{ name: ZodString; duration: ZodInt; description: ZodOptional<
-ZodNullable<ZodString>>; category: ZodString; images: ZodOptional<...>; active:
-ZodOptional<...>; price: ZodString; addOns: ZodOptional<...>; }, { ...; }>' is m
-issing the following properties from type 'ZodType<any, any, any>': _type, _parse, _getType, _getOrReturnCtx, and 7 more.
-99   app.post("/api/services", validateBody(insertServiceSchema), async (req, res) => {
-                                            ~~~~~~~~~~~~~~~~~~~
-server/routes.ts:786:29 - error TS2551: Property 'created_at' does not exist on
-type '{ id: number; duration: number; status: string; location: string | null; d
-ate: Date; serviceId: number; notes: string | null; totalPrice: string; clientId
-: number; addOns: { id: string; name: string; price: number; }[] | null; createdAt: Date; depositPaid: boolean | null; } & { ...; }'. Did you mean 'createdAt'?
-786         createdAt = booking.created_at;
-                                ~~~~~~~~~~
-server/routes.ts:797:29 - error TS2551: Property 'thumbnailUrl' does not exist o
-n type '{ id: number; url: string; featured: boolean | null; category: string |
-null; tags: string[] | null; booking_id: number | null; filename: string; origin
-al_name: string; thumbnail_url: string | null; ai_analysis: { ...; } | null; uploaded_at: Date; }'. Did you mean 'thumbnail_url'?
-797           thumbnailUrl: img.thumbnailUrl || img.url,
-                                ~~~~~~~~~~~~
-server/routes.ts:859:46 - error TS2551: Property 'serviceType' does not exist on
- type '{ title: string; id: number; status: string; location: string | null; del
-iverables: string | null; timeline: string | null; created_at: Date | null; clie
-nt_id: number; booking_id: number | null; ... 22 more ...; updated_at: Date | null; } & { ...; }'. Did you mean 'service_type'?
-859         title: contract.title || `${contract.serviceType || 'Photography'} Contract`,
-                                                 ~~~~~~~~~~~
-server/routes.ts:861:34 - error TS2551: Property 'clientSignedAt' does not exist
- on type '{ title: string; id: number; status: string; location: string | null;
-deliverables: string | null; timeline: string | null; created_at: Date | null; c
-lient_id: number; booking_id: number | null; ... 22 more ...; updated_at: Date | null; } & { ...; }'. Did you mean 'client_signed_at'?
-861         clientSignedAt: contract.clientSignedAt,
-                                     ~~~~~~~~~~~~~~
-server/routes.ts:862:40 - error TS2551: Property 'photographerSignedAt' does not
- exist on type '{ title: string; id: number; status: string; location: string |
-null; deliverables: string | null; timeline: string | null; created_at: Date | n
-ull; client_id: number; booking_id: number | null; ... 22 more ...; updated_at: Date | null; } & { ...; }'. Did you mean 'photographer_signed_at'?
-862         photographerSignedAt: contract.photographerSignedAt,
-                                           ~~~~~~~~~~~~~~~~~~~~
-server/routes.ts:863:33 - error TS2551: Property 'isFullySigned' does not exist
-on type '{ title: string; id: number; status: string; location: string | null; d
-eliverables: string | null; timeline: string | null; created_at: Date | null; cl
-ient_id: number; booking_id: number | null; ... 22 more ...; updated_at: Date | null; } & { ...; }'. Did you mean 'is_fully_signed'?
-863         isFullySigned: contract.isFullySigned,
-                                    ~~~~~~~~~~~~~
-server/routes.ts:864:29 - error TS2551: Property 'createdAt' does not exist on t
-ype '{ title: string; id: number; status: string; location: string | null; deliv
-erables: string | null; timeline: string | null; created_at: Date | null; client
-_id: number; booking_id: number | null; ... 22 more ...; updated_at: Date | null; } & { ...; }'. Did you mean 'created_at'?
-864         createdAt: contract.createdAt,
-                                ~~~~~~~~~
-server/routes.ts:865:31 - error TS2551: Property 'totalAmount' does not exist on
- type '{ title: string; id: number; status: string; location: string | null; del
-iverables: string | null; timeline: string | null; created_at: Date | null; clie
-nt_id: number; booking_id: number | null; ... 22 more ...; updated_at: Date | null; } & { ...; }'. Did you mean 'total_amount'?
-865         totalAmount: contract.totalAmount,
-                                  ~~~~~~~~~~~
-server/routes.ts:867:58 - error TS2551: Property 'clientSignedAt' does not exist
- on type '{ title: string; id: number; status: string; location: string | null;
-deliverables: string | null; timeline: string | null; created_at: Date | null; c
-lient_id: number; booking_id: number | null; ... 22 more ...; updated_at: Date | null; } & { ...; }'. Did you mean 'client_signed_at'?
-867         signUrl: contract.status === 'sent' && !contract.clientSignedAt ? `/client-portal/contract/${contract.portalAccessToken}` : null,
-                                                             ~~~~~~~~~~~~~~
-server/routes.ts:867:111 - error TS2551: Property 'portalAccessToken' does not e
-xist on type '{ title: string; id: number; status: string; location: string | nu
-ll; deliverables: string | null; timeline: string | null; created_at: Date | nul
-l; client_id: number; booking_id: number | null; ... 22 more ...; updated_at: Date | null; } & { ...; }'. Did you mean 'portal_access_token'?
-867         signUrl: contract.status === 'sent' && !contract.clientSignedAt ? `/client-portal/contract/${contract.portalAccessToken}` : null,
+node_modules/drizzle-orm/gel-core/columns/date-duration.d.ts:1:35 - error TS2307: Cannot find module 'gel' or its corresponding type declarations.
+1 import type { DateDuration } from 'gel';
+                                    ~~~~~
+node_modules/drizzle-orm/gel-core/columns/duration.d.ts:1:31 - error TS2307: Cannot find module 'gel' or its corresponding type declarations.
+1 import type { Duration } from 'gel';
+                                ~~~~~
+node_modules/drizzle-orm/gel-core/columns/localdate.d.ts:1:32 - error TS2307: Cannot find module 'gel' or its corresponding type declarations.
+1 import type { LocalDate } from 'gel';
+                                 ~~~~~
+node_modules/drizzle-orm/gel-core/columns/localtime.d.ts:1:32 - error TS2307: Cannot find module 'gel' or its corresponding type declarations.
+1 import type { LocalTime } from 'gel';
+                                 ~~~~~
+node_modules/drizzle-orm/gel-core/columns/relative-duration.d.ts:1:39 - error TS2307: Cannot find module 'gel' or its corresponding type declarations.
+1 import type { RelativeDuration } from 'gel';
+                                        ~~~~~
+node_modules/drizzle-orm/gel-core/columns/timestamp.d.ts:1:36 - error TS2307: Cannot find module 'gel' or its corresponding type declarations.
+1 import type { LocalDateTime } from 'gel';
+                                     ~~~~~
+node_modules/drizzle-orm/gel-core/query-builders/query.d.ts:23:22 - error TS2420
+: Class 'GelRelationalQuery<TResult>' incorrectly implements interface 'SQLWrapper'.
+  Property 'getSQL' is missing in type 'GelRelationalQuery<TResult>' but required in type 'SQLWrapper'.
+23 export declare class GelRelationalQuery<TResult> extends QueryPromise<TResult> implements RunnableQuery<TResult, 'gel'>, SQLWrapper {
+                        ~~~~~~~~~~~~~~~~~~
+  node_modules/drizzle-orm/sql/sql.d.ts:50:5
+    50     getSQL(): SQL;
+           ~~~~~~~~~~~~~~
+    'getSQL' is declared here.
+node_modules/drizzle-orm/gel-core/roles.d.ts:7:22 - error TS2559: Type 'GelRole' has no properties in common with type 'GelRoleConfig'.
+7 export declare class GelRole implements GelRoleConfig {
+                       ~~~~~~~
+node_modules/drizzle-orm/mysql-core/db.d.ts:1:38 - error TS2307: Cannot find module 'mysql2/promise' or its corresponding type declarations.
+1 import type { ResultSetHeader } from 'mysql2/promise';
+                                       ~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/mysql-core/query-builders/delete.d.ts:36:22 - error TS2
+420: Class 'MySqlDeleteBase<TTable, TQueryResult, TPreparedQueryHKT, TDynamic, TExcludedMethods>' incorrectly implements interface 'SQLWrapper'.
+  Property 'getSQL' is missing in type 'MySqlDeleteBase<TTable, TQueryResult, TPreparedQueryHKT, TDynamic, TExcludedMethods>' but required in type 'SQLWrapper'.
+36 export declare class MySqlDeleteBase<TTable extends MySqlTable, TQueryResult
+extends MySqlQueryResultHKT, TPreparedQueryHKT extends PreparedQueryHKTBase, TDy
+namic extends boolean = false, TExcludedMethods extends string = never> extends QueryPromise<MySqlQueryResultKind<TQueryResult, never>> implements SQLWrapper {
+                        ~~~~~~~~~~~~~~~
+  node_modules/drizzle-orm/sql/sql.d.ts:50:5
+    50     getSQL(): SQL;
+           ~~~~~~~~~~~~~~
+    'getSQL' is declared here.
+node_modules/drizzle-orm/mysql-core/query-builders/select.d.ts:294:244 - error TS2344: Type 'string' does not satisfy the constraint 'keyof this & string'.
+  Type 'string' is not assignable to type 'keyof this & string'.
+    Type 'string' is not assignable to type 'keyof this'.
+      Type '"session"' is not assignable to type '"offset" | "_" | "getSQL" | "a
+s" | "union" | "intersect" | "except" | "for" | "where" | "orderBy" | "limit" |
+"leftJoin" | "rightJoin" | "innerJoin" | "toSQL" | "$dynamic" | "having" | ... 8 more ... | "$withCache"'.
+294     union: <TValue extends MySqlSetOperatorWithResult<TResult>>(rightSelecti
+on: ((setOperators: GetMySqlSetOperators) => SetOperatorRightSelect<TValue, TRes
+ult>) | SetOperatorRightSelect<TValue, TResult>) => MySqlSelectWithout<this, TDynamic, MySqlSetOperatorExcludedMethods, true>;
 
-                                  ~~~~~~~~~~~~~~~~~
-server/routes.ts:868:35 - error TS2551: Property 'templateContent' does not exis
-t on type '{ title: string; id: number; status: string; location: string | null;
- deliverables: string | null; timeline: string | null; created_at: Date | null;
-client_id: number; booking_id: number | null; ... 22 more ...; updated_at: Date | null; } & { ...; }'. Did you mean 'template_content'?
-868         templateContent: contract.templateContent
-                                      ~~~~~~~~~~~~~~~
-server/routes.ts:905:27 - error TS2551: Property 'photographerSignedAt' does not
- exist on type '{ title: string; id: number; status: string; location: string |
-null; deliverables: string | null; timeline: string | null; created_at: Date | n
-ull; client_id: number; booking_id: number | null; ... 22 more ...; updated_at: Date | null; }'. Did you mean 'photographer_signed_at'?
-905       if (updatedContract.photographerSignedAt) {
-                              ~~~~~~~~~~~~~~~~~~~~
-server/routes.ts:907:11 - error TS2561: Object literal may only specify known pr
-operties, but 'isFullySigned' does not exist in type 'Partial<{ title: string; c
-lient_id: number; contract_type: string; template_content: string; id?: number |
- undefined; status?: string | undefined; location?: string | null | undefined; d
-eliverables?: string | ... 1 more ... | undefined; ... 23 more ...; updated_at?:
- Date | ... 1 more ... | undefined; }>'. Did you mean to write 'is_fully_signed'?
-907           isFullySigned: true,
-              ~~~~~~~~~~~~~
-server/routes.ts:929:49 - error TS2551: Property 'portalAccessToken' does not ex
-ist on type '{ title: string; id: number; status: string; location: string | nul
-l; deliverables: string | null; timeline: string | null; created_at: Date | null
-; client_id: number; booking_id: number | null; ... 22 more ...; updated_at: Date | null; } & { ...; }'. Did you mean 'portal_access_token'?
-929       const contract = allContracts.find(c => c.portalAccessToken === token);
-                                                    ~~~~~~~~~~~~~~~~~
-server/routes.ts:935:20 - error TS2551: Property 'clientSignedAt' does not exist
- on type '{ title: string; id: number; status: string; location: string | null;
-deliverables: string | null; timeline: string | null; created_at: Date | null; c
-lient_id: number; booking_id: number | null; ... 22 more ...; updated_at: Date | null; } & { ...; }'. Did you mean 'client_signed_at'?
-935       if (contract.clientSignedAt) {
-                       ~~~~~~~~~~~~~~
-server/routes.ts:942:35 - error TS2551: Property 'templateContent' does not exis
-t on type '{ title: string; id: number; status: string; location: string | null;
- deliverables: string | null; timeline: string | null; created_at: Date | null;
-client_id: number; booking_id: number | null; ... 22 more ...; updated_at: Date | null; } & { ...; }'. Did you mean 'template_content'?
-942         templateContent: contract.templateContent,
-                                      ~~~~~~~~~~~~~~~
-server/routes.ts:943:31 - error TS2551: Property 'totalAmount' does not exist on
- type '{ title: string; id: number; status: string; location: string | null; del
-iverables: string | null; timeline: string | null; created_at: Date | null; clie
-nt_id: number; booking_id: number | null; ... 22 more ...; updated_at: Date | null; } & { ...; }'. Did you mean 'total_amount'?
-943         totalAmount: contract.totalAmount,
-                                  ~~~~~~~~~~~
-server/routes.ts:944:29 - error TS2551: Property 'createdAt' does not exist on t
-ype '{ title: string; id: number; status: string; location: string | null; deliv
-erables: string | null; timeline: string | null; created_at: Date | null; client
-_id: number; booking_id: number | null; ... 22 more ...; updated_at: Date | null; } & { ...; }'. Did you mean 'created_at'?
-944         createdAt: contract.createdAt,
-                                ~~~~~~~~~
-server/routes.ts:945:28 - error TS2551: Property 'clientId' does not exist on ty
-pe '{ title: string; id: number; status: string; location: string | null; delive
-rables: string | null; timeline: string | null; created_at: Date | null; client_
-id: number; booking_id: number | null; ... 22 more ...; updated_at: Date | null; } & { ...; }'. Did you mean 'client_id'?
-945         clientId: contract.clientId
-                               ~~~~~~~~
-server/routes.ts:1019:53 - error TS2551: Property 'client_id' does not exist on
-type '{ id: number; duration: number; status: string; location: string | null; d
-ate: Date; serviceId: number; notes: string | null; totalPrice: string; clientId
-: number; addOns: { id: string; name: string; price: number; }[] | null; createdAt: Date; depositPaid: boolean | null; } & { ...; }'. Did you mean 'clientId'?
-1019       const clientBookings = bookings.filter(b => b.client_id === clientId);
-                                                         ~~~~~~~~~
-server/routes.ts:1028:30 - error TS2551: Property 'created_at' does not exist on
- type '{ id: number; duration: number; status: string; location: string | null;
-date: Date; serviceId: number; notes: string | null; totalPrice: string; clientI
-d: number; addOns: { id: string; name: string; price: number; }[] | null; createdAt: Date; depositPaid: boolean | null; } & { ...; }'. Did you mean 'createdAt'?
-1028         createdDate: booking.created_at || new Date().toISOString(),
-                                  ~~~~~~~~~~
+
+
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/mysql-core/query-builders/select.d.ts:320:247 - error TS2344: Type 'string' does not satisfy the constraint 'keyof this & string'.
+  Type 'string' is not assignable to type 'keyof this & string'.
+    Type 'string' is not assignable to type 'keyof this'.
+      Type '"session"' is not assignable to type '"offset" | "_" | "getSQL" | "a
+s" | "union" | "intersect" | "except" | "for" | "where" | "orderBy" | "limit" |
+"leftJoin" | "rightJoin" | "innerJoin" | "toSQL" | "$dynamic" | "having" | ... 8 more ... | "$withCache"'.
+320     unionAll: <TValue extends MySqlSetOperatorWithResult<TResult>>(rightSele
+ction: ((setOperators: GetMySqlSetOperators) => SetOperatorRightSelect<TValue, T
+Result>) | SetOperatorRightSelect<TValue, TResult>) => MySqlSelectWithout<this, TDynamic, MySqlSetOperatorExcludedMethods, true>;
+
+
+
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/mysql-core/query-builders/select.d.ts:346:248 - error TS2344: Type 'string' does not satisfy the constraint 'keyof this & string'.
+  Type 'string' is not assignable to type 'keyof this & string'.
+    Type 'string' is not assignable to type 'keyof this'.
+      Type '"session"' is not assignable to type '"offset" | "_" | "getSQL" | "a
+s" | "union" | "intersect" | "except" | "for" | "where" | "orderBy" | "limit" |
+"leftJoin" | "rightJoin" | "innerJoin" | "toSQL" | "$dynamic" | "having" | ... 8 more ... | "$withCache"'.
+346     intersect: <TValue extends MySqlSetOperatorWithResult<TResult>>(rightSel
+ection: ((setOperators: GetMySqlSetOperators) => SetOperatorRightSelect<TValue,
+TResult>) | SetOperatorRightSelect<TValue, TResult>) => MySqlSelectWithout<this, TDynamic, MySqlSetOperatorExcludedMethods, true>;
+
+
+
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/mysql-core/query-builders/select.d.ts:387:251 - error TS2344: Type 'string' does not satisfy the constraint 'keyof this & string'.
+  Type 'string' is not assignable to type 'keyof this & string'.
+    Type 'string' is not assignable to type 'keyof this'.
+      Type '"session"' is not assignable to type '"offset" | "_" | "getSQL" | "a
+s" | "union" | "intersect" | "except" | "for" | "where" | "orderBy" | "limit" |
+"leftJoin" | "rightJoin" | "innerJoin" | "toSQL" | "$dynamic" | "having" | ... 8 more ... | "$withCache"'.
+387     intersectAll: <TValue extends MySqlSetOperatorWithResult<TResult>>(right
+Selection: ((setOperators: GetMySqlSetOperators) => SetOperatorRightSelect<TValu
+e, TResult>) | SetOperatorRightSelect<TValue, TResult>) => MySqlSelectWithout<this, TDynamic, MySqlSetOperatorExcludedMethods, true>;
+
+
+
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/mysql-core/query-builders/select.d.ts:413:245 - error TS2344: Type 'string' does not satisfy the constraint 'keyof this & string'.
+  Type 'string' is not assignable to type 'keyof this & string'.
+    Type 'string' is not assignable to type 'keyof this'.
+      Type '"session"' is not assignable to type '"offset" | "_" | "getSQL" | "a
+s" | "union" | "intersect" | "except" | "for" | "where" | "orderBy" | "limit" |
+"leftJoin" | "rightJoin" | "innerJoin" | "toSQL" | "$dynamic" | "having" | ... 8 more ... | "$withCache"'.
+413     except: <TValue extends MySqlSetOperatorWithResult<TResult>>(rightSelect
+ion: ((setOperators: GetMySqlSetOperators) => SetOperatorRightSelect<TValue, TRe
+sult>) | SetOperatorRightSelect<TValue, TResult>) => MySqlSelectWithout<this, TDynamic, MySqlSetOperatorExcludedMethods, true>;
+
+
+
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/mysql-core/query-builders/select.d.ts:454:248 - error TS2344: Type 'string' does not satisfy the constraint 'keyof this & string'.
+  Type 'string' is not assignable to type 'keyof this & string'.
+    Type 'string' is not assignable to type 'keyof this'.
+      Type '"session"' is not assignable to type '"offset" | "_" | "getSQL" | "a
+s" | "union" | "intersect" | "except" | "for" | "where" | "orderBy" | "limit" |
+"leftJoin" | "rightJoin" | "innerJoin" | "toSQL" | "$dynamic" | "having" | ... 8 more ... | "$withCache"'.
+454     exceptAll: <TValue extends MySqlSetOperatorWithResult<TResult>>(rightSel
+ection: ((setOperators: GetMySqlSetOperators) => SetOperatorRightSelect<TValue,
+TResult>) | SetOperatorRightSelect<TValue, TResult>) => MySqlSelectWithout<this, TDynamic, MySqlSetOperatorExcludedMethods, true>;
+
+
+
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/mysql-core/query-builders/select.d.ts:611:22 - error TS
+2515: Non-abstract class 'MySqlSelectBase<TTableName, TSelection, TSelectMode, T
+PreparedQueryHKT, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSelecte
+dFields>' does not implement inherited abstract member getSQL from class 'MySqlS
+electQueryBuilderBase<MySqlSelectHKT, TTableName, TSelection, TSelectMode, TPrep
+aredQueryHKT, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields>'.
+611 export declare class MySqlSelectBase<TTableName extends string | undefined,
+TSelection, TSelectMode extends SelectMode, TPreparedQueryHKT extends PreparedQu
+eryHKTBase, TNullabilityMap extends Record<string, JoinNullability> = TTableName
+ extends string ? Record<TTableName, 'not-null'> : {}, TDynamic extends boolean
+= false, TExcludedMethods extends string = never, TResult = SelectResult<TSelect
+ion, TSelectMode, TNullabilityMap>[], TSelectedFields = BuildSubquerySelection<T
+Selection, TNullabilityMap>> extends MySqlSelectQueryBuilderBase<MySqlSelectHKT,
+ TTableName, TSelection, TSelectMode, TPreparedQueryHKT, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields> {
+                         ~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/mysql-core/query-builders/select.types.d.ts:138:1149 -
+error TS2344: Type 'MySqlSetOperatorExcludedMethods' does not satisfy the constr
+aint '"offset" | "_" | "getSQL" | "as" | "union" | "intersect" | "except" | "for
+" | "where" | "orderBy" | "limit" | "execute" | "leftJoin" | "rightJoin" | "innerJoin" | "toSQL" | "prepare" | ... 14 more ... | "iterator"'.
+  Type '"session"' is not assignable to type '"offset" | "_" | "getSQL" | "as" |
+ "union" | "intersect" | "except" | "for" | "where" | "orderBy" | "limit" | "exe
+cute" | "leftJoin" | "rightJoin" | "innerJoin" | "toSQL" | "prepare" | ... 14 more ... | "iterator"'.
+138 export type MySqlCreateSetOperatorFn = <TTableName extends string | undefine
+d, TSelection extends ColumnsSelection, TSelectMode extends SelectMode, TValue e
+xtends MySqlSetOperatorWithResult<TResult>, TRest extends MySqlSetOperatorWithRe
+sult<TResult>[], TPreparedQueryHKT extends PreparedQueryHKTBase = PreparedQueryH
+KTBase, TNullabilityMap extends Record<string, JoinNullability> = TTableName ext
+ends string ? Record<TTableName, 'not-null'> : {}, TDynamic extends boolean = fa
+lse, TExcludedMethods extends string = never, TResult extends any[] = SelectResu
+lt<TSelection, TSelectMode, TNullabilityMap>[], TSelectedFields extends ColumnsS
+election = BuildSubquerySelection<TSelection, TNullabilityMap>>(leftSelect: MySq
+lSetOperatorInterface<TTableName, TSelection, TSelectMode, TPreparedQueryHKT, TN
+ullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields>, rightSelec
+t: SetOperatorRightSelect<TValue, TResult>, ...restSelects: SetOperatorRestSelec
+t<TRest, TResult>) => MySqlSelectWithout<MySqlSelectBase<TTableName, TSelection,
+ TSelectMode, TPreparedQueryHKT, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields>, false, MySqlSetOperatorExcludedMethods, true>;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/node-postgres/session.d.ts:2:8 - error TS1192: Module '
+"C:/Users/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/@types/pg/index"' has no default export.
+2 import pg from 'pg';
+         ~~
+node_modules/drizzle-orm/pg-core/query-builders/query.d.ts:23:22 - error TS2420:
+ Class 'PgRelationalQuery<TResult>' incorrectly implements interface 'SQLWrapper'.
+  Property 'getSQL' is missing in type 'PgRelationalQuery<TResult>' but required in type 'SQLWrapper'.
+23 export declare class PgRelationalQuery<TResult> extends QueryPromise<TResult> implements RunnableQuery<TResult, 'pg'>, SQLWrapper {
+                        ~~~~~~~~~~~~~~~~~
+  node_modules/drizzle-orm/sql/sql.d.ts:50:5
+    50     getSQL(): SQL;
+           ~~~~~~~~~~~~~~
+    'getSQL' is declared here.
+node_modules/drizzle-orm/pg-core/roles.d.ts:7:22 - error TS2559: Type 'PgRole' has no properties in common with type 'PgRoleConfig'.
+7 export declare class PgRole implements PgRoleConfig {
+                       ~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/bigint.d.ts:13:22 - error TS25
+15: Non-abstract class 'SingleStoreBigInt53Builder<T>' does not implement inheri
+ted abstract member generatedAlwaysAs from class 'SingleStoreColumnBuilderWithAutoIncrement<T, { unsigned: boolean; }, ColumnBuilderExtraConfig>'.
+13 export declare class SingleStoreBigInt53Builder<T extends ColumnBuilderBaseCo
+nfig<'number', 'SingleStoreBigInt53'>> extends SingleStoreColumnBuilderWithAutoIncrement<T, {
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/bigint.d.ts:35:22 - error TS25
+15: Non-abstract class 'SingleStoreBigInt64Builder<T>' does not implement inheri
+ted abstract member generatedAlwaysAs from class 'SingleStoreColumnBuilderWithAutoIncrement<T, { unsigned: boolean; }, ColumnBuilderExtraConfig>'.
+35 export declare class SingleStoreBigInt64Builder<T extends ColumnBuilderBaseCo
+nfig<'bigint', 'SingleStoreBigInt64'>> extends SingleStoreColumnBuilderWithAutoIncrement<T, {
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/binary.d.ts:14:22 - error TS25
+15: Non-abstract class 'SingleStoreBinaryBuilder<T>' does not implement inherite
+d abstract member generatedAlwaysAs from class 'SingleStoreColumnBuilder<T, SingleStoreBinaryConfig, object, ColumnBuilderExtraConfig>'.
+14 export declare class SingleStoreBinaryBuilder<T extends ColumnBuilderBaseConf
+ig<'string', 'SingleStoreBinary'>> extends SingleStoreColumnBuilder<T, SingleStoreBinaryConfig> {
+                        ~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/boolean.d.ts:14:22 - error TS2
+515: Non-abstract class 'SingleStoreBooleanBuilder<T>' does not implement inheri
+ted abstract member generatedAlwaysAs from class 'SingleStoreColumnBuilder<T, object, object, ColumnBuilderExtraConfig>'.
+14 export declare class SingleStoreBooleanBuilder<T extends ColumnBuilderBaseConfig<'boolean', 'SingleStoreBoolean'>> extends SingleStoreColumnBuilder<T> {
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/char.d.ts:16:22 - error TS2515
+: Non-abstract class 'SingleStoreCharBuilder<T>' does not implement inherited ab
+stract member generatedAlwaysAs from class 'SingleStoreColumnBuilder<T, SingleSt
+oreCharConfig<T["enumValues"], T["length"]>, { length: T["length"]; }, ColumnBuilderExtraConfig>'.
+16 export declare class SingleStoreCharBuilder<T extends ColumnBuilderBaseConfig<'string', 'SingleStoreChar'> & {
+                        ~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/custom.d.ts:24:22 - error TS25
+15: Non-abstract class 'SingleStoreCustomColumnBuilder<T>' does not implement in
+herited abstract member generatedAlwaysAs from class 'SingleStoreColumnBuilder<T
+, { fieldConfig: Record<string, any>; customTypeParams: CustomTypeParams<any>; }
+, { singlestoreColumnBuilderBrand: "SingleStoreCustomColumnBuilderBrand"; }, ColumnBuilderExtraConfig>'.
+24 export declare class SingleStoreCustomColumnBuilder<T extends ColumnBuilderBa
+seConfig<'custom', 'SingleStoreCustomColumn'>> extends SingleStoreColumnBuilder<T, {
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/date.d.ts:16:22 - error TS2515
+: Non-abstract class 'SingleStoreDateBuilder<T>' does not implement inherited ab
+stract member generatedAlwaysAs from class 'SingleStoreColumnBuilder<T, object, object, ColumnBuilderExtraConfig>'.
+16 export declare class SingleStoreDateBuilder<T extends ColumnBuilderBaseConfig<'date', 'SingleStoreDate'>> extends SingleStoreColumnBuilder<T> {
+                        ~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/date.d.ts:37:22 - error TS2515
+: Non-abstract class 'SingleStoreDateStringBuilder<T>' does not implement inheri
+ted abstract member generatedAlwaysAs from class 'SingleStoreColumnBuilder<T, object, object, ColumnBuilderExtraConfig>'.
+37 export declare class SingleStoreDateStringBuilder<T extends ColumnBuilderBaseConfig<'string', 'SingleStoreDateString'>> extends SingleStoreColumnBuilder<T> {
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/datetime.d.ts:16:22 - error TS
+2515: Non-abstract class 'SingleStoreDateTimeBuilder<T>' does not implement inhe
+rited abstract member generatedAlwaysAs from class 'SingleStoreColumnBuilder<T,
+SingleStoreDatetimeConfig<"string" | "date">, object, ColumnBuilderExtraConfig>'.
+16 export declare class SingleStoreDateTimeBuilder<T extends ColumnBuilderBaseCo
+nfig<'date', 'SingleStoreDateTime'>> extends SingleStoreColumnBuilder<T, SingleStoreDatetimeConfig> {
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/datetime.d.ts:38:22 - error TS
+2515: Non-abstract class 'SingleStoreDateTimeStringBuilder<T>' does not implemen
+t inherited abstract member generatedAlwaysAs from class 'SingleStoreColumnBuild
+er<T, SingleStoreDatetimeConfig<"string" | "date">, object, ColumnBuilderExtraConfig>'.
+38 export declare class SingleStoreDateTimeStringBuilder<T extends ColumnBuilder
+BaseConfig<'string', 'SingleStoreDateTimeString'>> extends SingleStoreColumnBuilder<T, SingleStoreDatetimeConfig> {
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/decimal.d.ts:15:22 - error TS2
+515: Non-abstract class 'SingleStoreDecimalBuilder<T>' does not implement inheri
+ted abstract member generatedAlwaysAs from class 'SingleStoreColumnBuilderWithAu
+toIncrement<T, SingleStoreDecimalConfig<"string" | "number" | "bigint">, ColumnBuilderExtraConfig>'.
+15 export declare class SingleStoreDecimalBuilder<T extends ColumnBuilderBaseCon
+fig<'string', 'SingleStoreDecimal'>> extends SingleStoreColumnBuilderWithAutoIncrement<T, SingleStoreDecimalConfig> {
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/decimal.d.ts:36:22 - error TS2
+515: Non-abstract class 'SingleStoreDecimalNumberBuilder<T>' does not implement
+inherited abstract member generatedAlwaysAs from class 'SingleStoreColumnBuilder
+WithAutoIncrement<T, SingleStoreDecimalConfig<"string" | "number" | "bigint">, ColumnBuilderExtraConfig>'.
+36 export declare class SingleStoreDecimalNumberBuilder<T extends ColumnBuilderB
+aseConfig<'number', 'SingleStoreDecimalNumber'>> extends SingleStoreColumnBuilderWithAutoIncrement<T, SingleStoreDecimalConfig> {
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/decimal.d.ts:58:22 - error TS2
+515: Non-abstract class 'SingleStoreDecimalBigIntBuilder<T>' does not implement
+inherited abstract member generatedAlwaysAs from class 'SingleStoreColumnBuilder
+WithAutoIncrement<T, SingleStoreDecimalConfig<"string" | "number" | "bigint">, ColumnBuilderExtraConfig>'.
+58 export declare class SingleStoreDecimalBigIntBuilder<T extends ColumnBuilderB
+aseConfig<'bigint', 'SingleStoreDecimalBigInt'>> extends SingleStoreColumnBuilderWithAutoIncrement<T, SingleStoreDecimalConfig> {
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/double.d.ts:14:22 - error TS25
+15: Non-abstract class 'SingleStoreDoubleBuilder<T>' does not implement inherite
+d abstract member generatedAlwaysAs from class 'SingleStoreColumnBuilderWithAutoIncrement<T, SingleStoreDoubleConfig, ColumnBuilderExtraConfig>'.
+14 export declare class SingleStoreDoubleBuilder<T extends ColumnBuilderBaseConf
+ig<'number', 'SingleStoreDouble'>> extends SingleStoreColumnBuilderWithAutoIncrement<T, SingleStoreDoubleConfig> {
+                        ~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/enum.d.ts:19:5 - error TS2416:
+ Property 'generatedAlwaysAs' in type 'SingleStoreEnumColumnBuilder<T>' is not a
+ssignable to the same property in base type 'SingleStoreColumnBuilder<T, { enumValues: T["enumValues"]; }, object, ColumnBuilderExtraConfig>'.
+  Type '(as: SQL<unknown> | (() => SQL<unknown>) | T["data"], config?: Partial<G
+eneratedColumnConfig<unknown>>) => HasGenerated<this, {}>' is not assignable to
+type '(as: SQL<unknown> | (() => SQL<unknown>) | T["data"], config?: Partial<GeneratedColumnConfig<unknown>>) => HasGenerated<this, { type: "always"; }>'.
+    Type 'HasGenerated<this, {}>' is not assignable to type 'HasGenerated<this, { type: "always"; }>'.
+      Type 'HasGenerated<this, {}>' is not assignable to type '{ _: { hasDefault: true; generated: { type: "always"; }; }; }'.
+        The types of '_.generated' are incompatible between these types.
+          Property 'type' is missing in type '{}' but required in type '{ type: "always"; }'.
+19     generatedAlwaysAs(as: SQL<unknown> | (() => SQL) | T['data'], config?: Partial<GeneratedColumnConfig<unknown>>): HasGenerated<this, {}>;
+       ~~~~~~~~~~~~~~~~~
+  node_modules/drizzle-orm/column-builder.d.ts:227:9
+    227         type: 'always';
+                ~~~~
+    'type' is declared here.
+node_modules/drizzle-orm/singlestore-core/columns/float.d.ts:14:22 - error TS251
+5: Non-abstract class 'SingleStoreFloatBuilder<T>' does not implement inherited
+abstract member generatedAlwaysAs from class 'SingleStoreColumnBuilderWithAutoIncrement<T, SingleStoreFloatConfig, ColumnBuilderExtraConfig>'.
+14 export declare class SingleStoreFloatBuilder<T extends ColumnBuilderBaseConfi
+g<'number', 'SingleStoreFloat'>> extends SingleStoreColumnBuilderWithAutoIncrement<T, SingleStoreFloatConfig> {
+                        ~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/int.d.ts:14:22 - error TS2515:
+ Non-abstract class 'SingleStoreIntBuilder<T>' does not implement inherited abst
+ract member generatedAlwaysAs from class 'SingleStoreColumnBuilderWithAutoIncrement<T, SingleStoreIntConfig, ColumnBuilderExtraConfig>'.
+14 export declare class SingleStoreIntBuilder<T extends ColumnBuilderBaseConfig<
+'number', 'SingleStoreInt'>> extends SingleStoreColumnBuilderWithAutoIncrement<T, SingleStoreIntConfig> {
+                        ~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/json.d.ts:14:22 - error TS2515
+: Non-abstract class 'SingleStoreJsonBuilder<T>' does not implement inherited ab
+stract member generatedAlwaysAs from class 'SingleStoreColumnBuilder<T, object, object, ColumnBuilderExtraConfig>'.
+14 export declare class SingleStoreJsonBuilder<T extends ColumnBuilderBaseConfig<'json', 'SingleStoreJson'>> extends SingleStoreColumnBuilder<T> {
+                        ~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/mediumint.d.ts:15:22 - error T
+S2515: Non-abstract class 'SingleStoreMediumIntBuilder<T>' does not implement in
+herited abstract member generatedAlwaysAs from class 'SingleStoreColumnBuilderWithAutoIncrement<T, SingleStoreIntConfig, ColumnBuilderExtraConfig>'.
+15 export declare class SingleStoreMediumIntBuilder<T extends ColumnBuilderBaseC
+onfig<'number', 'SingleStoreMediumInt'>> extends SingleStoreColumnBuilderWithAutoIncrement<T, SingleStoreIntConfig> {
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/real.d.ts:14:22 - error TS2515
+: Non-abstract class 'SingleStoreRealBuilder<T>' does not implement inherited ab
+stract member generatedAlwaysAs from class 'SingleStoreColumnBuilderWithAutoIncrement<T, SingleStoreRealConfig, ColumnBuilderExtraConfig>'.
+14 export declare class SingleStoreRealBuilder<T extends ColumnBuilderBaseConfig
+<'number', 'SingleStoreReal'>> extends SingleStoreColumnBuilderWithAutoIncrement<T, SingleStoreRealConfig> {
+                        ~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/serial.d.ts:14:22 - error TS25
+15: Non-abstract class 'SingleStoreSerialBuilder<T>' does not implement inherite
+d abstract member generatedAlwaysAs from class 'SingleStoreColumnBuilderWithAutoIncrement<T, object, ColumnBuilderExtraConfig>'.
+14 export declare class SingleStoreSerialBuilder<T extends ColumnBuilderBaseConf
+ig<'number', 'SingleStoreSerial'>> extends SingleStoreColumnBuilderWithAutoIncrement<T> {
+                        ~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/smallint.d.ts:15:22 - error TS
+2515: Non-abstract class 'SingleStoreSmallIntBuilder<T>' does not implement inhe
+rited abstract member generatedAlwaysAs from class 'SingleStoreColumnBuilderWithAutoIncrement<T, SingleStoreIntConfig, ColumnBuilderExtraConfig>'.
+15 export declare class SingleStoreSmallIntBuilder<T extends ColumnBuilderBaseCo
+nfig<'number', 'SingleStoreSmallInt'>> extends SingleStoreColumnBuilderWithAutoIncrement<T, SingleStoreIntConfig> {
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/text.d.ts:16:22 - error TS2515
+: Non-abstract class 'SingleStoreTextBuilder<T>' does not implement inherited ab
+stract member generatedAlwaysAs from class 'SingleStoreColumnBuilder<T, { textTy
+pe: SingleStoreTextColumnType; enumValues: T["enumValues"]; }, object, ColumnBuilderExtraConfig>'.
+16 export declare class SingleStoreTextBuilder<T extends ColumnBuilderBaseConfig<'string', 'SingleStoreText'>> extends SingleStoreColumnBuilder<T, {
+                        ~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/time.d.ts:14:22 - error TS2515
+: Non-abstract class 'SingleStoreTimeBuilder<T>' does not implement inherited ab
+stract member generatedAlwaysAs from class 'SingleStoreColumnBuilder<T, object, object, ColumnBuilderExtraConfig>'.
+14 export declare class SingleStoreTimeBuilder<T extends ColumnBuilderBaseConfig<'string', 'SingleStoreTime'>> extends SingleStoreColumnBuilder<T> {
+                        ~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/timestamp.d.ts:15:22 - error T
+S2515: Non-abstract class 'SingleStoreTimestampBuilder<T>' does not implement in
+herited abstract member generatedAlwaysAs from class 'SingleStoreDateColumnBaseB
+uilder<T, SingleStoreTimestampConfig<"string" | "date">, ColumnBuilderExtraConfig>'.
+15 export declare class SingleStoreTimestampBuilder<T extends ColumnBuilderBaseC
+onfig<'date', 'SingleStoreTimestamp'>> extends SingleStoreDateColumnBaseBuilder<T, SingleStoreTimestampConfig> {
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/timestamp.d.ts:35:22 - error T
+S2515: Non-abstract class 'SingleStoreTimestampStringBuilder<T>' does not implem
+ent inherited abstract member generatedAlwaysAs from class 'SingleStoreDateColum
+nBaseBuilder<T, SingleStoreTimestampConfig<"string" | "date">, ColumnBuilderExtraConfig>'.
+35 export declare class SingleStoreTimestampStringBuilder<T extends ColumnBuilde
+rBaseConfig<'string', 'SingleStoreTimestampString'>> extends SingleStoreDateColumnBaseBuilder<T, SingleStoreTimestampConfig> {
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/tinyint.d.ts:15:22 - error TS2
+515: Non-abstract class 'SingleStoreTinyIntBuilder<T>' does not implement inheri
+ted abstract member generatedAlwaysAs from class 'SingleStoreColumnBuilderWithAutoIncrement<T, SingleStoreIntConfig, ColumnBuilderExtraConfig>'.
+15 export declare class SingleStoreTinyIntBuilder<T extends ColumnBuilderBaseCon
+fig<'number', 'SingleStoreTinyInt'>> extends SingleStoreColumnBuilderWithAutoIncrement<T, SingleStoreIntConfig> {
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/varbinary.d.ts:14:22 - error T
+S2515: Non-abstract class 'SingleStoreVarBinaryBuilder<T>' does not implement in
+herited abstract member generatedAlwaysAs from class 'SingleStoreColumnBuilder<T, SingleStoreVarbinaryOptions, object, ColumnBuilderExtraConfig>'.
+14 export declare class SingleStoreVarBinaryBuilder<T extends ColumnBuilderBaseC
+onfig<'string', 'SingleStoreVarBinary'>> extends SingleStoreColumnBuilder<T, SingleStoreVarbinaryOptions> {
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/varchar.d.ts:16:22 - error TS2
+515: Non-abstract class 'SingleStoreVarCharBuilder<T>' does not implement inheri
+ted abstract member generatedAlwaysAs from class 'SingleStoreColumnBuilder<T, Si
+ngleStoreVarCharConfig<T["enumValues"], T["length"]>, { length: T["length"]; }, ColumnBuilderExtraConfig>'.
+16 export declare class SingleStoreVarCharBuilder<T extends ColumnBuilderBaseConfig<'string', 'SingleStoreVarChar'> & {
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/vector.d.ts:13:22 - error TS25
+15: Non-abstract class 'SingleStoreVectorBuilder<T>' does not implement inherite
+d abstract member generatedAlwaysAs from class 'SingleStoreColumnBuilder<T, SingleStoreVectorConfig, object, ColumnBuilderExtraConfig>'.
+13 export declare class SingleStoreVectorBuilder<T extends ColumnBuilderBaseConf
+ig<'array', 'SingleStoreVector'>> extends SingleStoreColumnBuilder<T, SingleStoreVectorConfig> {
+                        ~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/columns/year.d.ts:14:22 - error TS2515
+: Non-abstract class 'SingleStoreYearBuilder<T>' does not implement inherited ab
+stract member generatedAlwaysAs from class 'SingleStoreColumnBuilder<T, object, object, ColumnBuilderExtraConfig>'.
+14 export declare class SingleStoreYearBuilder<T extends ColumnBuilderBaseConfig<'number', 'SingleStoreYear'>> extends SingleStoreColumnBuilder<T> {
+                        ~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/db.d.ts:1:38 - error TS2307: Cannot find module 'mysql2/promise' or its corresponding type declarations.
+1 import type { ResultSetHeader } from 'mysql2/promise';
+                                       ~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/query-builders/delete.d.ts:36:22 - err
+or TS2420: Class 'SingleStoreDeleteBase<TTable, TQueryResult, TPreparedQueryHKT, TDynamic, TExcludedMethods>' incorrectly implements interface 'SQLWrapper'.
+  Property 'getSQL' is missing in type 'SingleStoreDeleteBase<TTable, TQueryResu
+lt, TPreparedQueryHKT, TDynamic, TExcludedMethods>' but required in type 'SQLWrapper'.
+36 export declare class SingleStoreDeleteBase<TTable extends SingleStoreTable, T
+QueryResult extends SingleStoreQueryResultHKT, TPreparedQueryHKT extends Prepare
+dQueryHKTBase, TDynamic extends boolean = false, TExcludedMethods extends string
+ = never> extends QueryPromise<SingleStoreQueryResultKind<TQueryResult, never>> implements SQLWrapper {
+                        ~~~~~~~~~~~~~~~~~~~~~
+  node_modules/drizzle-orm/sql/sql.d.ts:50:5
+    50     getSQL(): SQL;
+           ~~~~~~~~~~~~~~
+    'getSQL' is declared here.
+node_modules/drizzle-orm/singlestore-core/query-builders/select.d.ts:268:262 - e
+rror TS2344: Type 'string' does not satisfy the constraint 'keyof this & string'.
+  Type 'string' is not assignable to type 'keyof this & string'.
+    Type 'string' is not assignable to type 'keyof this'.
+      Type '"session"' is not assignable to type '"offset" | "_" | "getSQL" | "a
+s" | "union" | "intersect" | "except" | "for" | "where" | "orderBy" | "limit" |
+"leftJoin" | "rightJoin" | "innerJoin" | "fullJoin" | "toSQL" | "$dynamic" | ... 7 more ... | "minus"'.
+268     union: <TValue extends SingleStoreSetOperatorWithResult<TResult>>(rightS
+election: ((setOperators: GetSingleStoreSetOperators) => SetOperatorRightSelect<
+TValue, TResult>) | SetOperatorRightSelect<TValue, TResult>) => SingleStoreSelectWithout<this, TDynamic, SingleStoreSetOperatorExcludedMethods, true>;
+
+
+
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/query-builders/select.d.ts:294:265 - e
+rror TS2344: Type 'string' does not satisfy the constraint 'keyof this & string'.
+  Type 'string' is not assignable to type 'keyof this & string'.
+    Type 'string' is not assignable to type 'keyof this'.
+      Type '"session"' is not assignable to type '"offset" | "_" | "getSQL" | "a
+s" | "union" | "intersect" | "except" | "for" | "where" | "orderBy" | "limit" |
+"leftJoin" | "rightJoin" | "innerJoin" | "fullJoin" | "toSQL" | "$dynamic" | ... 7 more ... | "minus"'.
+294     unionAll: <TValue extends SingleStoreSetOperatorWithResult<TResult>>(rig
+htSelection: ((setOperators: GetSingleStoreSetOperators) => SetOperatorRightSele
+ct<TValue, TResult>) | SetOperatorRightSelect<TValue, TResult>) => SingleStoreSelectWithout<this, TDynamic, SingleStoreSetOperatorExcludedMethods, true>;
+
+
+
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/query-builders/select.d.ts:320:266 - e
+rror TS2344: Type 'string' does not satisfy the constraint 'keyof this & string'.
+  Type 'string' is not assignable to type 'keyof this & string'.
+    Type 'string' is not assignable to type 'keyof this'.
+      Type '"session"' is not assignable to type '"offset" | "_" | "getSQL" | "a
+s" | "union" | "intersect" | "except" | "for" | "where" | "orderBy" | "limit" |
+"leftJoin" | "rightJoin" | "innerJoin" | "fullJoin" | "toSQL" | "$dynamic" | ... 7 more ... | "minus"'.
+320     intersect: <TValue extends SingleStoreSetOperatorWithResult<TResult>>(ri
+ghtSelection: ((setOperators: GetSingleStoreSetOperators) => SetOperatorRightSel
+ect<TValue, TResult>) | SetOperatorRightSelect<TValue, TResult>) => SingleStoreSelectWithout<this, TDynamic, SingleStoreSetOperatorExcludedMethods, true>;
+
+
+
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/query-builders/select.d.ts:346:263 - e
+rror TS2344: Type 'string' does not satisfy the constraint 'keyof this & string'.
+  Type 'string' is not assignable to type 'keyof this & string'.
+    Type 'string' is not assignable to type 'keyof this'.
+      Type '"session"' is not assignable to type '"offset" | "_" | "getSQL" | "a
+s" | "union" | "intersect" | "except" | "for" | "where" | "orderBy" | "limit" |
+"leftJoin" | "rightJoin" | "innerJoin" | "fullJoin" | "toSQL" | "$dynamic" | ... 7 more ... | "minus"'.
+346     except: <TValue extends SingleStoreSetOperatorWithResult<TResult>>(right
+Selection: ((setOperators: GetSingleStoreSetOperators) => SetOperatorRightSelect
+<TValue, TResult>) | SetOperatorRightSelect<TValue, TResult>) => SingleStoreSelectWithout<this, TDynamic, SingleStoreSetOperatorExcludedMethods, true>;
+
+
+
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/query-builders/select.d.ts:370:262 - e
+rror TS2344: Type 'string' does not satisfy the constraint 'keyof this & string'.
+  Type 'string' is not assignable to type 'keyof this & string'.
+    Type 'string' is not assignable to type 'keyof this'.
+      Type '"session"' is not assignable to type '"offset" | "_" | "getSQL" | "a
+s" | "union" | "intersect" | "except" | "for" | "where" | "orderBy" | "limit" |
+"leftJoin" | "rightJoin" | "innerJoin" | "fullJoin" | "toSQL" | "$dynamic" | ... 7 more ... | "minus"'.
+370     minus: <TValue extends SingleStoreSetOperatorWithResult<TResult>>(rightS
+election: ((setOperators: GetSingleStoreSetOperators) => SetOperatorRightSelect<
+TValue, TResult>) | SetOperatorRightSelect<TValue, TResult>) => SingleStoreSelectWithout<this, TDynamic, SingleStoreSetOperatorExcludedMethods, true>;
+
+
+
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/query-builders/select.d.ts:520:22 - er
+ror TS2515: Non-abstract class 'SingleStoreSelectBase<TTableName, TSelection, TS
+electMode, TPreparedQueryHKT, TNullabilityMap, TDynamic, TExcludedMethods, TResu
+lt, TSelectedFields>' does not implement inherited abstract member getSQL from c
+lass 'SingleStoreSelectQueryBuilderBase<SingleStoreSelectHKT, TTableName, TSelec
+tion, TSelectMode, TPreparedQueryHKT, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields>'.
+520 export declare class SingleStoreSelectBase<TTableName extends string | undef
+ined, TSelection, TSelectMode extends SelectMode, TPreparedQueryHKT extends Prep
+aredQueryHKTBase, TNullabilityMap extends Record<string, JoinNullability> = TTab
+leName extends string ? Record<TTableName, 'not-null'> : {}, TDynamic extends bo
+olean = false, TExcludedMethods extends string = never, TResult = SelectResult<T
+Selection, TSelectMode, TNullabilityMap>[], TSelectedFields = BuildSubquerySelec
+tion<TSelection, TNullabilityMap>> extends SingleStoreSelectQueryBuilderBase<Sin
+gleStoreSelectHKT, TTableName, TSelection, TSelectMode, TPreparedQueryHKT, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields> {
+                         ~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore-core/query-builders/select.types.d.ts:130:1
+185 - error TS2344: Type 'SingleStoreSetOperatorExcludedMethods' does not satisf
+y the constraint '"offset" | "_" | "getSQL" | "as" | "union" | "intersect" | "ex
+cept" | "for" | "where" | "orderBy" | "limit" | "execute" | "leftJoin" | "rightJoin" | "innerJoin" | "fullJoin" | "toSQL" | ... 14 more ... | "minus"'.
+  Type '"session"' is not assignable to type '"offset" | "_" | "getSQL" | "as" |
+ "union" | "intersect" | "except" | "for" | "where" | "orderBy" | "limit" | "exe
+cute" | "leftJoin" | "rightJoin" | "innerJoin" | "fullJoin" | "toSQL" | ... 14 more ... | "minus"'.
+130 export type SingleStoreCreateSetOperatorFn = <TTableName extends string | un
+defined, TSelection extends ColumnsSelection, TSelectMode extends SelectMode, TV
+alue extends SingleStoreSetOperatorWithResult<TResult>, TRest extends SingleStor
+eSetOperatorWithResult<TResult>[], TPreparedQueryHKT extends PreparedQueryHKTBas
+e = PreparedQueryHKTBase, TNullabilityMap extends Record<string, JoinNullability
+> = TTableName extends string ? Record<TTableName, 'not-null'> : {}, TDynamic ex
+tends boolean = false, TExcludedMethods extends string = never, TResult extends
+any[] = SelectResult<TSelection, TSelectMode, TNullabilityMap>[], TSelectedField
+s extends ColumnsSelection = BuildSubquerySelection<TSelection, TNullabilityMap>
+>(leftSelect: SingleStoreSetOperatorInterface<TTableName, TSelection, TSelectMod
+e, TPreparedQueryHKT, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSel
+ectedFields>, rightSelect: SetOperatorRightSelect<TValue, TResult>, ...restSelec
+ts: SetOperatorRestSelect<TRest, TResult>) => SingleStoreSelectWithout<SingleSto
+reSelectBase<TTableName, TSelection, TSelectMode, TPreparedQueryHKT, TNullabilit
+yMap, TDynamic, TExcludedMethods, TResult, TSelectedFields>, false, SingleStoreSetOperatorExcludedMethods, true>;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore/driver.d.ts:1:100 - error TS2307: Cannot find module 'mysql2' or its corresponding type declarations.
+1 import { type Connection as CallbackConnection, type Pool as CallbackPool, type PoolOptions } from 'mysql2';
+
+                     ~~~~~~~~
+node_modules/drizzle-orm/singlestore/driver.d.ts:2:39 - error TS2307: Cannot find module 'mysql2/promise' or its corresponding type declarations.
+2 import type { Connection, Pool } from 'mysql2/promise';
+                                        ~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/singlestore/session.d.ts:1:94 - error TS2307: Cannot find module 'mysql2/promise' or its corresponding type declarations.
+1 import type { Connection, FieldPacket, OkPacket, Pool, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
+
+               ~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/sqlite-core/query-builders/query.d.ts:25:22 - error TS2
+420: Class 'SQLiteRelationalQuery<TType, TResult>' incorrectly implements interface 'SQLWrapper'.
+  Property 'getSQL' is missing in type 'SQLiteRelationalQuery<TType, TResult>' but required in type 'SQLWrapper'.
+25 export declare class SQLiteRelationalQuery<TType extends 'sync' | 'async', TR
+esult> extends QueryPromise<TResult> implements RunnableQuery<TResult, 'sqlite'>, SQLWrapper {
+                        ~~~~~~~~~~~~~~~~~~~~~
+  node_modules/drizzle-orm/sql/sql.d.ts:50:5
+    50     getSQL(): SQL;
+           ~~~~~~~~~~~~~~
+    'getSQL' is declared here.
+node_modules/drizzle-orm/sqlite-core/query-builders/select.d.ts:233:247 - error TS2344: Type 'string' does not satisfy the constraint 'keyof this & string'.
+  Type 'string' is not assignable to type 'keyof this & string'.
+    Type 'string' is not assignable to type 'keyof this'.
+      Type '"config"' is not assignable to type '"offset" | "_" | "getSQL" | "as
+" | "union" | "intersect" | "except" | "where" | "orderBy" | "limit" | "leftJoin
+" | "rightJoin" | "innerJoin" | "fullJoin" | "toSQL" | "$dynamic" | "having" | "groupBy" | "crossJoin" | "unionAll"'.
+233     union: <TValue extends SQLiteSetOperatorWithResult<TResult>>(rightSelect
+ion: ((setOperators: GetSQLiteSetOperators) => SetOperatorRightSelect<TValue, TR
+esult>) | SetOperatorRightSelect<TValue, TResult>) => SQLiteSelectWithout<this, TDynamic, SQLiteSetOperatorExcludedMethods, true>;
+
+
+
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/sqlite-core/query-builders/select.d.ts:259:250 - error TS2344: Type 'string' does not satisfy the constraint 'keyof this & string'.
+  Type 'string' is not assignable to type 'keyof this & string'.
+    Type 'string' is not assignable to type 'keyof this'.
+      Type '"config"' is not assignable to type '"offset" | "_" | "getSQL" | "as
+" | "union" | "intersect" | "except" | "where" | "orderBy" | "limit" | "leftJoin
+" | "rightJoin" | "innerJoin" | "fullJoin" | "toSQL" | "$dynamic" | "having" | "groupBy" | "crossJoin" | "unionAll"'.
+259     unionAll: <TValue extends SQLiteSetOperatorWithResult<TResult>>(rightSel
+ection: ((setOperators: GetSQLiteSetOperators) => SetOperatorRightSelect<TValue,
+ TResult>) | SetOperatorRightSelect<TValue, TResult>) => SQLiteSelectWithout<this, TDynamic, SQLiteSetOperatorExcludedMethods, true>;
+
+
+
+             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/sqlite-core/query-builders/select.d.ts:285:251 - error TS2344: Type 'string' does not satisfy the constraint 'keyof this & string'.
+  Type 'string' is not assignable to type 'keyof this & string'.
+    Type 'string' is not assignable to type 'keyof this'.
+      Type '"config"' is not assignable to type '"offset" | "_" | "getSQL" | "as
+" | "union" | "intersect" | "except" | "where" | "orderBy" | "limit" | "leftJoin
+" | "rightJoin" | "innerJoin" | "fullJoin" | "toSQL" | "$dynamic" | "having" | "groupBy" | "crossJoin" | "unionAll"'.
+285     intersect: <TValue extends SQLiteSetOperatorWithResult<TResult>>(rightSe
+lection: ((setOperators: GetSQLiteSetOperators) => SetOperatorRightSelect<TValue
+, TResult>) | SetOperatorRightSelect<TValue, TResult>) => SQLiteSelectWithout<this, TDynamic, SQLiteSetOperatorExcludedMethods, true>;
+
+
+
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/sqlite-core/query-builders/select.d.ts:311:248 - error TS2344: Type 'string' does not satisfy the constraint 'keyof this & string'.
+  Type 'string' is not assignable to type 'keyof this & string'.
+    Type 'string' is not assignable to type 'keyof this'.
+      Type '"config"' is not assignable to type '"offset" | "_" | "getSQL" | "as
+" | "union" | "intersect" | "except" | "where" | "orderBy" | "limit" | "leftJoin
+" | "rightJoin" | "innerJoin" | "fullJoin" | "toSQL" | "$dynamic" | "having" | "groupBy" | "crossJoin" | "unionAll"'.
+311     except: <TValue extends SQLiteSetOperatorWithResult<TResult>>(rightSelec
+tion: ((setOperators: GetSQLiteSetOperators) => SetOperatorRightSelect<TValue, T
+Result>) | SetOperatorRightSelect<TValue, TResult>) => SQLiteSelectWithout<this, TDynamic, SQLiteSetOperatorExcludedMethods, true>;
+
+
+
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/sqlite-core/query-builders/select.d.ts:452:22 - error T
+S2515: Non-abstract class 'SQLiteSelectBase<TTableName, TResultType, TRunResult,
+ TSelection, TSelectMode, TNullabilityMap, TDynamic, TExcludedMethods, TResult,
+TSelectedFields>' does not implement inherited abstract member getSQL from class
+ 'SQLiteSelectQueryBuilderBase<SQLiteSelectHKT, TTableName, TResultType, TRunRes
+ult, TSelection, TSelectMode, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields>'.
+452 export declare class SQLiteSelectBase<TTableName extends string | undefined,
+ TResultType extends 'sync' | 'async', TRunResult, TSelection, TSelectMode exten
+ds SelectMode = 'single', TNullabilityMap extends Record<string, JoinNullability
+> = TTableName extends string ? Record<TTableName, 'not-null'> : {}, TDynamic ex
+tends boolean = false, TExcludedMethods extends string = never, TResult = Select
+Result<TSelection, TSelectMode, TNullabilityMap>[], TSelectedFields extends Colu
+mnsSelection = BuildSubquerySelection<TSelection, TNullabilityMap>> extends SQLi
+teSelectQueryBuilderBase<SQLiteSelectHKT, TTableName, TResultType, TRunResult, T
+Selection, TSelectMode, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields> implements RunnableQuery<TResult, 'sqlite'>, SQLWrapper {
+                         ~~~~~~~~~~~~~~~~
+node_modules/drizzle-orm/sqlite-core/query-builders/select.types.d.ts:123:1157 -
+ error TS2344: Type 'SQLiteSetOperatorExcludedMethods' does not satisfy the cons
+traint '"values" | "all" | "offset" | "get" | "_" | "getSQL" | "as" | "union" |
+"intersect" | "except" | "where" | "orderBy" | "limit" | "execute" | "leftJoin" | "rightJoin" | "innerJoin" | ... 12 more ... | "run"'.
+  Type '"config"' is not assignable to type '"values" | "all" | "offset" | "get"
+ | "_" | "getSQL" | "as" | "union" | "intersect" | "except" | "where" | "orderBy
+" | "limit" | "execute" | "leftJoin" | "rightJoin" | "innerJoin" | ... 12 more ... | "run"'.
+123 export type SQLiteCreateSetOperatorFn = <TTableName extends string | undefin
+ed, TResultType extends 'sync' | 'async', TRunResult, TSelection extends Columns
+Selection, TValue extends SQLiteSetOperatorWithResult<TResult>, TRest extends SQ
+LiteSetOperatorWithResult<TResult>[], TSelectMode extends SelectMode = 'single',
+ TNullabilityMap extends Record<string, JoinNullability> = TTableName extends st
+ring ? Record<TTableName, 'not-null'> : {}, TDynamic extends boolean = false, TE
+xcludedMethods extends string = never, TResult extends any[] = SelectResult<TSel
+ection, TSelectMode, TNullabilityMap>[], TSelectedFields extends ColumnsSelectio
+n = BuildSubquerySelection<TSelection, TNullabilityMap>>(leftSelect: SQLiteSetOp
+eratorInterface<TTableName, TResultType, TRunResult, TSelection, TSelectMode, TN
+ullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields>, rightSelec
+t: SetOperatorRightSelect<TValue, TResult>, ...restSelects: SetOperatorRestSelec
+t<TRest, TResult>) => SQLiteSelectWithout<SQLiteSelectBase<TTableName, TResultTy
+pe, TRunResult, TSelection, TSelectMode, TNullabilityMap, TDynamic, TExcludedMethods, TResult, TSelectedFields>, false, SQLiteSetOperatorExcludedMethods, true>;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+node_modules/twilio/index.d.ts:1:8 - error TS1259: Module '"C:/Users/rober/Docum
+ents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/index"' can only be default-imported using the 'esModuleInterop' flag
+1 import lib from "./lib";
+         ~~~
+  node_modules/twilio/lib/index.d.ts:67:1
+    67 export = TwilioSDK;
+       ~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/base/BaseTwilio.d.ts:4:8 - error TS1259: Module '"C:/Use
+rs/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/base/RequestClient"' can only be default-imported using the 'esModuleInterop' flag
+4 import RequestClient from "./RequestClient";
+         ~~~~~~~~~~~~~
+  node_modules/twilio/lib/base/RequestClient.d.ts:188:1
+    188 export = RequestClient;
+        ~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/index.d.ts:1:8 - error TS1259: Module '"C:/Users/rober/D
+ocuments/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Twilio"' can only be default-imported using the 'esModuleInterop' flag
+1 import ITwilio from "./rest/Twilio";
+         ~~~~~~~
+  node_modules/twilio/lib/rest/Twilio.d.ts:282:1
+    282 export = Twilio;
+        ~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/index.d.ts:3:8 - error TS1259: Module '"C:/Users/rober/D
+ocuments/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/base/RequestClient"' can only be default-imported using the 'esModuleInterop' flag
+3 import IRequestClient from "./base/RequestClient";
+         ~~~~~~~~~~~~~~
+  node_modules/twilio/lib/base/RequestClient.d.ts:188:1
+    188 export = RequestClient;
+        ~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/index.d.ts:5:8 - error TS1259: Module '"C:/Users/rober/D
+ocuments/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/jwt/AccessToken"' can only be default-imported using the 'esModuleInterop' flag
+5 import IAccessToken from "./jwt/AccessToken";
+         ~~~~~~~~~~~~
+  node_modules/twilio/lib/jwt/AccessToken.d.ts:186:1
+    186 export = AccessToken;
+        ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/index.d.ts:6:8 - error TS1259: Module '"C:/Users/rober/D
+ocuments/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/jwt/validatio
+n/ValidationToken"' can only be default-imported using the 'esModuleInterop' flag
+6 import IValidationToken from "./jwt/validation/ValidationToken";
+         ~~~~~~~~~~~~~~~~
+  node_modules/twilio/lib/jwt/validation/ValidationToken.d.ts:45:1
+    45 export = ValidationToken;
+       ~~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/index.d.ts:10:8 - error TS1259: Module '"C:/Users/rober/
+Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/twiml/VoiceResponse"' can only be default-imported using the 'esModuleInterop' flag
+10 import IVoiceResponse from "./twiml/VoiceResponse";
+          ~~~~~~~~~~~~~~
+  node_modules/twilio/lib/twiml/VoiceResponse.d.ts:2806:1
+    2806 export = VoiceResponse;
+         ~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/index.d.ts:11:8 - error TS1259: Module '"C:/Users/rober/
+Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/twiml/MessagingResponse"' can only be default-imported using the 'esModuleInterop' flag
+11 import IMessagingResponse from "./twiml/MessagingResponse";
+          ~~~~~~~~~~~~~~~~~~
+  node_modules/twilio/lib/twiml/MessagingResponse.d.ts:117:1
+    117 export = MessagingResponse;
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/index.d.ts:12:8 - error TS1259: Module '"C:/Users/rober/
+Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/twiml/FaxResponse"' can only be default-imported using the 'esModuleInterop' flag
+12 import IFaxResponse from "./twiml/FaxResponse";
+          ~~~~~~~~~~~~
+  node_modules/twilio/lib/twiml/FaxResponse.d.ts:66:1
+    66 export = FaxResponse;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/index.d.ts:13:8 - error TS1259: Module '"C:/Users/rober/
+Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/credential_p
+rovider/ClientCredentialProvider"' can only be default-imported using the 'esModuleInterop' flag
+13 import IClientCredentialProvider from "./credential_provider/ClientCredentialProvider";
+          ~~~~~~~~~~~~~~~~~~~~~~~~~
+  node_modules/twilio/lib/credential_provider/ClientCredentialProvider.d.ts:22:1
+    22 export = ClientCredentialProvider;
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/index.d.ts:14:8 - error TS1259: Module '"C:/Users/rober/
+Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/credential_p
+rovider/NoAuthCredentialProvider"' can only be default-imported using the 'esModuleInterop' flag
+14 import INoAuthCredentialProvider from "./credential_provider/NoAuthCredentialProvider";
+          ~~~~~~~~~~~~~~~~~~~~~~~~~
+  node_modules/twilio/lib/credential_provider/NoAuthCredentialProvider.d.ts:9:1
+    9 export = NoAuthCredentialProvider;
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/index.d.ts:15:8 - error TS1259: Module '"C:/Users/rober/
+Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/credential_p
+rovider/OrgsCredentialProvider"' can only be default-imported using the 'esModuleInterop' flag
+15 import IOrgsCredentialProvider from "./credential_provider/OrgsCredentialProvider";
+          ~~~~~~~~~~~~~~~~~~~~~~~
+  node_modules/twilio/lib/credential_provider/OrgsCredentialProvider.d.ts:22:1
+    22 export = OrgsCredentialProvider;
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Accounts.d.ts:4:8 - error TS1259: Module '"C:/Users
+/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/AccountsBase"' can only be default-imported using the 'esModuleInterop' flag
+4 import AccountsBase from "./AccountsBase";
+         ~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/AccountsBase.d.ts:13:1
+    13 export = AccountsBase;
+       ~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/accounts/V1.d.ts:1:8 - error TS1259: Module '"C:/Us
+ers/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/AccountsBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import AccountsBase from "../AccountsBase";
+         ~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/AccountsBase.d.ts:13:1
+    13 export = AccountsBase;
+       ~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Api.d.ts:26:8 - error TS1259: Module '"C:/Users/rob
+er/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/ApiBase"' can only be default-imported using the 'esModuleInterop' flag
+26 import ApiBase from "./ApiBase";
+          ~~~~~~~
+  node_modules/twilio/lib/rest/ApiBase.d.ts:13:1
+    13 export = ApiBase;
+       ~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/api/V2010.d.ts:1:8 - error TS1259: Module '"C:/User
+s/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/ApiBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import ApiBase from "../ApiBase";
+         ~~~~~~~
+  node_modules/twilio/lib/rest/ApiBase.d.ts:13:1
+    13 export = ApiBase;
+       ~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Assistants.d.ts:1:8 - error TS1259: Module '"C:/Use
+rs/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/AssistantsBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import AssistantsBase from "./AssistantsBase";
+         ~~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/AssistantsBase.d.ts:13:1
+    13 export = AssistantsBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/assistants/V1.d.ts:1:8 - error TS1259: Module '"C:/
+Users/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/
+rest/AssistantsBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import AssistantsBase from "../AssistantsBase";
+         ~~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/AssistantsBase.d.ts:13:1
+    13 export = AssistantsBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Bulkexports.d.ts:3:8 - error TS1259: Module '"C:/Us
+ers/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/re
+st/BulkexportsBase"' can only be default-imported using the 'esModuleInterop' flag
+3 import BulkexportsBase from "./BulkexportsBase";
+         ~~~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/BulkexportsBase.d.ts:13:1
+    13 export = BulkexportsBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/bulkexports/V1.d.ts:1:8 - error TS1259: Module '"C:
+/Users/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib
+/rest/BulkexportsBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import BulkexportsBase from "../BulkexportsBase";
+         ~~~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/BulkexportsBase.d.ts:13:1
+    13 export = BulkexportsBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Chat.d.ts:4:8 - error TS1259: Module '"C:/Users/rob
+er/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/ChatBase"' can only be default-imported using the 'esModuleInterop' flag
+4 import ChatBase from "./ChatBase";
+         ~~~~~~~~
+  node_modules/twilio/lib/rest/ChatBase.d.ts:19:1
+    19 export = ChatBase;
+       ~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/chat/V1.d.ts:1:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/ChatBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import ChatBase from "../ChatBase";
+         ~~~~~~~~
+  node_modules/twilio/lib/rest/ChatBase.d.ts:19:1
+    19 export = ChatBase;
+       ~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/chat/V2.d.ts:1:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/ChatBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import ChatBase from "../ChatBase";
+         ~~~~~~~~
+  node_modules/twilio/lib/rest/ChatBase.d.ts:19:1
+    19 export = ChatBase;
+       ~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/chat/V3.d.ts:1:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/ChatBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import ChatBase from "../ChatBase";
+         ~~~~~~~~
+  node_modules/twilio/lib/rest/ChatBase.d.ts:19:1
+    19 export = ChatBase;
+       ~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Content.d.ts:1:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/ContentBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import ContentBase from "./ContentBase";
+         ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/ContentBase.d.ts:16:1
+    16 export = ContentBase;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/content/V1.d.ts:1:8 - error TS1259: Module '"C:/Use
+rs/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/ContentBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import ContentBase from "../ContentBase";
+         ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/ContentBase.d.ts:16:1
+    16 export = ContentBase;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/content/V2.d.ts:1:8 - error TS1259: Module '"C:/Use
+rs/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/ContentBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import ContentBase from "../ContentBase";
+         ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/ContentBase.d.ts:16:1
+    16 export = ContentBase;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Conversations.d.ts:9:8 - error TS1259: Module '"C:/
+Users/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/
+rest/ConversationsBase"' can only be default-imported using the 'esModuleInterop' flag
+9 import ConversationsBase from "./ConversationsBase";
+         ~~~~~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/ConversationsBase.d.ts:13:1
+    13 export = ConversationsBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/conversations/V1.d.ts:1:8 - error TS1259: Module '"
+C:/Users/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/l
+ib/rest/ConversationsBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import ConversationsBase from "../ConversationsBase";
+         ~~~~~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/ConversationsBase.d.ts:13:1
+    13 export = ConversationsBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Events.d.ts:5:8 - error TS1259: Module '"C:/Users/r
+ober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/EventsBase"' can only be default-imported using the 'esModuleInterop' flag
+5 import EventsBase from "./EventsBase";
+         ~~~~~~~~~~
+  node_modules/twilio/lib/rest/EventsBase.d.ts:13:1
+    13 export = EventsBase;
+       ~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/events/V1.d.ts:1:8 - error TS1259: Module '"C:/User
+s/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/EventsBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import EventsBase from "../EventsBase";
+         ~~~~~~~~~~
+  node_modules/twilio/lib/rest/EventsBase.d.ts:13:1
+    13 export = EventsBase;
+       ~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/FlexApi.d.ts:8:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/FlexApiBase"' can only be default-imported using the 'esModuleInterop' flag
+8 import FlexApiBase from "./FlexApiBase";
+         ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/FlexApiBase.d.ts:16:1
+    16 export = FlexApiBase;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/flexApi/V1.d.ts:1:8 - error TS1259: Module '"C:/Use
+rs/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/FlexApiBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import FlexApiBase from "../FlexApiBase";
+         ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/FlexApiBase.d.ts:16:1
+    16 export = FlexApiBase;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/flexApi/V2.d.ts:1:8 - error TS1259: Module '"C:/Use
+rs/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/FlexApiBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import FlexApiBase from "../FlexApiBase";
+         ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/FlexApiBase.d.ts:16:1
+    16 export = FlexApiBase;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/FrontlineApi.d.ts:2:8 - error TS1259: Module '"C:/U
+sers/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/r
+est/FrontlineApiBase"' can only be default-imported using the 'esModuleInterop' flag
+2 import FrontlineApiBase from "./FrontlineApiBase";
+         ~~~~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/FrontlineApiBase.d.ts:13:1
+    13 export = FrontlineApiBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/frontlineApi/V1.d.ts:1:8 - error TS1259: Module '"C
+:/Users/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/li
+b/rest/FrontlineApiBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import FrontlineApiBase from "../FrontlineApiBase";
+         ~~~~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/FrontlineApiBase.d.ts:13:1
+    13 export = FrontlineApiBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Iam.d.ts:1:8 - error TS1259: Module '"C:/Users/robe
+r/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/IamBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import IamBase from "./IamBase";
+         ~~~~~~~
+  node_modules/twilio/lib/rest/IamBase.d.ts:13:1
+    13 export = IamBase;
+       ~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/iam/V1.d.ts:1:8 - error TS1259: Module '"C:/Users/r
+ober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/IamBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import IamBase from "../IamBase";
+         ~~~~~~~
+  node_modules/twilio/lib/rest/IamBase.d.ts:13:1
+    13 export = IamBase;
+       ~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Insights.d.ts:6:8 - error TS1259: Module '"C:/Users
+/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/InsightsBase"' can only be default-imported using the 'esModuleInterop' flag
+6 import InsightsBase from "./InsightsBase";
+         ~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/InsightsBase.d.ts:13:1
+    13 export = InsightsBase;
+       ~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/insights/V1.d.ts:1:8 - error TS1259: Module '"C:/Us
+ers/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/InsightsBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import InsightsBase from "../InsightsBase";
+         ~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/InsightsBase.d.ts:13:1
+    13 export = InsightsBase;
+       ~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Intelligence.d.ts:1:8 - error TS1259: Module '"C:/U
+sers/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/r
+est/IntelligenceBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import IntelligenceBase from "./IntelligenceBase";
+         ~~~~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/IntelligenceBase.d.ts:13:1
+    13 export = IntelligenceBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/intelligence/V2.d.ts:1:8 - error TS1259: Module '"C
+:/Users/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/li
+b/rest/IntelligenceBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import IntelligenceBase from "../IntelligenceBase";
+         ~~~~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/IntelligenceBase.d.ts:13:1
+    13 export = IntelligenceBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/IpMessaging.d.ts:3:8 - error TS1259: Module '"C:/Us
+ers/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/re
+st/IpMessagingBase"' can only be default-imported using the 'esModuleInterop' flag
+3 import IpMessagingBase from "./IpMessagingBase";
+         ~~~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/IpMessagingBase.d.ts:16:1
+    16 export = IpMessagingBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/ipMessaging/V1.d.ts:1:8 - error TS1259: Module '"C:
+/Users/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib
+/rest/IpMessagingBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import IpMessagingBase from "../IpMessagingBase";
+         ~~~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/IpMessagingBase.d.ts:16:1
+    16 export = IpMessagingBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/ipMessaging/V2.d.ts:1:8 - error TS1259: Module '"C:
+/Users/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib
+/rest/IpMessagingBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import IpMessagingBase from "../IpMessagingBase";
+         ~~~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/IpMessagingBase.d.ts:16:1
+    16 export = IpMessagingBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Lookups.d.ts:2:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/LookupsBase"' can only be default-imported using the 'esModuleInterop' flag
+2 import LookupsBase from "./LookupsBase";
+         ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/LookupsBase.d.ts:16:1
+    16 export = LookupsBase;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/lookups/V1.d.ts:1:8 - error TS1259: Module '"C:/Use
+rs/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/LookupsBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import LookupsBase from "../LookupsBase";
+         ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/LookupsBase.d.ts:16:1
+    16 export = LookupsBase;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/lookups/V2.d.ts:1:8 - error TS1259: Module '"C:/Use
+rs/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/LookupsBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import LookupsBase from "../LookupsBase";
+         ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/LookupsBase.d.ts:16:1
+    16 export = LookupsBase;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Marketplace.d.ts:1:8 - error TS1259: Module '"C:/Us
+ers/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/re
+st/MarketplaceBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import MarketplaceBase from "./MarketplaceBase";
+         ~~~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/MarketplaceBase.d.ts:13:1
+    13 export = MarketplaceBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/marketplace/V1.d.ts:1:8 - error TS1259: Module '"C:
+/Users/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib
+/rest/MarketplaceBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import MarketplaceBase from "../MarketplaceBase";
+         ~~~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/MarketplaceBase.d.ts:13:1
+    13 export = MarketplaceBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Messaging.d.ts:8:8 - error TS1259: Module '"C:/User
+s/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/MessagingBase"' can only be default-imported using the 'esModuleInterop' flag
+8 import MessagingBase from "./MessagingBase";
+         ~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/MessagingBase.d.ts:16:1
+    16 export = MessagingBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/messaging/V1.d.ts:1:8 - error TS1259: Module '"C:/U
+sers/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/r
+est/MessagingBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import MessagingBase from "../MessagingBase";
+         ~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/MessagingBase.d.ts:16:1
+    16 export = MessagingBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/messaging/V2.d.ts:1:8 - error TS1259: Module '"C:/U
+sers/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/r
+est/MessagingBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import MessagingBase from "../MessagingBase";
+         ~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/MessagingBase.d.ts:16:1
+    16 export = MessagingBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Monitor.d.ts:3:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/MonitorBase"' can only be default-imported using the 'esModuleInterop' flag
+3 import MonitorBase from "./MonitorBase";
+         ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/MonitorBase.d.ts:13:1
+    13 export = MonitorBase;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/monitor/V1.d.ts:1:8 - error TS1259: Module '"C:/Use
+rs/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/MonitorBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import MonitorBase from "../MonitorBase";
+         ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/MonitorBase.d.ts:13:1
+    13 export = MonitorBase;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Notify.d.ts:3:8 - error TS1259: Module '"C:/Users/r
+ober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/NotifyBase"' can only be default-imported using the 'esModuleInterop' flag
+3 import NotifyBase from "./NotifyBase";
+         ~~~~~~~~~~
+  node_modules/twilio/lib/rest/NotifyBase.d.ts:13:1
+    13 export = NotifyBase;
+       ~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/notify/V1.d.ts:1:8 - error TS1259: Module '"C:/User
+s/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/NotifyBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import NotifyBase from "../NotifyBase";
+         ~~~~~~~~~~
+  node_modules/twilio/lib/rest/NotifyBase.d.ts:13:1
+    13 export = NotifyBase;
+       ~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Numbers.d.ts:2:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/NumbersBase"' can only be default-imported using the 'esModuleInterop' flag
+2 import NumbersBase from "./NumbersBase";
+         ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/NumbersBase.d.ts:16:1
+    16 export = NumbersBase;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/numbers/V1.d.ts:1:8 - error TS1259: Module '"C:/Use
+rs/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/NumbersBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import NumbersBase from "../NumbersBase";
+         ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/NumbersBase.d.ts:16:1
+    16 export = NumbersBase;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/numbers/V2.d.ts:1:8 - error TS1259: Module '"C:/Use
+rs/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/NumbersBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import NumbersBase from "../NumbersBase";
+         ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/NumbersBase.d.ts:16:1
+    16 export = NumbersBase;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Oauth.d.ts:1:8 - error TS1259: Module '"C:/Users/ro
+ber/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/OauthBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import OauthBase from "./OauthBase";
+         ~~~~~~~~~
+  node_modules/twilio/lib/rest/OauthBase.d.ts:13:1
+    13 export = OauthBase;
+       ~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/oauth/V1.d.ts:1:8 - error TS1259: Module '"C:/Users
+/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/OauthBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import OauthBase from "../OauthBase";
+         ~~~~~~~~~
+  node_modules/twilio/lib/rest/OauthBase.d.ts:13:1
+    13 export = OauthBase;
+       ~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Preview.d.ts:8:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/PreviewBase"' can only be default-imported using the 'esModuleInterop' flag
+8 import PreviewBase from "./PreviewBase";
+         ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/PreviewBase.d.ts:19:1
+    19 export = PreviewBase;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/preview/HostedNumbers.d.ts:1:8 - error TS1259: Modu
+le '"C:/Users/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twi
+lio/lib/rest/PreviewBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import PreviewBase from "../PreviewBase";
+         ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/PreviewBase.d.ts:19:1
+    19 export = PreviewBase;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/preview/Marketplace.d.ts:1:8 - error TS1259: Module
+ '"C:/Users/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twili
+o/lib/rest/PreviewBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import PreviewBase from "../PreviewBase";
+         ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/PreviewBase.d.ts:19:1
+    19 export = PreviewBase;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/preview/Wireless.d.ts:1:8 - error TS1259: Module '"
+C:/Users/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/l
+ib/rest/PreviewBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import PreviewBase from "../PreviewBase";
+         ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/PreviewBase.d.ts:19:1
+    19 export = PreviewBase;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/PreviewIam.d.ts:3:8 - error TS1259: Module '"C:/Use
+rs/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/PreviewIamBase"' can only be default-imported using the 'esModuleInterop' flag
+3 import PreviewIamBase from "./PreviewIamBase";
+         ~~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/PreviewIamBase.d.ts:13:1
+    13 export = PreviewIamBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/previewIam/V1.d.ts:1:8 - error TS1259: Module '"C:/
+Users/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/
+rest/PreviewIamBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import PreviewIamBase from "../PreviewIamBase";
+         ~~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/PreviewIamBase.d.ts:13:1
+    13 export = PreviewIamBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/previewIam/Versionless.d.ts:1:8 - error TS1259: Mod
+ule '"C:/Users/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/tw
+ilio/lib/rest/PreviewIamBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import PreviewIamBase from "../PreviewIamBase";
+         ~~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/PreviewIamBase.d.ts:13:1
+    13 export = PreviewIamBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Pricing.d.ts:6:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/PricingBase"' can only be default-imported using the 'esModuleInterop' flag
+6 import PricingBase from "./PricingBase";
+         ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/PricingBase.d.ts:16:1
+    16 export = PricingBase;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/pricing/V1.d.ts:1:8 - error TS1259: Module '"C:/Use
+rs/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/PricingBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import PricingBase from "../PricingBase";
+         ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/PricingBase.d.ts:16:1
+    16 export = PricingBase;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/pricing/V2.d.ts:1:8 - error TS1259: Module '"C:/Use
+rs/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/PricingBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import PricingBase from "../PricingBase";
+         ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/PricingBase.d.ts:16:1
+    16 export = PricingBase;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Proxy.d.ts:2:8 - error TS1259: Module '"C:/Users/ro
+ber/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/ProxyBase"' can only be default-imported using the 'esModuleInterop' flag
+2 import ProxyBase from "./ProxyBase";
+         ~~~~~~~~~
+  node_modules/twilio/lib/rest/ProxyBase.d.ts:13:1
+    13 export = ProxyBase;
+       ~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/proxy/V1.d.ts:1:8 - error TS1259: Module '"C:/Users
+/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/ProxyBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import ProxyBase from "../ProxyBase";
+         ~~~~~~~~~
+  node_modules/twilio/lib/rest/ProxyBase.d.ts:13:1
+    13 export = ProxyBase;
+       ~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Routes.d.ts:4:8 - error TS1259: Module '"C:/Users/r
+ober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/RoutesBase"' can only be default-imported using the 'esModuleInterop' flag
+4 import RoutesBase from "./RoutesBase";
+         ~~~~~~~~~~
+  node_modules/twilio/lib/rest/RoutesBase.d.ts:13:1
+    13 export = RoutesBase;
+       ~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/routes/V2.d.ts:1:8 - error TS1259: Module '"C:/User
+s/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/RoutesBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import RoutesBase from "../RoutesBase";
+         ~~~~~~~~~~
+  node_modules/twilio/lib/rest/RoutesBase.d.ts:13:1
+    13 export = RoutesBase;
+       ~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Serverless.d.ts:2:8 - error TS1259: Module '"C:/Use
+rs/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/ServerlessBase"' can only be default-imported using the 'esModuleInterop' flag
+2 import ServerlessBase from "./ServerlessBase";
+         ~~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/ServerlessBase.d.ts:13:1
+    13 export = ServerlessBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/serverless/V1.d.ts:1:8 - error TS1259: Module '"C:/
+Users/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/
+rest/ServerlessBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import ServerlessBase from "../ServerlessBase";
+         ~~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/ServerlessBase.d.ts:13:1
+    13 export = ServerlessBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Studio.d.ts:3:8 - error TS1259: Module '"C:/Users/r
+ober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/StudioBase"' can only be default-imported using the 'esModuleInterop' flag
+3 import StudioBase from "./StudioBase";
+         ~~~~~~~~~~
+  node_modules/twilio/lib/rest/StudioBase.d.ts:16:1
+    16 export = StudioBase;
+       ~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/studio/V1.d.ts:1:8 - error TS1259: Module '"C:/User
+s/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/StudioBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import StudioBase from "../StudioBase";
+         ~~~~~~~~~~
+  node_modules/twilio/lib/rest/StudioBase.d.ts:16:1
+    16 export = StudioBase;
+       ~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/studio/V2.d.ts:1:8 - error TS1259: Module '"C:/User
+s/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/StudioBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import StudioBase from "../StudioBase";
+         ~~~~~~~~~~
+  node_modules/twilio/lib/rest/StudioBase.d.ts:16:1
+    16 export = StudioBase;
+       ~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Supersim.d.ts:10:8 - error TS1259: Module '"C:/User
+s/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/SupersimBase"' can only be default-imported using the 'esModuleInterop' flag
+10 import SupersimBase from "./SupersimBase";
+          ~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/SupersimBase.d.ts:13:1
+    13 export = SupersimBase;
+       ~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/supersim/V1.d.ts:1:8 - error TS1259: Module '"C:/Us
+ers/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/SupersimBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import SupersimBase from "../SupersimBase";
+         ~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/SupersimBase.d.ts:13:1
+    13 export = SupersimBase;
+       ~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Sync.d.ts:2:8 - error TS1259: Module '"C:/Users/rob
+er/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/SyncBase"' can only be default-imported using the 'esModuleInterop' flag
+2 import SyncBase from "./SyncBase";
+         ~~~~~~~~
+  node_modules/twilio/lib/rest/SyncBase.d.ts:13:1
+    13 export = SyncBase;
+       ~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/sync/V1.d.ts:1:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/SyncBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import SyncBase from "../SyncBase";
+         ~~~~~~~~
+  node_modules/twilio/lib/rest/SyncBase.d.ts:13:1
+    13 export = SyncBase;
+       ~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Taskrouter.d.ts:2:8 - error TS1259: Module '"C:/Use
+rs/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/TaskrouterBase"' can only be default-imported using the 'esModuleInterop' flag
+2 import TaskrouterBase from "./TaskrouterBase";
+         ~~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/TaskrouterBase.d.ts:13:1
+    13 export = TaskrouterBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/taskrouter/V1.d.ts:1:8 - error TS1259: Module '"C:/
+Users/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/
+rest/TaskrouterBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import TaskrouterBase from "../TaskrouterBase";
+         ~~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/TaskrouterBase.d.ts:13:1
+    13 export = TaskrouterBase;
+       ~~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Trunking.d.ts:2:8 - error TS1259: Module '"C:/Users
+/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/TrunkingBase"' can only be default-imported using the 'esModuleInterop' flag
+2 import TrunkingBase from "./TrunkingBase";
+         ~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/TrunkingBase.d.ts:13:1
+    13 export = TrunkingBase;
+       ~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/trunking/V1.d.ts:1:8 - error TS1259: Module '"C:/Us
+ers/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/TrunkingBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import TrunkingBase from "../TrunkingBase";
+         ~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/TrunkingBase.d.ts:13:1
+    13 export = TrunkingBase;
+       ~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Trusthub.d.ts:8:8 - error TS1259: Module '"C:/Users
+/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/TrusthubBase"' can only be default-imported using the 'esModuleInterop' flag
+8 import TrusthubBase from "./TrusthubBase";
+         ~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/TrusthubBase.d.ts:13:1
+    13 export = TrusthubBase;
+       ~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/trusthub/V1.d.ts:1:8 - error TS1259: Module '"C:/Us
+ers/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/TrusthubBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import TrusthubBase from "../TrusthubBase";
+         ~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/TrusthubBase.d.ts:13:1
+    13 export = TrusthubBase;
+       ~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:2:8 - error TS1259: Module '"C:/Users/r
+ober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Accounts"' can only be default-imported using the 'esModuleInterop' flag
+2 import Accounts from "./Accounts";
+         ~~~~~~~~
+  node_modules/twilio/lib/rest/Accounts.d.ts:19:1
+    19 export = Accounts;
+       ~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:3:8 - error TS1259: Module '"C:/Users/r
+ober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Api"' can only be default-imported using the 'esModuleInterop' flag
+3 import Api from "./Api";
+         ~~~
+  node_modules/twilio/lib/rest/Api.d.ts:127:1
+    127 export = Api;
+        ~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:4:8 - error TS1259: Module '"C:/Users/r
+ober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Assistants"' can only be default-imported using the 'esModuleInterop' flag
+4 import Assistants from "./Assistants";
+         ~~~~~~~~~~
+  node_modules/twilio/lib/rest/Assistants.d.ts:4:1
+    4 export = Assistants;
+      ~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:5:8 - error TS1259: Module '"C:/Users/r
+ober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Bulkexports"' can only be default-imported using the 'esModuleInterop' flag
+5 import Bulkexports from "./Bulkexports";
+         ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/Bulkexports.d.ts:14:1
+    14 export = Bulkexports;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:6:8 - error TS1259: Module '"C:/Users/r
+ober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Chat"' can only be default-imported using the 'esModuleInterop' flag
+6 import Chat from "./Chat";
+         ~~~~
+  node_modules/twilio/lib/rest/Chat.d.ts:19:1
+    19 export = Chat;
+       ~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:7:8 - error TS1259: Module '"C:/Users/r
+ober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Content"' can only be default-imported using the 'esModuleInterop' flag
+7 import Content from "./Content";
+         ~~~~~~~
+  node_modules/twilio/lib/rest/Content.d.ts:9:1
+    9 export = Content;
+      ~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:8:8 - error TS1259: Module '"C:/Users/r
+ober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Conversations"' can only be default-imported using the 'esModuleInterop' flag
+8 import Conversations from "./Conversations";
+         ~~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/Conversations.d.ts:44:1
+    44 export = Conversations;
+       ~~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:9:8 - error TS1259: Module '"C:/Users/r
+ober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Events"' can only be default-imported using the 'esModuleInterop' flag
+9 import Events from "./Events";
+         ~~~~~~
+  node_modules/twilio/lib/rest/Events.d.ts:24:1
+    24 export = Events;
+       ~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:10:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/FlexApi"' can only be default-imported using the 'esModuleInterop' flag
+10 import FlexApi from "./FlexApi";
+          ~~~~~~~
+  node_modules/twilio/lib/rest/FlexApi.d.ts:39:1
+    39 export = FlexApi;
+       ~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:11:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/FrontlineApi"' can only be default-imported using the 'esModuleInterop' flag
+11 import FrontlineApi from "./FrontlineApi";
+          ~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/FrontlineApi.d.ts:9:1
+    9 export = FrontlineApi;
+      ~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:12:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/PreviewIam"' can only be default-imported using the 'esModuleInterop' flag
+12 import PreviewIam from "./PreviewIam";
+          ~~~~~~~~~~
+  node_modules/twilio/lib/rest/PreviewIam.d.ts:18:1
+    18 export = PreviewIam;
+       ~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:13:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Iam"' can only be default-imported using the 'esModuleInterop' flag
+13 import Iam from "./Iam";
+          ~~~
+  node_modules/twilio/lib/rest/Iam.d.ts:4:1
+    4 export = Iam;
+      ~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:14:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Insights"' can only be default-imported using the 'esModuleInterop' flag
+14 import Insights from "./Insights";
+          ~~~~~~~~
+  node_modules/twilio/lib/rest/Insights.d.ts:29:1
+    29 export = Insights;
+       ~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:15:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Intelligence"' can only be default-imported using the 'esModuleInterop' flag
+15 import Intelligence from "./Intelligence";
+          ~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/Intelligence.d.ts:4:1
+    4 export = Intelligence;
+      ~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:16:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/IpMessaging"' can only be default-imported using the 'esModuleInterop' flag
+16 import IpMessaging from "./IpMessaging";
+          ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/IpMessaging.d.ts:14:1
+    14 export = IpMessaging;
+       ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:17:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Lookups"' can only be default-imported using the 'esModuleInterop' flag
+17 import Lookups from "./Lookups";
+          ~~~~~~~
+  node_modules/twilio/lib/rest/Lookups.d.ts:9:1
+    9 export = Lookups;
+      ~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:18:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Marketplace"' can only be default-imported using the 'esModuleInterop' flag
+18 import Marketplace from "./Marketplace";
+          ~~~~~~~~~~~
+  node_modules/twilio/lib/rest/Marketplace.d.ts:4:1
+    4 export = Marketplace;
+      ~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:19:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Messaging"' can only be default-imported using the 'esModuleInterop' flag
+19 import Messaging from "./Messaging";
+          ~~~~~~~~~
+  node_modules/twilio/lib/rest/Messaging.d.ts:39:1
+    39 export = Messaging;
+       ~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:20:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Monitor"' can only be default-imported using the 'esModuleInterop' flag
+20 import Monitor from "./Monitor";
+          ~~~~~~~
+  node_modules/twilio/lib/rest/Monitor.d.ts:14:1
+    14 export = Monitor;
+       ~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:21:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Notify"' can only be default-imported using the 'esModuleInterop' flag
+21 import Notify from "./Notify";
+          ~~~~~~
+  node_modules/twilio/lib/rest/Notify.d.ts:14:1
+    14 export = Notify;
+       ~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:22:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Numbers"' can only be default-imported using the 'esModuleInterop' flag
+22 import Numbers from "./Numbers";
+          ~~~~~~~
+  node_modules/twilio/lib/rest/Numbers.d.ts:9:1
+    9 export = Numbers;
+      ~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:23:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Oauth"' can only be default-imported using the 'esModuleInterop' flag
+23 import Oauth from "./Oauth";
+          ~~~~~
+  node_modules/twilio/lib/rest/Oauth.d.ts:4:1
+    4 export = Oauth;
+      ~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:24:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Preview"' can only be default-imported using the 'esModuleInterop' flag
+24 import Preview from "./Preview";
+          ~~~~~~~
+  node_modules/twilio/lib/rest/Preview.d.ts:39:1
+    39 export = Preview;
+       ~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:25:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Pricing"' can only be default-imported using the 'esModuleInterop' flag
+25 import Pricing from "./Pricing";
+          ~~~~~~~
+  node_modules/twilio/lib/rest/Pricing.d.ts:29:1
+    29 export = Pricing;
+       ~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:26:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Proxy"' can only be default-imported using the 'esModuleInterop' flag
+26 import Proxy from "./Proxy";
+          ~~~~~
+  node_modules/twilio/lib/rest/Proxy.d.ts:9:1
+    9 export = Proxy;
+      ~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:27:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Routes"' can only be default-imported using the 'esModuleInterop' flag
+27 import Routes from "./Routes";
+          ~~~~~~
+  node_modules/twilio/lib/rest/Routes.d.ts:19:1
+    19 export = Routes;
+       ~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:28:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Serverless"' can only be default-imported using the 'esModuleInterop' flag
+28 import Serverless from "./Serverless";
+          ~~~~~~~~~~
+  node_modules/twilio/lib/rest/Serverless.d.ts:9:1
+    9 export = Serverless;
+      ~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:29:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Studio"' can only be default-imported using the 'esModuleInterop' flag
+29 import Studio from "./Studio";
+          ~~~~~~
+  node_modules/twilio/lib/rest/Studio.d.ts:14:1
+    14 export = Studio;
+       ~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:30:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Supersim"' can only be default-imported using the 'esModuleInterop' flag
+30 import Supersim from "./Supersim";
+          ~~~~~~~~
+  node_modules/twilio/lib/rest/Supersim.d.ts:49:1
+    49 export = Supersim;
+       ~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:31:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Sync"' can only be default-imported using the 'esModuleInterop' flag
+31 import Sync from "./Sync";
+          ~~~~
+  node_modules/twilio/lib/rest/Sync.d.ts:9:1
+    9 export = Sync;
+      ~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:32:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Taskrouter"' can only be default-imported using the 'esModuleInterop' flag
+32 import Taskrouter from "./Taskrouter";
+          ~~~~~~~~~~
+  node_modules/twilio/lib/rest/Taskrouter.d.ts:9:1
+    9 export = Taskrouter;
+      ~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:33:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Trunking"' can only be default-imported using the 'esModuleInterop' flag
+33 import Trunking from "./Trunking";
+          ~~~~~~~~
+  node_modules/twilio/lib/rest/Trunking.d.ts:9:1
+    9 export = Trunking;
+      ~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:34:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Trusthub"' can only be default-imported using the 'esModuleInterop' flag
+34 import Trusthub from "./Trusthub";
+          ~~~~~~~~
+  node_modules/twilio/lib/rest/Trusthub.d.ts:39:1
+    39 export = Trusthub;
+       ~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:35:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Verify"' can only be default-imported using the 'esModuleInterop' flag
+35 import Verify from "./Verify";
+          ~~~~~~
+  node_modules/twilio/lib/rest/Verify.d.ts:29:1
+    29 export = Verify;
+       ~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:36:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Video"' can only be default-imported using the 'esModuleInterop' flag
+36 import Video from "./Video";
+          ~~~~~
+  node_modules/twilio/lib/rest/Video.d.ts:34:1
+    34 export = Video;
+       ~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:37:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Voice"' can only be default-imported using the 'esModuleInterop' flag
+37 import Voice from "./Voice";
+          ~~~~~
+  node_modules/twilio/lib/rest/Voice.d.ts:34:1
+    34 export = Voice;
+       ~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Twilio.d.ts:38:8 - error TS1259: Module '"C:/Users/
+rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/Wireless"' can only be default-imported using the 'esModuleInterop' flag
+38 import Wireless from "./Wireless";
+          ~~~~~~~~
+  node_modules/twilio/lib/rest/Wireless.d.ts:24:1
+    24 export = Wireless;
+       ~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Verify.d.ts:6:8 - error TS1259: Module '"C:/Users/r
+ober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/VerifyBase"' can only be default-imported using the 'esModuleInterop' flag
+6 import VerifyBase from "./VerifyBase";
+         ~~~~~~~~~~
+  node_modules/twilio/lib/rest/VerifyBase.d.ts:13:1
+    13 export = VerifyBase;
+       ~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/verify/V2.d.ts:1:8 - error TS1259: Module '"C:/User
+s/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/VerifyBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import VerifyBase from "../VerifyBase";
+         ~~~~~~~~~~
+  node_modules/twilio/lib/rest/VerifyBase.d.ts:13:1
+    13 export = VerifyBase;
+       ~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Video.d.ts:7:8 - error TS1259: Module '"C:/Users/ro
+ber/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/VideoBase"' can only be default-imported using the 'esModuleInterop' flag
+7 import VideoBase from "./VideoBase";
+         ~~~~~~~~~
+  node_modules/twilio/lib/rest/VideoBase.d.ts:13:1
+    13 export = VideoBase;
+       ~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/video/V1.d.ts:1:8 - error TS1259: Module '"C:/Users
+/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/VideoBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import VideoBase from "../VideoBase";
+         ~~~~~~~~~
+  node_modules/twilio/lib/rest/VideoBase.d.ts:13:1
+    13 export = VideoBase;
+       ~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Voice.d.ts:7:8 - error TS1259: Module '"C:/Users/ro
+ber/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/VoiceBase"' can only be default-imported using the 'esModuleInterop' flag
+7 import VoiceBase from "./VoiceBase";
+         ~~~~~~~~~
+  node_modules/twilio/lib/rest/VoiceBase.d.ts:13:1
+    13 export = VoiceBase;
+       ~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/voice/V1.d.ts:1:8 - error TS1259: Module '"C:/Users
+/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/VoiceBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import VoiceBase from "../VoiceBase";
+         ~~~~~~~~~
+  node_modules/twilio/lib/rest/VoiceBase.d.ts:13:1
+    13 export = VoiceBase;
+       ~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/Wireless.d.ts:5:8 - error TS1259: Module '"C:/Users
+/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/WirelessBase"' can only be default-imported using the 'esModuleInterop' flag
+5 import WirelessBase from "./WirelessBase";
+         ~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/WirelessBase.d.ts:13:1
+    13 export = WirelessBase;
+       ~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/twilio/lib/rest/wireless/V1.d.ts:1:8 - error TS1259: Module '"C:/Us
+ers/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/twilio/lib/rest/WirelessBase"' can only be default-imported using the 'esModuleInterop' flag
+1 import WirelessBase from "../WirelessBase";
+         ~~~~~~~~~~~~
+  node_modules/twilio/lib/rest/WirelessBase.d.ts:13:1
+    13 export = WirelessBase;
+       ~~~~~~~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+node_modules/vite/dist/node/index.d.ts:5:41 - error TS2307: Cannot find module 'rollup/parseAst' or its corresponding type declarations.
+  There are types at 'C:/Users/rober/Documents/Work/Newfolder/CaptureByChristian
+/node_modules/rollup/dist/parseAst.d.ts', but this result could not be resolved
+under your current 'moduleResolution' setting. Consider updating to 'node16', 'nodenext', or 'bundler'.
+5 export { parseAst, parseAstAsync } from 'rollup/parseAst';
+                                          ~~~~~~~~~~~~~~~~~
+server/database-init.ts:9:34 - error TS1343: The 'import.meta' meta-property is
+only allowed when the '--module' option is 'es2020', 'es2022', 'esnext', 'system', 'node16', 'node18', or 'nodenext'.
+9 const __filename = fileURLToPath(import.meta.url);
+                                   ~~~~~~~~~~~
+server/db.ts:4:8 - error TS1192: Module '"C:/Users/rober/Documents/Work/Newfolder/CaptureByChristian/node_modules/dotenv/lib/main"' has no default export.
+4 import dotenv from 'dotenv';
+         ~~~~~~
+server/middleware/fileValidation.ts:1:8 - error TS1259: Module '"C:/Users/rober/
+Documents/Work/Newfolder/CaptureByChristian/node_modules/@types/multer/index"' can only be default-imported using the 'esModuleInterop' flag
+1 import multer from 'multer';
+         ~~~~~~
+  node_modules/@types/multer/index.d.ts:316:1
+    316 export = multer;
+        ~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+server/middleware/fileValidation.ts:2:8 - error TS1259: Module '"path"' can only be default-imported using the 'esModuleInterop' flag
+2 import path from 'path';
+         ~~~~
+  node_modules/@types/node/path.d.ts:187:5
+    187     export = path;
+            ~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+server/middleware/fileValidation.ts:3:8 - error TS1259: Module '"C:/Users/rober/
+Documents/Work/Newfolder/CaptureByChristian/node_modules/@types/express/index"' can only be default-imported using the 'esModuleInterop' flag
+3 import express, { Request } from 'express';
+         ~~~~~~~
+  node_modules/@types/express/index.d.ts:128:1
+    128 export = e;
+        ~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+server/routes.ts:10:8 - error TS1259: Module '"C:/Users/rober/Documents/Work/New
+folder/CaptureByChristian/node_modules/@types/multer/index"' can only be default-imported using the 'esModuleInterop' flag
+10 import multer from "multer";
+          ~~~~~~
+  node_modules/@types/multer/index.d.ts:316:1
+    316 export = multer;
+        ~~~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
 server/routes.ts:1280:15 - error TS2739: Type '{ bookingId: number; amount: stri
 ng; dueDate: Date; status: "pending"; }' is missing the following properties fro
-m type '{ amount: string; booking_id: number; due_date: Date; id?: number | unde
-fined; status?: string | undefined; paid_at?: Date | null | undefined; payment_method?: string | null | undefined; }': booking_id, due_date
+m type '{ booking_id: number; amount: string; due_date: Date; id?: number; status?: string; paid_at?: Date; payment_method?: string; }': booking_id, due_date
 1280         const validatedData: InsertInvoice = invoiceData;
                    ~~~~~~~~~~~~~
-server/routes.ts:1413:9 - error TS2561: Object literal may only specify known pr
-operties, but 'ipAddress' does not exist in type '{ name: string; email: string;
- message: string; subject: string; source?: string | undefined; id?: number | un
-defined; status?: string | undefined; phone?: string | null | undefined; priorit
-y?: string | undefined; ... 4 more ...; suggested_response?: string | ... 1 more ... | undefined; }'. Did you mean to write 'ip_address'?
-1413         ipAddress: req.ip,
-             ~~~~~~~~~
 server/routes.ts:1541:68 - error TS2551: Property 'createdAt' does not exist on
-type '{ source: string; id: number; name: string; status: string; email: string;
- message: string; phone: string | null; subject: string; priority: string; creat
-ed_at: Date; ip_address: string | null; user_agent: string | null; ai_category: string; suggested_response: string | null; }'. Did you mean 'created_at'?
+type '{ name: string; message: string; id: number; source: string; priority: str
+ing; email: string; status: string; subject: string; created_at: Date; phone: st
+ring; ip_address: string; user_agent: string; ai_category: string; suggested_response: string; }'. Did you mean 'created_at'?
 1541       const todayMessages = contactMessages.filter(m => new Date(m.createdAt) >= todayStart);
                                                                         ~~~~~~~~~
 server/routes.ts:1580:30 - error TS2551: Property 'createdAt' does not exist on
-type '{ source: string; id: number; name: string; status: string; email: string;
- message: string; phone: string | null; subject: string; priority: string; creat
-ed_at: Date; ip_address: string | null; user_agent: string | null; ai_category: string; suggested_response: string | null; }'. Did you mean 'created_at'?
+type '{ name: string; message: string; id: number; source: string; priority: str
+ing; email: string; status: string; subject: string; created_at: Date; phone: st
+ring; ip_address: string; user_agent: string; ai_category: string; suggested_response: string; }'. Did you mean 'created_at'?
 1580             time: new Date(m.createdAt).toLocaleTimeString()
                                   ~~~~~~~~~
-server/routes.ts:1754:9 - error TS2561: Object literal may only specify known pr
-operties, but 'clientId' does not exist in type '{ message: string; client_id: n
-umber; sender_name: string; sender_email: string; id?: number | undefined; statu
-s?: string | undefined; created_at?: Date | undefined; is_from_client?: boolean | undefined; }'. Did you mean to write 'client_id'?
-1754         clientId,
-             ~~~~~~~~
-server/vite.ts:25:43 - error TS7016: Could not find a declaration file for modul
-e '../vite.config.js'. 'C:/Users/rober/Documents/Work/Newfolder/CaptureByChristian/vite.config.js' implicitly has an 'any' type.
-25     const viteConfigModule = await import('../vite.config.js');
-                                             ~~~~~~~~~~~~~~~~~~~
-Found 80 errors in 6 files.
+server/twilio.ts:1:8 - error TS1259: Module '"C:/Users/rober/Documents/Work/Newf
+older/CaptureByChristian/node_modules/twilio/index"' can only be default-imported using the 'esModuleInterop' flag
+1 import twilio from 'twilio';
+         ~~~~~~
+  node_modules/twilio/index.d.ts:2:1
+    2 export = lib;
+      ~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+server/vite.ts:1:8 - error TS1259: Module '"C:/Users/rober/Documents/Work/Newfol
+der/CaptureByChristian/node_modules/@types/express/index"' can only be default-imported using the 'esModuleInterop' flag
+1 import express, { type Express } from "express";
+         ~~~~~~~
+  node_modules/@types/express/index.d.ts:128:1
+    128 export = e;
+        ~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+server/vite.ts:2:8 - error TS1192: Module '"fs"' has no default export.
+2 import fs from "fs";
+         ~~
+server/vite.ts:3:8 - error TS1259: Module '"path"' can only be default-imported using the 'esModuleInterop' flag
+3 import path from "path";
+         ~~~~
+  node_modules/@types/node/path.d.ts:187:5
+    187     export = path;
+            ~~~~~~~~~~~~~~
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+server/vite.ts:55:55 - error TS1343: The 'import.meta' meta-property is only all
+owed when the '--module' option is 'es2020', 'es2022', 'esnext', 'system', 'node16', 'node18', or 'nodenext'.
+55         const currentDir = path.dirname(fileURLToPath(import.meta.url));
+                                                         ~~~~~~~~~~~
+server/vite.ts:83:49 - error TS1343: The 'import.meta' meta-property is only all
+owed when the '--module' option is 'es2020', 'es2022', 'esnext', 'system', 'node16', 'node18', or 'nodenext'.
+83   const currentDir = path.dirname(fileURLToPath(import.meta.url));
+                                                   ~~~~~~~~~~~
+Found 223 errors in 147 files.
 Errors  Files
-    30  server/database.test.ts:156
-     3  server/index.ts:63
-     1  server/middleware/fileValidation.ts:52
-    17  server/routes.test.ts:86
-    28  server/routes.ts:66
-     1  server/vite.ts:25
+     1  node_modules/drizzle-orm/gel-core/columns/date-duration.d.ts:1
+     1  node_modules/drizzle-orm/gel-core/columns/duration.d.ts:1
+     1  node_modules/drizzle-orm/gel-core/columns/localdate.d.ts:1
+     1  node_modules/drizzle-orm/gel-core/columns/localtime.d.ts:1
+     1  node_modules/drizzle-orm/gel-core/columns/relative-duration.d.ts:1
+     1  node_modules/drizzle-orm/gel-core/columns/timestamp.d.ts:1
+     1  node_modules/drizzle-orm/gel-core/query-builders/query.d.ts:23
+     1  node_modules/drizzle-orm/gel-core/roles.d.ts:7
+     1  node_modules/drizzle-orm/mysql-core/db.d.ts:1
+     1  node_modules/drizzle-orm/mysql-core/query-builders/delete.d.ts:36
+     7  node_modules/drizzle-orm/mysql-core/query-builders/select.d.ts:294
+     1  node_modules/drizzle-orm/mysql-core/query-builders/select.types.d.ts:138
+     1  node_modules/drizzle-orm/node-postgres/session.d.ts:2
+     1  node_modules/drizzle-orm/pg-core/query-builders/query.d.ts:23
+     1  node_modules/drizzle-orm/pg-core/roles.d.ts:7
+     2  node_modules/drizzle-orm/singlestore-core/columns/bigint.d.ts:13
+     1  node_modules/drizzle-orm/singlestore-core/columns/binary.d.ts:14
+     1  node_modules/drizzle-orm/singlestore-core/columns/boolean.d.ts:14
+     1  node_modules/drizzle-orm/singlestore-core/columns/char.d.ts:16
+     1  node_modules/drizzle-orm/singlestore-core/columns/custom.d.ts:24
+     2  node_modules/drizzle-orm/singlestore-core/columns/date.d.ts:16
+     2  node_modules/drizzle-orm/singlestore-core/columns/datetime.d.ts:16
+     3  node_modules/drizzle-orm/singlestore-core/columns/decimal.d.ts:15
+     1  node_modules/drizzle-orm/singlestore-core/columns/double.d.ts:14
+     1  node_modules/drizzle-orm/singlestore-core/columns/enum.d.ts:19
+     1  node_modules/drizzle-orm/singlestore-core/columns/float.d.ts:14
+     1  node_modules/drizzle-orm/singlestore-core/columns/int.d.ts:14
+     1  node_modules/drizzle-orm/singlestore-core/columns/json.d.ts:14
+     1  node_modules/drizzle-orm/singlestore-core/columns/mediumint.d.ts:15
+     1  node_modules/drizzle-orm/singlestore-core/columns/real.d.ts:14
+     1  node_modules/drizzle-orm/singlestore-core/columns/serial.d.ts:14
+     1  node_modules/drizzle-orm/singlestore-core/columns/smallint.d.ts:15
+     1  node_modules/drizzle-orm/singlestore-core/columns/text.d.ts:16
+     1  node_modules/drizzle-orm/singlestore-core/columns/time.d.ts:14
+     2  node_modules/drizzle-orm/singlestore-core/columns/timestamp.d.ts:15
+     1  node_modules/drizzle-orm/singlestore-core/columns/tinyint.d.ts:15
+     1  node_modules/drizzle-orm/singlestore-core/columns/varbinary.d.ts:14
+     1  node_modules/drizzle-orm/singlestore-core/columns/varchar.d.ts:16
+     1  node_modules/drizzle-orm/singlestore-core/columns/vector.d.ts:13
+     1  node_modules/drizzle-orm/singlestore-core/columns/year.d.ts:14
+     1  node_modules/drizzle-orm/singlestore-core/db.d.ts:1
+     1  node_modules/drizzle-orm/singlestore-core/query-builders/delete.d.ts:36
+     6  node_modules/drizzle-orm/singlestore-core/query-builders/select.d.ts:268
+     1  node_modules/drizzle-orm/singlestore-core/query-builders/select.types.d.ts:130
+     2  node_modules/drizzle-orm/singlestore/driver.d.ts:1
+     1  node_modules/drizzle-orm/singlestore/session.d.ts:1
+     1  node_modules/drizzle-orm/sqlite-core/query-builders/query.d.ts:25
+     5  node_modules/drizzle-orm/sqlite-core/query-builders/select.d.ts:233
+     1  node_modules/drizzle-orm/sqlite-core/query-builders/select.types.d.ts:123
+     1  node_modules/twilio/index.d.ts:1
+     1  node_modules/twilio/lib/base/BaseTwilio.d.ts:4
+    10  node_modules/twilio/lib/index.d.ts:1
+     1  node_modules/twilio/lib/rest/Accounts.d.ts:4
+     1  node_modules/twilio/lib/rest/accounts/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/Api.d.ts:26
+     1  node_modules/twilio/lib/rest/api/V2010.d.ts:1
+     1  node_modules/twilio/lib/rest/Assistants.d.ts:1
+     1  node_modules/twilio/lib/rest/assistants/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/Bulkexports.d.ts:3
+     1  node_modules/twilio/lib/rest/bulkexports/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/Chat.d.ts:4
+     1  node_modules/twilio/lib/rest/chat/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/chat/V2.d.ts:1
+     1  node_modules/twilio/lib/rest/chat/V3.d.ts:1
+     1  node_modules/twilio/lib/rest/Content.d.ts:1
+     1  node_modules/twilio/lib/rest/content/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/content/V2.d.ts:1
+     1  node_modules/twilio/lib/rest/Conversations.d.ts:9
+     1  node_modules/twilio/lib/rest/conversations/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/Events.d.ts:5
+     1  node_modules/twilio/lib/rest/events/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/FlexApi.d.ts:8
+     1  node_modules/twilio/lib/rest/flexApi/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/flexApi/V2.d.ts:1
+     1  node_modules/twilio/lib/rest/FrontlineApi.d.ts:2
+     1  node_modules/twilio/lib/rest/frontlineApi/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/Iam.d.ts:1
+     1  node_modules/twilio/lib/rest/iam/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/Insights.d.ts:6
+     1  node_modules/twilio/lib/rest/insights/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/Intelligence.d.ts:1
+     1  node_modules/twilio/lib/rest/intelligence/V2.d.ts:1
+     1  node_modules/twilio/lib/rest/IpMessaging.d.ts:3
+     1  node_modules/twilio/lib/rest/ipMessaging/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/ipMessaging/V2.d.ts:1
+     1  node_modules/twilio/lib/rest/Lookups.d.ts:2
+     1  node_modules/twilio/lib/rest/lookups/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/lookups/V2.d.ts:1
+     1  node_modules/twilio/lib/rest/Marketplace.d.ts:1
+     1  node_modules/twilio/lib/rest/marketplace/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/Messaging.d.ts:8
+     1  node_modules/twilio/lib/rest/messaging/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/messaging/V2.d.ts:1
+     1  node_modules/twilio/lib/rest/Monitor.d.ts:3
+     1  node_modules/twilio/lib/rest/monitor/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/Notify.d.ts:3
+     1  node_modules/twilio/lib/rest/notify/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/Numbers.d.ts:2
+     1  node_modules/twilio/lib/rest/numbers/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/numbers/V2.d.ts:1
+     1  node_modules/twilio/lib/rest/Oauth.d.ts:1
+     1  node_modules/twilio/lib/rest/oauth/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/Preview.d.ts:8
+     1  node_modules/twilio/lib/rest/preview/HostedNumbers.d.ts:1
+     1  node_modules/twilio/lib/rest/preview/Marketplace.d.ts:1
+     1  node_modules/twilio/lib/rest/preview/Wireless.d.ts:1
+     1  node_modules/twilio/lib/rest/PreviewIam.d.ts:3
+     1  node_modules/twilio/lib/rest/previewIam/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/previewIam/Versionless.d.ts:1
+     1  node_modules/twilio/lib/rest/Pricing.d.ts:6
+     1  node_modules/twilio/lib/rest/pricing/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/pricing/V2.d.ts:1
+     1  node_modules/twilio/lib/rest/Proxy.d.ts:2
+     1  node_modules/twilio/lib/rest/proxy/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/Routes.d.ts:4
+     1  node_modules/twilio/lib/rest/routes/V2.d.ts:1
+     1  node_modules/twilio/lib/rest/Serverless.d.ts:2
+     1  node_modules/twilio/lib/rest/serverless/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/Studio.d.ts:3
+     1  node_modules/twilio/lib/rest/studio/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/studio/V2.d.ts:1
+     1  node_modules/twilio/lib/rest/Supersim.d.ts:10
+     1  node_modules/twilio/lib/rest/supersim/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/Sync.d.ts:2
+     1  node_modules/twilio/lib/rest/sync/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/Taskrouter.d.ts:2
+     1  node_modules/twilio/lib/rest/taskrouter/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/Trunking.d.ts:2
+     1  node_modules/twilio/lib/rest/trunking/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/Trusthub.d.ts:8
+     1  node_modules/twilio/lib/rest/trusthub/V1.d.ts:1
+    37  node_modules/twilio/lib/rest/Twilio.d.ts:2
+     1  node_modules/twilio/lib/rest/Verify.d.ts:6
+     1  node_modules/twilio/lib/rest/verify/V2.d.ts:1
+     1  node_modules/twilio/lib/rest/Video.d.ts:7
+     1  node_modules/twilio/lib/rest/video/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/Voice.d.ts:7
+     1  node_modules/twilio/lib/rest/voice/V1.d.ts:1
+     1  node_modules/twilio/lib/rest/Wireless.d.ts:5
+     1  node_modules/twilio/lib/rest/wireless/V1.d.ts:1
+     1  node_modules/vite/dist/node/index.d.ts:5
+     1  server/database-init.ts:9
+     1  server/db.ts:4
+     3  server/middleware/fileValidation.ts:1
+     4  server/routes.ts:10
+     1  server/twilio.ts:1
+     5  server/vite.ts:1

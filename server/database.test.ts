@@ -105,6 +105,7 @@ describe('Database Layer Tests', () => {
       });
 
       expect(mockInsert).toHaveBeenCalled();
+      expect(result).toEqual(mockClient);
     });
 
     it('should get all clients', async () => {
@@ -118,6 +119,7 @@ describe('Database Layer Tests', () => {
 
       const result = await storage.getClients();
       expect(mockSelect).toHaveBeenCalled();
+      expect(Array.isArray(result)).toBe(true);
     });
 
     it('should get client by ID', async () => {
@@ -131,6 +133,7 @@ describe('Database Layer Tests', () => {
 
       const result = await storage.getClient(1);
       expect(mockSelect).toHaveBeenCalled();
+      expect(result).toEqual(mockClient);
     });
 
     it('should get client by email', async () => {
@@ -144,6 +147,7 @@ describe('Database Layer Tests', () => {
 
       const result = await storage.getClientByEmail('john@example.com');
       expect(mockSelect).toHaveBeenCalled();
+      expect(result).toEqual(mockClient);
     });
 
     it('should update client', async () => {

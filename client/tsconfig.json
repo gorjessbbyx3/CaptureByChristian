@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
     "moduleResolution": "bundler",
@@ -18,24 +19,15 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/components/*": ["./src/components/*"],
-      "@/modules/*": ["./src/modules/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/hooks/*": ["./src/hooks/*"],
+      "@/pages/*": ["./src/pages/*"],
       "@shared/*": ["../shared/*"]
-    },
-    "types": ["node"]
+    }
   },
   "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.js",
-    "src/**/*.jsx",
-    "../shared/**/*.ts"
+    "src",
+    "../shared"
   ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "build",
-    "../server",
-    "**/*.test.ts",
-    "**/*.spec.ts"
-  ]
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

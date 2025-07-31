@@ -8,10 +8,26 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { registerRoutes } from './routes';
+import { registerRoutes } from './routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Validate required environment variables in production
+if (process.env.NODE_ENV === 'production') {
+  if (!process.env.FRONTEND_URL) {
+    console.error('❌ FRONTEND_URL is required in production');
+    process.exit(1);
+  }
+  if (!process.env.DATABASE_URL) {
+    console.error('❌ DATABASE_URL is required in production');
+    process.exit(1);
+  }
+  if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET === 'your-secret-key-change-in-production') {
+    console.error('❌ SESSION_SECRET must be set to a secure value in production');
+    process.exit(1);
+  }
+}
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
@@ -19,9 +35,12 @@ const PORT = Number(process.env.PORT) || 3000;
 // Middleware
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? process.env.FRONTEND_URL || true
-    : 'http://localhost:5173',
-  credentials: true
+    ? (process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : false)
+    : ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  credentials: true,
+  optionsSuccessStatus: 200, // For legacy browser support
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
 app.use(express.json({ limit: '50mb' }));
@@ -71,7 +90,8 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // Error handling middleware
-app.use((err: unknown, req: express.Request, res: express.Response) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+app.use((err: unknown, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error('Error:', err);
   res.status(500).json({ 
     error: process.env.NODE_ENV === 'production' 

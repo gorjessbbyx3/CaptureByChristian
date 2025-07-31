@@ -1,0 +1,130 @@
+# Configuration for actions/labeler - https://github.com/actions/labeler
+
+documentation:
+  - changed-files:
+    - any-glob-to-any-file: 
+      - '**/*.md'
+      - 'docs/**/*'
+      - 'README*'
+      - 'CHANGELOG*'
+      - 'LICENSE*'
+
+frontend:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'client/**/*'
+      - '**/*.tsx'
+      - '**/*.jsx'
+      - '**/components/**/*'
+      - '**/pages/**/*'
+      - '**/hooks/**/*'
+      - 'tailwind.config.*'
+      - 'vite.config.*'
+      - 'postcss.config.*'
+
+backend:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'server/**/*'
+      - 'api/**/*'
+      - '**/*.ts'
+      - 'routes/**/*'
+      - 'middleware/**/*'
+
+database:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'shared/schema.ts'
+      - 'migrations/**/*'
+      - 'drizzle.config.*'
+      - '**/*database*'
+      - '**/*db*'
+
+deployment:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'Dockerfile*'
+      - 'docker-compose*'
+      - '.github/workflows/**/*'
+      - 'deploy*'
+      - 'vercel.json'
+      - 'render.yaml'
+      - '**/build*'
+
+security:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '.env*'
+      - '**/auth*'
+      - '**/security*'
+      - '**/cors*'
+      - '**/validation*'
+
+dependencies:
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'package*.json'
+      - 'yarn.lock'
+      - 'pnpm-lock.yaml'
+
+testing:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.test.*'
+      - '**/*.spec.*'
+      - 'test/**/*'
+      - 'tests/**/*'
+      - 'vitest.config.*'
+      - 'jest.config.*'
+
+config:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '*.config.*'
+      - '.*rc.*'
+      - '.env*'
+      - 'tsconfig*.json'
+      - '.eslintrc*'
+      - '.prettierrc*'
+      - '.gitignore'
+
+enhancement:
+  - head-branch:
+    - '^feature'
+    - '^feat'
+  - title:
+    - '^feat:'
+    - '^feature:'
+
+bug:
+  - head-branch:
+    - '^fix'
+    - '^hotfix'
+    - '^bugfix'
+  - title:
+    - '^fix:'
+    - '^bug:'
+    - '^hotfix:'
+
+refactor:
+  - head-branch:
+    - '^refactor'
+  - title:
+    - '^refactor:'
+    - '^refact:'
+
+performance:
+  - head-branch:
+    - '^perf'
+  - title:
+    - '^perf:'
+    - '^performance:'
+
+style:
+  - head-branch:
+    - '^style'
+    - '^ui'
+  - title:
+    - '^style:'
+    - '^ui:'
+    - '^css:'

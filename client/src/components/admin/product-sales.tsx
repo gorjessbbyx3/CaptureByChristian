@@ -29,22 +29,6 @@ import {
 import { format } from "date-fns";
 
 export function ProductSales() {
-  return (
-    <div className="space-y-6">
-      {/* Feature Not Implemented Notice */}
-      <Card className="border-dashed border-2">
-        <CardContent className="p-8 text-center">
-          <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">Product Sales System</h3>
-          <p className="text-muted-foreground mb-4">
-            This advanced e-commerce system requires database implementation for products, orders, inventory, and shipping.
-            Feature planned for future development.
-          </p>
-        </CardContent>
-      </Card>
-    </div>
-  );
-
   const [newProductOpen, setNewProductOpen] = useState(false);
 
   // Product sales feature requires database implementation

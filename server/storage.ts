@@ -6,8 +6,8 @@ import {
   type GalleryImage, type InsertGalleryImage, type AiChat, type InsertAiChat,
   type ContactMessage, type InsertContactMessage, type ClientMessage, type InsertClientMessage,
   type Profile, type InsertProfile
-} from "@shared/schema";
-import { db } from "./db";
+} from "../shared/schema.js";
+import { db } from "./db.js";
 import { eq, desc, and, gte, lte, sql } from "drizzle-orm";
 
 export interface IStorage {
@@ -240,8 +240,8 @@ export class DatabaseStorage implements IStorage {
       const contractsData = await db
         .select()
         .from(contracts)
-        .leftJoin(clients, eq(contracts.clientId, clients.id))
-        .orderBy(desc(contracts.createdAt));
+        .leftJoin(clients, eq(contracts.client_id, clients.id))
+        .orderBy(desc(contracts.created_at));
       
       return contractsData.map(row => ({
         ...row.contracts,
@@ -259,7 +259,7 @@ export class DatabaseStorage implements IStorage {
       const [contractData] = await db
         .select()
         .from(contracts)
-        .leftJoin(clients, eq(contracts.clientId, clients.id))
+        .leftJoin(clients, eq(contracts.client_id, clients.id))
         .where(eq(contracts.id, id));
       
       if (!contractData) return undefined;
@@ -278,7 +278,7 @@ export class DatabaseStorage implements IStorage {
     const [contract] = await db
       .select()
       .from(contracts)
-      .where(eq(contracts.bookingId, bookingId));
+      .where(eq(contracts.booking_id, bookingId));
     return contract || undefined;
   }
 
@@ -295,7 +295,7 @@ export class DatabaseStorage implements IStorage {
   async updateContract(id: number, updateContract: Partial<InsertContract>): Promise<Contract> {
     const [contract] = await db
       .update(contracts)
-      .set({ ...updateContract, updatedAt: new Date() })
+      .set({ ...updateContract, updated_at: new Date() })
       .where(eq(contracts.id, id))
       .returning();
     return contract;
@@ -310,9 +310,9 @@ export class DatabaseStorage implements IStorage {
       .update(contracts)
       .set({
         status: 'sent',
-        portalAccessToken: portalToken,
-        signatureRequestSent: new Date(),
-        updatedAt: new Date()
+        portal_access_token: portalToken,
+        signature_request_sent: new Date(),
+        updated_at: new Date()
       })
       .where(eq(contracts.id, contractId));
     
@@ -327,7 +327,7 @@ export class DatabaseStorage implements IStorage {
 
   // Invoices
   async getInvoice(bookingId: number): Promise<Invoice | undefined> {
-    const [invoice] = await db.select().from(invoices).where(eq(invoices.bookingId, bookingId));
+    const [invoice] = await db.select().from(invoices).where(eq(invoices.booking_id, bookingId));
     return invoice || undefined;
   }
 
@@ -343,15 +343,15 @@ export class DatabaseStorage implements IStorage {
 
   // Gallery
   async getGalleryImages(): Promise<GalleryImage[]> {
-    return await db.select().from(galleryImages).orderBy(desc(galleryImages.uploadedAt));
+    return await db.select().from(galleryImages).orderBy(desc(galleryImages.uploaded_at));
   }
 
   async getFeaturedImages(): Promise<GalleryImage[]> {
-    return await db.select().from(galleryImages).where(eq(galleryImages.featured, true)).orderBy(desc(galleryImages.uploadedAt));
+    return await db.select().from(galleryImages).where(eq(galleryImages.featured, true)).orderBy(desc(galleryImages.uploaded_at));
   }
 
   async getImagesByBooking(bookingId: number): Promise<GalleryImage[]> {
-    return await db.select().from(galleryImages).where(eq(galleryImages.bookingId, bookingId)).orderBy(desc(galleryImages.uploadedAt));
+    return await db.select().from(galleryImages).where(eq(galleryImages.booking_id, bookingId)).orderBy(desc(galleryImages.uploaded_at));
   }
 
   async createGalleryImage(insertImage: InsertGalleryImage): Promise<GalleryImage> {
@@ -370,7 +370,7 @@ export class DatabaseStorage implements IStorage {
 
   // AI Chats
   async getAiChat(sessionId: string): Promise<AiChat | undefined> {
-    const [chat] = await db.select().from(aiChats).where(eq(aiChats.sessionId, sessionId));
+    const [chat] = await db.select().from(aiChats).where(eq(aiChats.session_id, sessionId));
     return chat || undefined;
   }
 
@@ -382,8 +382,8 @@ export class DatabaseStorage implements IStorage {
   async updateAiChat(sessionId: string, updateChat: Partial<InsertAiChat>): Promise<AiChat> {
     const [chat] = await db.update(aiChats).set({
       ...updateChat,
-      updatedAt: new Date(),
-    }).where(eq(aiChats.sessionId, sessionId)).returning();
+      updated_at: new Date(),
+    }).where(eq(aiChats.session_id, sessionId)).returning();
     return chat;
   }
 
@@ -442,7 +442,7 @@ export class DatabaseStorage implements IStorage {
 
   // Contact Messages
   async getContactMessages(): Promise<ContactMessage[]> {
-    return await db.select().from(contactMessages).orderBy(desc(contactMessages.createdAt));
+    return await db.select().from(contactMessages).orderBy(desc(contactMessages.created_at));
   }
 
   async getContactMessage(id: number): Promise<ContactMessage | undefined> {
@@ -602,8 +602,8 @@ export class DatabaseStorage implements IStorage {
 
   async getClientMessages(clientId: number): Promise<ClientMessage[]> {
     const messages = await db.select().from(clientMessages)
-      .where(eq(clientMessages.clientId, clientId))
-      .orderBy(desc(clientMessages.createdAt));
+      .where(eq(clientMessages.client_id, clientId))
+      .orderBy(desc(clientMessages.created_at));
     return messages;
   }
 
@@ -613,7 +613,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getProfile(): Promise<Profile | undefined> {
-    const profileList = await db.select().from(profiles).where(eq(profiles.isActive, true)).limit(1);
+    const profileList = await db.select().from(profiles).where(eq(profiles.is_active, true)).limit(1);
     return profileList[0];
   }
 
@@ -621,7 +621,7 @@ export class DatabaseStorage implements IStorage {
     const existingProfile = await this.getProfile();
     if (existingProfile) {
       const [profile] = await db.update(profiles)
-        .set({ ...updateProfile, updatedAt: new Date() })
+        .set({ ...updateProfile, updated_at: new Date() })
         .where(eq(profiles.id, existingProfile.id))
         .returning();
       return profile;

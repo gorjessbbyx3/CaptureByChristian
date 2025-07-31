@@ -283,7 +283,7 @@ describe('External Integrations Tests', () => {
         notes: ''
       };
 
-      const result = await emailInvoice(invoiceData, Buffer.from(''));
+      const result = await emailInvoice(invoiceData, '');
       
       // Should handle invalid email gracefully
       expect(typeof result).toBe('boolean');
@@ -426,7 +426,7 @@ describe('External Integrations Tests', () => {
           notes: ''
         };
 
-        const result = await emailInvoice(invoiceData, Buffer.from(''));
+        const result = await emailInvoice(invoiceData, '');
         expect(result).toBe(false);
       }
     });

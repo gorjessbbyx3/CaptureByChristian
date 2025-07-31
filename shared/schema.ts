@@ -63,91 +63,91 @@ export const bookings = pgTable("bookings", {
 
 export const contracts = pgTable("contracts", {
   id: serial("id").primaryKey(),
-  bookingId: integer("bookingId").references(() => bookings.id),
-  clientId: integer("clientId").references(() => clients.id).notNull(),
-  contractType: text("contractType").notNull(), // 'individual', 'business'
-  serviceType: text("serviceType"), // 'portrait', 'wedding', 'commercial', etc.
+  booking_id: integer("booking_id").references(() => bookings.id),
+  client_id: integer("client_id").references(() => clients.id).notNull(),
+  contract_type: text("contract_type").notNull(), // 'individual', 'business'
+  service_type: text("service_type"), // 'portrait', 'wedding', 'commercial', etc.
   status: text("status").notNull().default("draft"), // 'draft', 'sent', 'signed', 'completed', 'cancelled'
   title: text("title").notNull(),
-  templateContent: text("templateContent").notNull(),
-  signedContent: text("signedContent"),
-  sessionDate: timestamp("sessionDate"),
+  template_content: text("template_content").notNull(),
+  signed_content: text("signed_content"),
+  session_date: timestamp("session_date"),
   location: text("location"),
-  packageType: text("packageType"),
-  totalAmount: decimal("totalAmount", { precision: 10, scale: 2 }),
-  retainerAmount: decimal("retainerAmount", { precision: 10, scale: 2 }),
-  balanceAmount: decimal("balanceAmount", { precision: 10, scale: 2 }),
-  paymentTerms: text("paymentTerms"),
+  package_type: text("package_type"),
+  total_amount: decimal("total_amount", { precision: 10, scale: 2 }),
+  retainer_amount: decimal("retainer_amount", { precision: 10, scale: 2 }),
+  balance_amount: decimal("balance_amount", { precision: 10, scale: 2 }),
+  payment_terms: text("payment_terms"),
   deliverables: text("deliverables"),
   timeline: text("timeline"),
-  usageRights: text("usageRights"),
-  cancellationPolicy: text("cancellationPolicy"),
-  additionalTerms: text("additionalTerms"),
-  clientSignature: text("clientSignature"), // base64 client signature
-  clientSignedAt: timestamp("clientSignedAt"),
-  clientIpAddress: text("clientIpAddress"),
-  photographerSignature: text("photographerSignature"),
-  photographerSignedAt: timestamp("photographerSignedAt"),
-  signatureRequestSent: timestamp("signatureRequestSent"),
-  portalAccessToken: text("portalAccessToken"), // For client portal access
-  isFullySigned: boolean("isFullySigned").default(false),
-  signatureMetadata: json("signatureMetadata").$type<{
+  usage_rights: text("usage_rights"),
+  cancellation_policy: text("cancellation_policy"),
+  additional_terms: text("additional_terms"),
+  client_signature: text("client_signature"), // base64 client signature
+  client_signed_at: timestamp("client_signed_at"),
+  client_ip_address: text("client_ip_address"),
+  photographer_signature: text("photographer_signature"),
+  photographer_signed_at: timestamp("photographer_signed_at"),
+  signature_request_sent: timestamp("signature_request_sent"),
+  portal_access_token: text("portal_access_token"), // For client portal access
+  is_fully_signed: boolean("is_fully_signed").default(false),
+  signature_metadata: json("signature_metadata").$type<{
     clientDevice?: string;
     clientUserAgent?: string;
     signatureMethod?: 'electronic' | 'digital';
     witnessRequired?: boolean;
     notarizedRequired?: boolean;
   }>(),
-  createdAt: timestamp("createdAt").defaultNow(),
-  updatedAt: timestamp("updatedAt").defaultNow()
+  created_at: timestamp("created_at").defaultNow(),
+  updated_at: timestamp("updated_at").defaultNow()
 });
 
 export const invoices = pgTable("invoices", {
   id: serial("id").primaryKey(),
-  bookingId: integer("booking_id").references(() => bookings.id).notNull(),
+  booking_id: integer("booking_id").references(() => bookings.id).notNull(),
   amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
-  dueDate: timestamp("due_date").notNull(),
-  paidAt: timestamp("paid_at"),
+  due_date: timestamp("due_date").notNull(),
+  paid_at: timestamp("paid_at"),
   status: text("status").notNull().default("pending"), // pending, paid, overdue
-  paymentMethod: text("payment_method"),
+  payment_method: text("payment_method"),
 });
 
 export const galleryImages = pgTable("gallery_images", {
   id: serial("id").primaryKey(),
-  bookingId: integer("booking_id").references(() => bookings.id),
+  booking_id: integer("booking_id").references(() => bookings.id),
   filename: text("filename").notNull(),
-  originalName: text("original_name").notNull(),
+  original_name: text("original_name").notNull(),
   url: text("url").notNull(),
-  thumbnailUrl: text("thumbnail_url"),
+  thumbnail_url: text("thumbnail_url"),
   category: text("category"),
   tags: text("tags").array(),
-  aiAnalysis: json("ai_analysis").$type<{
+  ai_analysis: json("ai_analysis").$type<{
     emotions?: string[];
     style?: string;
     composition?: string;
     quality?: number;
   }>(),
   featured: boolean("featured").default(false),
-  uploadedAt: timestamp("uploaded_at").defaultNow().notNull(),
+  uploaded_at: timestamp("uploaded_at").defaultNow().notNull(),
 });
 
 export const aiChats = pgTable("ai_chats", {
   id: serial("id").primaryKey(),
-  sessionId: text("session_id").notNull(),
-  clientEmail: text("client_email"),
+  session_id: text("session_id").notNull(),
+  client_email: text("client_email"),
   messages: json("messages").$type<Array<{
     role: 'user' | 'assistant';
     content: string;
     timestamp: number;
   }>>().notNull(),
-  bookingData: json("booking_data").$type<{
+  booking_data: json("booking_data").$type<{
     serviceType?: string;
     date?: string;
     location?: string;
     budget?: number;
   }>(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+  updated_at: timestamp("updated_at").defaultNow().notNull(),
 });
 
 // Comprehensive CRM Enhancement Tables
@@ -194,20 +194,20 @@ export const questionnaires = pgTable("questionnaires", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description"),
-  serviceType: text("service_type"),
+  service_type: text("service_type"),
   questions: json("questions").$type<Array<{id: string, type: string, question: string, required: boolean}>>(),
   active: boolean("active").default(true),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  created_at: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const clientPortalSessions = pgTable("client_portal_sessions", {
   id: serial("id").primaryKey(),
-  clientId: integer("client_id").references(() => clients.id).notNull(),
-  sessionToken: text("session_token").notNull().unique(),
-  expiresAt: timestamp("expires_at").notNull(),
-  ipAddress: text("ip_address"),
-  userAgent: text("user_agent"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  client_id: integer("client_id").references(() => clients.id).notNull(),
+  session_token: text("session_token").notNull().unique(),
+  expires_at: timestamp("expires_at").notNull(),
+  ip_address: text("ip_address"),
+  user_agent: text("user_agent"),
+  created_at: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const products = pgTable("products", {
@@ -220,32 +220,32 @@ export const products = pgTable("products", {
   sku: text("sku"),
   variants: json("variants").$type<Array<{name: string, price: number}>>(),
   active: boolean("active").default(true),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  created_at: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const orders = pgTable("orders", {
   id: serial("id").primaryKey(),
-  clientId: integer("client_id").references(() => clients.id).notNull(),
-  galleryId: integer("gallery_id").references(() => galleryImages.id),
+  client_id: integer("client_id").references(() => clients.id).notNull(),
+  gallery_id: integer("gallery_id").references(() => galleryImages.id),
   items: json("items").$type<Array<{productId: number, quantity: number, price: number}>>(),
   subtotal: decimal("subtotal", { precision: 10, scale: 2 }).notNull(),
   tax: decimal("tax", { precision: 10, scale: 2 }).default("0.00"),
   total: decimal("total", { precision: 10, scale: 2 }).notNull(),
   status: text("status").default("pending"),
-  shippingAddress: json("shipping_address"),
-  trackingNumber: text("tracking_number"),
-  fulfilledAt: timestamp("fulfilled_at"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  shipping_address: json("shipping_address"),
+  tracking_number: text("tracking_number"),
+  fulfilled_at: timestamp("fulfilled_at"),
+  created_at: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const teamMembers = pgTable("team_members", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id).notNull(),
+  user_id: integer("user_id").references(() => users.id).notNull(),
   role: text("role").notNull(),
   permissions: json("permissions").$type<Array<string>>(),
-  hourlyRate: decimal("hourly_rate", { precision: 10, scale: 2 }),
+  hourly_rate: decimal("hourly_rate", { precision: 10, scale: 2 }),
   active: boolean("active").default(true),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  created_at: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const contactMessages = pgTable("contact_messages", {
@@ -258,22 +258,22 @@ export const contactMessages = pgTable("contact_messages", {
   status: text("status").default("unread").notNull(),
   priority: text("priority").default("normal").notNull(),
   source: text("source").default("website").notNull(),
-  ipAddress: text("ip_address"),
-  userAgent: text("user_agent"),
-  aiCategory: text("ai_category").default("general_inquiry").notNull(),
-  suggestedResponse: text("suggested_response"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  ip_address: text("ip_address"),
+  user_agent: text("user_agent"),
+  ai_category: text("ai_category").default("general_inquiry").notNull(),
+  suggested_response: text("suggested_response"),
+  created_at: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const clientMessages = pgTable("client_messages", {
   id: serial("id").primaryKey(),
-  clientId: integer("client_id").references(() => clients.id).notNull(),
+  client_id: integer("client_id").references(() => clients.id).notNull(),
   message: text("message").notNull(),
-  isFromClient: boolean("is_from_client").default(true).notNull(),
-  senderName: text("sender_name").notNull(),
-  senderEmail: text("sender_email").notNull(),
+  is_from_client: boolean("is_from_client").default(true).notNull(),
+  sender_name: text("sender_name").notNull(),
+  sender_email: text("sender_email").notNull(),
   status: text("status").default("unread").notNull(), // unread, read, replied
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  created_at: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const profiles = pgTable("profiles", {
@@ -285,14 +285,14 @@ export const profiles = pgTable("profiles", {
   email: text("email").notNull(),
   address: text("address").notNull(),
   headshot: text("headshot"), // base64 or URL
-  socialMedia: json("social_media").$type<{
+  social_media: json("social_media").$type<{
     instagram: string;
     facebook: string;
     youtube: string;
   }>().default({ instagram: "", facebook: "", youtube: "" }),
-  isActive: boolean("is_active").default(true).notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  is_active: boolean("is_active").default(true).notNull(),
+  updated_at: timestamp("updated_at").defaultNow().notNull(),
+  created_at: timestamp("created_at").defaultNow().notNull(),
 });
 
 // Relations
@@ -320,21 +320,21 @@ export const bookingsRelations = relations(bookings, ({ one, many }) => ({
 
 export const contractsRelations = relations(contracts, ({ one }) => ({
   booking: one(bookings, {
-    fields: [contracts.bookingId],
+    fields: [contracts.booking_id],
     references: [bookings.id],
   }),
 }));
 
 export const invoicesRelations = relations(invoices, ({ one }) => ({
   booking: one(bookings, {
-    fields: [invoices.bookingId],
+    fields: [invoices.booking_id],
     references: [bookings.id],
   }),
 }));
 
 export const galleryImagesRelations = relations(galleryImages, ({ one }) => ({
   booking: one(bookings, {
-    fields: [galleryImages.bookingId],
+    fields: [galleryImages.booking_id],
     references: [bookings.id],
   }),
 }));
@@ -361,24 +361,24 @@ export const insertBookingSchema = createInsertSchema(bookings).omit({
 
 // Contract schema - custom definition to handle date strings properly
 export const insertContractSchema = z.object({
-  clientId: z.number(),
-  contractType: z.enum(['individual', 'business']),
-  serviceType: z.string().nullable(),
+  client_id: z.number(),
+  contract_type: z.enum(['individual', 'business']),
+  service_type: z.string().nullable(),
   title: z.string().min(1),
-  templateContent: z.string(),
-  sessionDate: z.string().nullable().transform(val => val ? new Date(val) : null),
+  template_content: z.string(),
+  session_date: z.string().nullable().transform(val => val ? new Date(val) : null),
   location: z.string().nullable(),
-  packageType: z.string().nullable(),
-  totalAmount: z.string().nullable(),
-  retainerAmount: z.string().nullable(),
-  balanceAmount: z.string().nullable(),
-  paymentTerms: z.string().nullable(),
+  package_type: z.string().nullable(),
+  total_amount: z.string().nullable(),
+  retainer_amount: z.string().nullable(),
+  balance_amount: z.string().nullable(),
+  payment_terms: z.string().nullable(),
   deliverables: z.string().nullable(),
   timeline: z.string().nullable(),
-  usageRights: z.string().nullable(),
-  cancellationPolicy: z.string().nullable(),
-  additionalTerms: z.string().nullable(),
-  bookingId: z.number().nullable(),
+  usage_rights: z.string().nullable(),
+  cancellation_policy: z.string().nullable(),
+  additional_terms: z.string().nullable(),
+  booking_id: z.number().nullable(),
 });
 
 export const insertInvoiceSchema = createInsertSchema(invoices).omit({
@@ -387,13 +387,13 @@ export const insertInvoiceSchema = createInsertSchema(invoices).omit({
 
 export const insertGalleryImageSchema = createInsertSchema(galleryImages).omit({
   id: true,
-  uploadedAt: true,
+  uploaded_at: true,
 });
 
 export const insertAiChatSchema = createInsertSchema(aiChats).omit({
   id: true,
-  createdAt: true,
-  updatedAt: true,
+  created_at: true,
+  updated_at: true,
 });
 
 export const insertLeadSchema = createInsertSchema(leads).omit({
@@ -413,43 +413,43 @@ export const insertAutomationSequenceSchema = createInsertSchema(automationSeque
 
 export const insertQuestionnaireSchema = createInsertSchema(questionnaires).omit({
   id: true,
-  createdAt: true,
+  created_at: true,
 });
 
 export const insertClientPortalSessionSchema = createInsertSchema(clientPortalSessions).omit({
   id: true,
-  createdAt: true,
+  created_at: true,
 });
 
 export const insertProductSchema = createInsertSchema(products).omit({
   id: true,
-  createdAt: true,
+  created_at: true,
 });
 
 export const insertOrderSchema = createInsertSchema(orders).omit({
   id: true,
-  createdAt: true,
+  created_at: true,
 });
 
 export const insertTeamMemberSchema = createInsertSchema(teamMembers).omit({
   id: true,
-  createdAt: true,
+  created_at: true,
 });
 
 export const insertContactMessageSchema = createInsertSchema(contactMessages).omit({
   id: true,
-  createdAt: true,
+  created_at: true,
 });
 
 export const insertClientMessageSchema = createInsertSchema(clientMessages).omit({
   id: true,
-  createdAt: true,
+  created_at: true,
 });
 
 export const insertProfileSchema = createInsertSchema(profiles).omit({
   id: true,
-  createdAt: true,
-  updatedAt: true,
+  created_at: true,
+  updated_at: true,
 });
 
 // Types - Use Drizzle inferred types for consistency

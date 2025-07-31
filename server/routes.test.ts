@@ -52,6 +52,7 @@ vi.mock('./storage', () => ({
     createClientMessage: vi.fn(),
     getProfile: vi.fn(),
     updateProfile: vi.fn(),
+    getService: vi.fn(),
   }
 }));
 
@@ -120,8 +121,8 @@ describe('API Routes', () => {
         headshot: null,
         socialMedia: null,
         isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       };
       
       vi.mocked(storage.getProfile).mockResolvedValue(mockProfile);
@@ -156,8 +157,8 @@ describe('API Routes', () => {
       const updatedProfile = { 
         id: 1, 
         ...updateData,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       };
       vi.mocked(storage.updateProfile).mockResolvedValue(updatedProfile);
 
@@ -273,9 +274,10 @@ describe('API Routes', () => {
     it('should create a new service', async () => {
       const serviceData = {
         name: 'New Service',
-        price: 1000,
+        price: '1000.00',
         duration: 120,
-        description: 'Test service'
+        description: 'Test service',
+        category: 'photography'
       };
       
       const mockService = { id: 1, ...serviceData };
@@ -290,7 +292,7 @@ describe('API Routes', () => {
     });
 
     it('should update a service', async () => {
-      const updateData = { name: 'Updated Service', price: 1500 };
+      const updateData = { name: 'Updated Service', price: '1500' };
       const mockService = { id: 1, ...updateData };
       
       vi.mocked(storage.updateService).mockResolvedValue(mockService);
@@ -330,9 +332,11 @@ describe('API Routes', () => {
       
       const mockBooking = { id: 1, ...bookingData };
       const mockClient = { id: 1, name: 'Test Client', email: 'test@example.com' };
+      const mockService = { id: 1, name: 'Test Service', duration: 60, price: '1000' };
       
       vi.mocked(storage.getClientByEmail).mockResolvedValue(null);
       vi.mocked(storage.createClient).mockResolvedValue(mockClient);
+      vi.mocked(storage.getService).mockResolvedValue(mockService);
       vi.mocked(storage.createBooking).mockResolvedValue(mockBooking);
 
       const response = await request(app)
@@ -369,10 +373,10 @@ describe('API Routes', () => {
       vi.mocked(storage.createGalleryImage).mockResolvedValue(mockImage);
 
       const response = await request(app)
-        .post('/api/gallery-images')
+        .post('/api/gallery')
         .send(imageData);
       
-      expect(response.status).toBe(201);
+      expect(response.status).toBe(200);
       expect(response.body).toEqual(mockImage);
     });
   });

@@ -38,22 +38,6 @@ export function QuestionnaireSystem() {
   const [newQuestionnaireOpen, setNewQuestionnaireOpen] = useState(false);
   const [questionnaireBuilder, setQuestionnaireBuilder] = useState(false);
 
-  return (
-    <div className="space-y-6">
-      {/* Feature Not Implemented Notice */}
-      <Card className="border-dashed border-2">
-        <CardContent className="p-8 text-center">
-          <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">Questionnaire System</h3>
-          <p className="text-muted-foreground mb-4">
-            This advanced questionnaire system requires database implementation for questionnaires, responses, and automation.
-            Feature planned for future development.
-          </p>
-        </CardContent>
-      </Card>
-    </div>
-  );
-
   // Questionnaire system requires database implementation
   const questionnaires = [
     {
@@ -528,7 +512,7 @@ export function QuestionnaireSystem() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {responses.map((response: any) => {
+            {responses.map((response: { id: number; questionnaireId: number; clientName: string; completedAt: string; bookingDate: string; responses: Record<string, string | string[]> }) => {
               const questionnaire = questionnaires.find(q => q.id === response.questionnaireId);
               return (
                 <div key={response.id} className="border rounded-lg p-4">

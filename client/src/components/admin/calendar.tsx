@@ -31,10 +31,79 @@ import {
 
 type ViewMode = 'month' | 'week' | 'day';
 
+// Type definitions
+interface Booking {
+  id: number;
+  clientId: number;
+  serviceId: number;
+  date: string;
+  duration: number;
+  location: string;
+  totalPrice: string;
+  depositPaid: boolean;
+  status: string;
+  notes: string;
+  addOns: Array<{id: string, name: string, price: number}>;
+  createdAt: string;
+  client: {
+    id: number;
+    name: string;
+    email: string;
+    phone: string;
+  };
+  service: {
+    id: number;
+    name: string;
+    description: string;
+    price: string;
+    duration: number;
+    category: string;
+  };
+}
+
+interface Service {
+  id: number;
+  name: string;
+  description: string;
+  price: string;
+  duration: number;
+  category: string;
+  active: boolean;
+}
+
+interface Client {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  status: string;
+}
+
+interface BookingData {
+  clientName: string;
+  clientEmail: string;
+  clientPhone: string;
+  serviceId: string;
+  date: string;
+  time: string;
+  location: string;
+  notes: string;
+  totalPrice: string;
+  duration: number;
+}
+
+interface UpdateBookingData {
+  status?: string;
+  notes?: string;
+  location?: string;
+  date?: string;
+  totalPrice?: string;
+}
+
 export function AdminCalendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<ViewMode>('month');
-  const [selectedBooking, setSelectedBooking] = useState<any>(null);
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [newAppointment, setNewAppointment] = useState({
@@ -67,7 +136,7 @@ export function AdminCalendar() {
   });
 
   const updateBookingMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: any }) => updateBooking(id, data),
+    mutationFn: ({ id, data }: { id: number; data: UpdateBookingData }) => updateBooking(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/bookings'] });
       queryClient.invalidateQueries({ queryKey: ['/api/analytics/stats'] });
@@ -76,7 +145,7 @@ export function AdminCalendar() {
   });
 
   const createBookingMutation = useMutation({
-    mutationFn: async (bookingData: any) => {
+    mutationFn: async (bookingData: BookingData) => {
       const response = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -97,7 +166,7 @@ export function AdminCalendar() {
       resetNewAppointment();
       console.log('✅ Appointment created successfully:', data);
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error('❌ Failed to create appointment:', error);
       alert(`Failed to create appointment: ${error.message}`);
     }
@@ -152,7 +221,7 @@ export function AdminCalendar() {
   const getBookingsForDate = (date: Date) => {
     if (!bookings || !Array.isArray(bookings)) return [];
 
-    return bookings.filter((booking: any) => {
+    return bookings.filter((booking: Booking) => {
       if (!booking || !booking.date) return false;
       try {
         const bookingDate = new Date(booking.date);
@@ -195,26 +264,23 @@ export function AdminCalendar() {
       return;
     }
 
-    const selectedService = services.find((s: any) => s.id === parseInt(newAppointment.serviceId));
+    const selectedService = services.find((s: Service) => s.id === parseInt(newAppointment.serviceId));
     if (!selectedService) {
       alert('Please select a valid service');
       return;
     }
 
-    // Combine date and time
-    const appointmentDateTime = new Date(`${newAppointment.date}T${newAppointment.time}`);
-
     const bookingData = {
       clientName: newAppointment.clientName,
       clientEmail: newAppointment.clientEmail,
       clientPhone: newAppointment.clientPhone || '',
-      serviceId: parseInt(newAppointment.serviceId),
-      date: appointmentDateTime.toISOString(),
+      serviceId: newAppointment.serviceId,
+      date: newAppointment.date,
+      time: newAppointment.time,
       location: newAppointment.location || 'TBD',
       totalPrice: newAppointment.totalPrice || selectedService.price,
       notes: newAppointment.notes || '',
-      duration: newAppointment.duration,
-      status: 'confirmed'
+      duration: newAppointment.duration
     };
 
     createBookingMutation.mutate(bookingData);
@@ -328,7 +394,7 @@ export function AdminCalendar() {
                 {day.getDate()}
               </div>
               <div className="space-y-1">
-                {dayBookings.slice(0, 2).map((booking: any) => (
+                {dayBookings.slice(0, 2).map((booking: Booking) => (
                   <div
                     key={booking.id}
                     className={`text-xs p-1 rounded border cursor-pointer hover:opacity-80 transition-opacity ${getStatusColor(booking.status)}`}
@@ -428,7 +494,7 @@ export function AdminCalendar() {
               <div key={dayIndex} className="border-l">
                 {businessHours.map(hour => (
                   <div key={hour} className="h-16 border-b p-1">
-                    {dayBookings.map((booking: any) => {
+                    {dayBookings.map((booking: Booking) => {
                       try {
                         const bookingDate = new Date(booking.date);
                         const bookingHour = bookingDate.getHours();
@@ -497,7 +563,7 @@ export function AdminCalendar() {
                   {hour === 12 ? '12 PM' : hour > 12 ? `${hour - 12} PM` : `${hour} AM`}
                 </div>
                 <div className="flex-1 p-4">
-                  {dayBookings.map((booking: any) => {
+                  {dayBookings.map((booking: Booking) => {
                     try {
                       const bookingDate = new Date(booking.date);
                       const bookingHour = bookingDate.getHours();
@@ -671,7 +737,7 @@ export function AdminCalendar() {
                 <Select 
                   value={newAppointment.clientName} 
                   onValueChange={(value) => {
-                    const selectedClient = clients.find((c: any) => c.name === value);
+                    const selectedClient = clients.find((c: Client) => c.name === value);
                     setNewAppointment(prev => ({ 
                       ...prev, 
                       clientName: value,
@@ -684,7 +750,7 @@ export function AdminCalendar() {
                     <SelectValue placeholder="Select or enter client name" />
                   </SelectTrigger>
                   <SelectContent>
-                    {clients.map((client: any) => (
+                    {clients.map((client: Client) => (
                       <SelectItem key={client.id} value={client.name}>
                         {client.name}
                       </SelectItem>
@@ -726,7 +792,7 @@ export function AdminCalendar() {
                 <Select
                   value={newAppointment.serviceId}
                   onValueChange={(value) => {
-                    const service = services.find((s: any) => s.id === parseInt(value));
+                    const service = services.find((s: Service) => s.id === parseInt(value));
                     setNewAppointment(prev => ({ 
                       ...prev, 
                       serviceId: value,
@@ -739,7 +805,7 @@ export function AdminCalendar() {
                     <SelectValue placeholder="Select a service" />
                   </SelectTrigger>
                   <SelectContent>
-                    {services.map((service: any) => (
+                    {services.map((service: Service) => (
                       <SelectItem key={service.id} value={service.id.toString()}>
                         {service.name} - ${service.price}
                       </SelectItem>
@@ -840,7 +906,7 @@ export function AdminCalendar() {
           {selectedDate && (
             <div className="space-y-4 max-h-96 overflow-y-auto">
               {getBookingsForDate(selectedDate).length > 0 ? (
-                getBookingsForDate(selectedDate).map((booking: any) => (
+                getBookingsForDate(selectedDate).map((booking: Booking) => (
                   <div
                     key={booking.id}
                     className={`p-3 rounded-lg border cursor-pointer hover:opacity-80 transition-opacity ${getStatusColor(booking.status)}`}

@@ -1,0 +1,52 @@
+# Global code ownership
+* @robertsn808
+
+# Frontend/Client code
+/client/ @robertsn808
+*.tsx @robertsn808
+*.jsx @robertsn808
+/client/src/components/ @robertsn808
+/client/src/pages/ @robertsn808
+
+# Backend/Server code
+/server/ @robertsn808
+/api/ @robertsn808
+*.ts @robertsn808
+
+# Database and schema changes
+/shared/schema.ts @robertsn808
+/migrations/ @robertsn808
+/drizzle.config.ts @robertsn808
+
+# Security and configuration files
+/.github/ @robertsn808
+/.env* @robertsn808
+/Dockerfile* @robertsn808
+/docker-compose* @robertsn808
+/nginx.conf @robertsn808
+
+# Documentation
+*.md @robertsn808
+/docs/ @robertsn808
+
+# Package management
+package.json @robertsn808
+package-lock.json @robertsn808
+/client/package.json @robertsn808
+/client/package-lock.json @robertsn808
+
+# Build and deployment configurations
+/build.js @robertsn808
+/build-server.js @robertsn808
+/deploy-* @robertsn808
+/vercel.json @robertsn808
+/render.yaml @robertsn808
+tsconfig*.json @robertsn808
+vite.config.ts @robertsn808
+tailwind.config.* @robertsn808
+
+# Critical system files (require extra attention)
+/server/index.ts @robertsn808
+/server/routes.ts @robertsn808
+/server/db.ts @robertsn808
+/server/storage.ts @robertsn808

@@ -16,7 +16,14 @@
     "strict": false
   },
   "include": [
-    "server/**/*",
+    "server/index.ts",
+    "server/routes.ts",
+    "server/storage.ts",
+    "server/db.ts",
+    "server/openai.ts",
+    "server/pdf-generator.ts",
+    "server/database-init.ts",
+    "server/twilio.ts",
     "shared/**/*"
   ],
   "exclude": [

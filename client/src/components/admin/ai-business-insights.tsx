@@ -18,9 +18,55 @@ import {
   Sparkles
 } from "lucide-react";
 
+// Type definitions
+interface Booking {
+  id: number;
+  totalPrice: number;
+  status: string;
+  serviceId: number;
+  clientId: number;
+  date: string;
+  location: string;
+}
+
+interface Service {
+  id: number;
+  name: string;
+  price: number;
+  category: string;
+}
+
+interface ContactMessage {
+  id: number;
+  name: string;
+  email: string;
+  status: string;
+  priority: string;
+  subject: string;
+  message: string;
+}
+
+interface BusinessInsight {
+  type: string;
+  title: string;
+  insight: string;
+  confidence: number;
+  impact: string;
+  action: string;
+  icon: React.ComponentType<{ className?: string }>;
+  color: string;
+}
+
+interface ServicePerformance {
+  name: string;
+  bookings: number;
+  revenue: number;
+  avgValue: number;
+}
+
 export function AIBusinessInsights() {
   const [aiQuery, setAiQuery] = useState("");
-  const [insights, setInsights] = useState<any[]>([]);
+  const [insights, setInsights] = useState<BusinessInsight[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
 
   // Fetch real business data for AI analysis
@@ -65,24 +111,24 @@ export function AIBusinessInsights() {
     setIsGenerating(true);
     
     // Calculate real metrics from business data
-    const totalRevenue = bookingsData.reduce((sum: number, booking: any) => sum + (booking.totalPrice || 0), 0);
+    const totalRevenue = bookingsData.reduce((sum: number, booking: Booking) => sum + (booking.totalPrice || 0), 0);
     const avgBookingValue = bookingsData.length > 0 ? totalRevenue / bookingsData.length : 0;
-    const confirmedBookings = bookingsData.filter((b: any) => b.status === 'confirmed').length;
+    const confirmedBookings = bookingsData.filter((b: Booking) => b.status === 'confirmed').length;
     const conversionRate = clientsData.length > 0 ? (confirmedBookings / clientsData.length) * 100 : 0;
-    const unreadMessages = contactMessages.filter((m: any) => m.status === 'unread').length;
-    const urgentMessages = contactMessages.filter((m: any) => m.priority === 'urgent').length;
+    const unreadMessages = contactMessages.filter((m: ContactMessage) => m.status === 'unread').length;
+    const urgentMessages = contactMessages.filter((m: ContactMessage) => m.priority === 'urgent').length;
     
     // Service performance analysis
-    const servicePerformance = servicesData.map((service: any) => {
-      const serviceBookings = bookingsData.filter((b: any) => b.serviceId === service.id);
-      const serviceRevenue = serviceBookings.reduce((sum: number, b: any) => sum + (b.totalPrice || 0), 0);
+    const servicePerformance: ServicePerformance[] = servicesData.map((service: Service) => {
+      const serviceBookings = bookingsData.filter((b: Booking) => b.serviceId === service.id);
+      const serviceRevenue = serviceBookings.reduce((sum: number, b: Booking) => sum + (b.totalPrice || 0), 0);
       return {
         name: service.name,
         bookings: serviceBookings.length,
         revenue: serviceRevenue,
         avgValue: serviceBookings.length > 0 ? serviceRevenue / serviceBookings.length : 0
       };
-    }).sort((a: any, b: any) => b.revenue - a.revenue);
+    }).sort((a: ServicePerformance, b: ServicePerformance) => b.revenue - a.revenue);
 
     const topService = servicePerformance[0];
     const businessInsights = [
@@ -159,9 +205,9 @@ export function AIBusinessInsights() {
   };
 
   // Calculate predictive metrics from real data
-  const totalRevenue = bookingsData.reduce((sum: number, booking: any) => sum + (booking.totalPrice || 0), 0);
+  const totalRevenue = bookingsData.reduce((sum: number, booking: Booking) => sum + (booking.totalPrice || 0), 0);
   const avgBookingValue = bookingsData.length > 0 ? totalRevenue / bookingsData.length : 0;
-  const confirmedBookings = bookingsData.filter((b: any) => b.status === 'confirmed').length;
+  const confirmedBookings = bookingsData.filter((b: Booking) => b.status === 'confirmed').length;
   const conversionRate = clientsData.length > 0 ? (confirmedBookings / clientsData.length) * 100 : 0;
 
   const predictiveMetrics = [

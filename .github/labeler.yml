@@ -1,84 +1,107 @@
 documentation:
-  - '**/*.md'
-  - 'docs/**/*'
-  - 'README*'
-  - 'CHANGELOG*'
-  - 'LICENSE*'
+  - changed-files:
+    - any-glob-to-any-file: 
+      - '**/*.md'
+      - 'docs/**/*'
+      - 'README*'
+      - 'CHANGELOG*'
+      - 'LICENSE*'
 
 frontend:
-  - 'client/**/*'
-  - '**/*.tsx'
-  - '**/*.jsx'
-  - '**/components/**/*'
-  - '**/pages/**/*'
-  - '**/hooks/**/*'
-  - 'tailwind.config.*'
-  - 'vite.config.*'
-  - 'postcss.config.*'
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'client/**/*'
+      - '**/*.tsx'
+      - '**/*.jsx'
+      - '**/components/**/*'
+      - '**/pages/**/*'
+      - '**/hooks/**/*'
+      - 'tailwind.config.*'
+      - 'vite.config.*'
+      - 'postcss.config.*'
 
 backend:
-  - 'server/**/*'
-  - 'api/**/*'
-  - '**/*.ts'
-  - 'routes/**/*'
-  - 'middleware/**/*'
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'server/**/*'
+      - 'api/**/*'
+      - '**/*.ts'
+      - 'routes/**/*'
+      - 'middleware/**/*'
 
 database:
-  - 'shared/schema.ts'
-  - 'migrations/**/*'
-  - 'drizzle.config.*'
-  - '**/*database*'
-  - '**/*db*'
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'shared/schema.ts'
+      - 'migrations/**/*'
+      - 'drizzle.config.*'
+      - '**/*database*'
+      - '**/*db*'
 
 deployment:
-  - 'Dockerfile*'
-  - 'docker-compose*'
-  - '.github/workflows/**/*'
-  - 'deploy*'
-  - 'vercel.json'
-  - 'render.yaml'
-  - '**/build*'
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'Dockerfile*'
+      - 'docker-compose*'
+      - '.github/workflows/**/*'
+      - 'deploy*'
+      - 'vercel.json'
+      - 'render.yaml'
+      - '**/build*'
 
 security:
-  - '.env*'
-  - '**/auth*'
-  - '**/security*'
-  - '**/cors*'
-  - '**/validation*'
+  - changed-files:
+    - any-glob-to-any-file:
+      - '.env*'
+      - '**/auth*'
+      - '**/security*'
+      - '**/cors*'
+      - '**/validation*'
 
 dependencies:
-  - 'package*.json'
-  - 'yarn.lock'
-  - 'pnpm-lock.yaml'
+  - changed-files:
+    - any-glob-to-any-file:
+      - 'package*.json'
+      - 'yarn.lock'
+      - 'pnpm-lock.yaml'
 
 testing:
-  - '**/*.test.*'
-  - '**/*.spec.*'
-  - 'test/**/*'
-  - 'tests/**/*'
-  - 'vitest.config.*'
-  - 'jest.config.*'
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.test.*'
+      - '**/*.spec.*'
+      - 'test/**/*'
+      - 'tests/**/*'
+      - 'vitest.config.*'
+      - 'jest.config.*'
 
 config:
-  - '*.config.*'
-  - '.*rc.*'
-  - '.env*'
-  - 'tsconfig*.json'
-  - '.eslintrc*'
-  - '.prettierrc*'
-  - '.gitignore'
+  - changed-files:
+    - any-glob-to-any-file:
+      - '*.config.*'
+      - '.*rc.*'
+      - '.env*'
+      - 'tsconfig*.json'
+      - '.eslintrc*'
+      - '.prettierrc*'
+      - '.gitignore'
 
 enhancement:
-  - any: ['feat:', 'feature:']
+  - head-branch: ['^feature', '^feat']
+  - title: ['^feat:', '^feature:']
 
 bug:
-  - any: ['fix:', 'bug:', 'hotfix:']
+  - head-branch: ['^fix', '^hotfix', '^bugfix']
+  - title: ['^fix:', '^bug:', '^hotfix:']
 
 refactor:
-  - any: ['refactor:', 'refact:']
+  - head-branch: ['^refactor']
+  - title: ['^refactor:', '^refact:']
 
 performance:
-  - any: ['perf:', 'performance:']
+  - head-branch: ['^perf']
+  - title: ['^perf:', '^performance:']
 
 style:
-  - any: ['style:', 'ui:', 'css:']
+  - head-branch: ['^style', '^ui']
+  - title: ['^style:', '^ui:', '^css:']

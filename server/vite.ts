@@ -1,9 +1,9 @@
-import express, { type Express } from "express";
-import fs from "fs";
-import path from "path";
+import * as express from "express";
+import { type Express } from "express";
+import * as fs from "fs";
+import * as path from "path";
 import { type Server } from "http";
 import { nanoid } from "nanoid";
-import { fileURLToPath } from "url";
 
 // Dynamic imports to avoid compilation errors in production
 
@@ -21,7 +21,8 @@ export function log(message: string, source = "express") {
 export async function setupVite(app: Express, server: Server) {
   try {
     // Dynamic import to avoid build-time errors
-    const { createServer: createViteServer, createLogger } = await import('vite');
+    const viteModule = await import('vite');
+    const { createServer: createViteServer, createLogger } = viteModule;
     // Use empty config to avoid module declaration issues
     const viteConfig = {};
     
@@ -52,7 +53,7 @@ export async function setupVite(app: Express, server: Server) {
       const url = req.originalUrl;
 
       try {
-        const currentDir = path.dirname(fileURLToPath(import.meta.url));
+        const currentDir = __dirname;
         const clientTemplate = path.resolve(
           currentDir,
           "..",
@@ -80,7 +81,7 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const currentDir = path.dirname(fileURLToPath(import.meta.url));
+  const currentDir = __dirname;
   const distPath = path.resolve(currentDir, "../dist/public");
 
   if (!fs.existsSync(distPath)) {

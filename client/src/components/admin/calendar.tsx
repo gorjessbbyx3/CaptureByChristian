@@ -270,20 +270,17 @@ export function AdminCalendar() {
       return;
     }
 
-    // Combine date and time
-    const appointmentDateTime = new Date(`${newAppointment.date}T${newAppointment.time}`);
-
     const bookingData = {
       clientName: newAppointment.clientName,
       clientEmail: newAppointment.clientEmail,
       clientPhone: newAppointment.clientPhone || '',
-      serviceId: parseInt(newAppointment.serviceId),
-      date: appointmentDateTime.toISOString(),
+      serviceId: newAppointment.serviceId,
+      date: newAppointment.date,
+      time: newAppointment.time,
       location: newAppointment.location || 'TBD',
       totalPrice: newAppointment.totalPrice || selectedService.price,
       notes: newAppointment.notes || '',
-      duration: newAppointment.duration,
-      status: 'confirmed'
+      duration: newAppointment.duration
     };
 
     createBookingMutation.mutate(bookingData);

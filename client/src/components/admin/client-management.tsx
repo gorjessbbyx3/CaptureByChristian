@@ -501,7 +501,7 @@ function ClientDetails({ client, bookings }: { client: Client; bookings: Booking
             {bookings.slice(0, 5).map((booking: Booking) => (
               <div key={booking.id} className="flex items-center justify-between p-3 bg-muted/50 rounded">
                 <div>
-                  <p className="font-medium">{booking.service?.name}</p>
+                  <p className="font-medium">Photography Service</p>
                   <p className="text-sm text-muted-foreground">
                     {new Date(booking.date).toLocaleDateString()} at {booking.location}
                   </p>

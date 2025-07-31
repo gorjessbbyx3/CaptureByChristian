@@ -53,7 +53,7 @@ interface BusinessInsight {
   confidence: number;
   impact: string;
   action: string;
-  icon: React.ComponentType;
+  icon: React.ComponentType<{ className?: string }>;
   color: string;
 }
 

@@ -1,3 +1,5 @@
+# Configuration for actions/labeler - https://github.com/actions/labeler
+
 documentation:
   - changed-files:
     - any-glob-to-any-file: 
@@ -87,21 +89,42 @@ config:
       - '.gitignore'
 
 enhancement:
-  - head-branch: ['^feature', '^feat']
-  - title: ['^feat:', '^feature:']
+  - head-branch:
+    - '^feature'
+    - '^feat'
+  - title:
+    - '^feat:'
+    - '^feature:'
 
 bug:
-  - head-branch: ['^fix', '^hotfix', '^bugfix']
-  - title: ['^fix:', '^bug:', '^hotfix:']
+  - head-branch:
+    - '^fix'
+    - '^hotfix'
+    - '^bugfix'
+  - title:
+    - '^fix:'
+    - '^bug:'
+    - '^hotfix:'
 
 refactor:
-  - head-branch: ['^refactor']
-  - title: ['^refactor:', '^refact:']
+  - head-branch:
+    - '^refactor'
+  - title:
+    - '^refactor:'
+    - '^refact:'
 
 performance:
-  - head-branch: ['^perf']
-  - title: ['^perf:', '^performance:']
+  - head-branch:
+    - '^perf'
+  - title:
+    - '^perf:'
+    - '^performance:'
 
 style:
-  - head-branch: ['^style', '^ui']
-  - title: ['^style:', '^ui:', '^css:']
+  - head-branch:
+    - '^style'
+    - '^ui'
+  - title:
+    - '^style:'
+    - '^ui:'
+    - '^css:'

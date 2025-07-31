@@ -306,11 +306,11 @@ export const servicesRelations = relations(services, ({ many }) => ({
 
 export const bookingsRelations = relations(bookings, ({ one, many }) => ({
   client: one(clients, {
-    fields: [bookings.client_id],
+    fields: [bookings.clientId],
     references: [clients.id],
   }),
   service: one(services, {
-    fields: [bookings.service_id],
+    fields: [bookings.serviceId],
     references: [services.id],
   }),
   contract: one(contracts),

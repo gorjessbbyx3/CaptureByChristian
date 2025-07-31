@@ -1910,3 +1910,7 @@ Please respond with a JSON object containing:
   const httpServer = createServer(app);
   return httpServer;
 }
+
+function log(message: string, context: string) {
+  console.log(`[${context}] ${new Date().toISOString()}: ${message}`);
+}

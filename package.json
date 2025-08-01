@@ -5,9 +5,6 @@
   "main": "dist/server/index.js",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
-    "dev:server": "tsx watch server/index.ts",
-    "dev:client": "cd client && npm run dev",
     "build": "npm run build:client && npm run build:server",
     "build:client": "cd client && npm install --include=dev && npm run build",
     "build:server": "tsc -p tsconfig.build.json",

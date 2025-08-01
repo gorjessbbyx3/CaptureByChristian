@@ -47,7 +47,7 @@ docker build -f Dockerfile.render -t capturedbychristian:latest .
 
 ```bash
 # Using Render CLI
-render deploy --file render-production.yaml
+render deploy --file render.yaml
 
 # Or manual deployment via dashboard
 # Follow RENDER_DEPLOYMENT_GUIDE.md

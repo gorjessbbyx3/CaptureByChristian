@@ -1,6 +1,22 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { DatabaseStorage } from './storage';
 import { getDatabaseInitializer } from './database-init';
+import { ColumnBaseConfig, ColumnDataType, NeonAuthToken, Query, SQL} from 'drizzle-orm';
+import {NodePgQueryResultHKT} from 'drizzle-orm/node-postgres';
+import {
+  PgUpdateBuilder,
+  PgTable,
+  TableConfig,
+  PgInsertBase,
+  PgInsertBuilder,
+  PgInsertSelectQueryBuilder,
+  QueryBuilder,
+  PgColumn,
+  PgDeleteBase,
+  PgDeleteDynamic,
+  PgDeletePrepare
+} from 'drizzle-orm/pg-core';
+import {QueryResult} from 'pg';
 
 // Mock the database initializer
 vi.mock('./database-init', () => ({
@@ -151,17 +167,26 @@ describe('Database Layer Tests', () => {
     });
 
     it('should update client', async () => {
-      const updatedClient = { ...mockClient, name: 'John Updated' };
+      const updatedClient = {...mockClient, name: 'John Updated'};
       const mockDb = await import('./db');
       vi.mocked(mockDb.db.update).mockReturnValue({
         set: vi.fn().mockReturnValue({
           where: vi.fn().mockReturnValue({
             returning: vi.fn().mockResolvedValue([updatedClient])
           })
-        })
+        }),
+        table: undefined,
+        session: undefined,
+        dialect: undefined,
+        _: {
+          table: undefined
+        },
+        setToken: function (token: NeonAuthToken): PgUpdateBuilder<PgTable<TableConfig>, NodePgQueryResultHKT> {
+          throw new Error('Function not implemented.');
+        }
       });
 
-      const result = await storage.updateClient(1, { name: 'John Updated' });
+      const result = await storage.updateClient(1, {name: 'John Updated'});
       expect(result).toEqual(updatedClient);
     });
   });
@@ -182,7 +207,16 @@ describe('Database Layer Tests', () => {
       vi.mocked(mockDb.db.insert).mockReturnValue({
         values: vi.fn().mockReturnValue({
           returning: vi.fn().mockResolvedValue([mockService])
-        })
+        }),
+        table: undefined,
+        session: undefined,
+        dialect: undefined,
+        overridingSystemValue: function (): Omit<PgInsertBuilder<PgTable<TableConfig>, NodePgQueryResultHKT, true>, 'overridingSystemValue'> {
+          throw new Error('Function not implemented.');
+        },
+        select: function (selectQuery: (qb: QueryBuilder) => PgInsertSelectQueryBuilder<PgTable<TableConfig>>): PgInsertBase<PgTable<TableConfig>, NodePgQueryResultHKT, undefined, undefined, false, never> {
+          throw new Error('Function not implemented.');
+        }
       });
 
       const result = await storage.createService({
@@ -198,12 +232,18 @@ describe('Database Layer Tests', () => {
 
     it('should get active services', async () => {
       const mockDb = await import('./db');
+      // @ts-ignore
       vi.mocked(mockDb.db.select).mockReturnValue({
         from: vi.fn().mockReturnValue({
           where: vi.fn().mockReturnValue({
             orderBy: vi.fn().mockResolvedValue([mockService])
           })
-        })
+        }),
+        fields: undefined,
+        session: undefined,
+        dialect: undefined,
+        withList: undefined,
+        distinct: undefined
       });
 
       const result = await storage.getActiveServices();
@@ -211,7 +251,7 @@ describe('Database Layer Tests', () => {
     });
 
     it('should update service', async () => {
-      const updatedService = { ...mockService, price: '3000.00' };
+      const updatedService = {...mockService, price: '3000.00'};
       const mockDb = await import('./db');
       vi.mocked(mockDb.db.update).mockReturnValue({
         set: vi.fn().mockReturnValue({
@@ -221,7 +261,7 @@ describe('Database Layer Tests', () => {
         })
       });
 
-      const result = await storage.updateService(1, { price: '3000.00' });
+      const result = await storage.updateService(1, {price: '3000.00'});
       expect(result).toEqual(updatedService);
     });
 
@@ -246,8 +286,8 @@ describe('Database Layer Tests', () => {
       totalPrice: '1500.00',
       status: 'pending',
       createdAt: new Date(),
-      client: { id: 1, name: 'John Doe', email: 'john@example.com' },
-      service: { id: 1, name: 'Portrait Session', price: '1500.00' }
+      client: {id: 1, name: 'John Doe', email: 'john@example.com'},
+      service: {id: 1, name: 'Portrait Session', price: '1500.00'}
     };
 
     it('should create a booking', async () => {
@@ -255,7 +295,16 @@ describe('Database Layer Tests', () => {
       vi.mocked(mockDb.db.insert).mockReturnValue({
         values: vi.fn().mockReturnValue({
           returning: vi.fn().mockResolvedValue([mockBooking])
-        })
+        }),
+        table: undefined,
+        session: undefined,
+        dialect: undefined,
+        overridingSystemValue: function (): Omit<PgInsertBuilder<PgTable<TableConfig>, NodePgQueryResultHKT, true>, 'overridingSystemValue'> {
+          throw new Error('Function not implemented.');
+        },
+        select: function (selectQuery: (qb: QueryBuilder) => PgInsertSelectQueryBuilder<PgTable<TableConfig>>): PgInsertBase<PgTable<TableConfig>, NodePgQueryResultHKT, undefined, undefined, false, never> {
+          throw new Error('Function not implemented.');
+        }
       });
 
       const result = await storage.createBooking({
@@ -317,7 +366,7 @@ describe('Database Layer Tests', () => {
     it('should get bookings by date range', async () => {
       const startDate = new Date('2024-06-01');
       const endDate = new Date('2024-06-30');
-      
+
       const mockDb = await import('./db');
       vi.mocked(mockDb.db.select).mockReturnValue({
         from: vi.fn().mockReturnValue({
@@ -342,7 +391,7 @@ describe('Database Layer Tests', () => {
     });
 
     it('should update booking', async () => {
-      const updatedBooking = { ...mockBooking, status: 'confirmed' };
+      const updatedBooking = {...mockBooking, status: 'confirmed'};
       const mockDb = await import('./db');
       vi.mocked(mockDb.db.update).mockReturnValue({
         set: vi.fn().mockReturnValue({
@@ -352,7 +401,7 @@ describe('Database Layer Tests', () => {
         })
       });
 
-      const result = await storage.updateBooking(1, { status: 'confirmed' });
+      const result = await storage.updateBooking(1, {status: 'confirmed'});
       expect(result.status).toBe('confirmed');
     });
   });
@@ -402,7 +451,7 @@ describe('Database Layer Tests', () => {
     });
 
     it('should get featured images', async () => {
-      const featuredImage = { ...mockImage, featured: true };
+      const featuredImage = {...mockImage, featured: true};
       const mockDb = await import('./db');
       vi.mocked(mockDb.db.select).mockReturnValue({
         from: vi.fn().mockReturnValue({
@@ -431,7 +480,7 @@ describe('Database Layer Tests', () => {
     });
 
     it('should update gallery image', async () => {
-      const updatedImage = { ...mockImage, featured: true };
+      const updatedImage = {...mockImage, featured: true};
       const mockDb = await import('./db');
       vi.mocked(mockDb.db.update).mockReturnValue({
         set: vi.fn().mockReturnValue({
@@ -441,7 +490,7 @@ describe('Database Layer Tests', () => {
         })
       });
 
-      const result = await storage.updateGalleryImage(1, { featured: true });
+      const result = await storage.updateGalleryImage(1, {featured: true});
       expect(result.featured).toBe(true);
     });
 
@@ -460,8 +509,13 @@ describe('Database Layer Tests', () => {
       const mockDb = await import('./db');
       vi.mocked(mockDb.db.select).mockReturnValue({
         from: vi.fn().mockReturnValue({
-          where: vi.fn().mockResolvedValue([{ total: 5000 }])
-        })
+          where: vi.fn().mockResolvedValue([{total: 5000}])
+        }),
+        fields: undefined,
+        session: undefined,
+        dialect: undefined,
+        withList: undefined,
+        distinct: undefined
       });
 
       const result = await storage.getMonthlyRevenue(2024, 6);
@@ -472,8 +526,13 @@ describe('Database Layer Tests', () => {
       const mockDb = await import('./db');
       vi.mocked(mockDb.db.select).mockReturnValue({
         from: vi.fn().mockReturnValue({
-          where: vi.fn().mockResolvedValue([{ count: 10 }])
-        })
+          where: vi.fn().mockResolvedValue([{count: 10}])
+        }),
+        fields: undefined,
+        session: undefined,
+        dialect: undefined,
+        withList: undefined,
+        distinct: undefined
       });
 
       const result = await storage.getBookingStats();
@@ -487,8 +546,13 @@ describe('Database Layer Tests', () => {
       const mockDb = await import('./db');
       vi.mocked(mockDb.db.select).mockReturnValue({
         from: vi.fn().mockReturnValue({
-          where: vi.fn().mockResolvedValue([{ count: 25 }])
-        })
+          where: vi.fn().mockResolvedValue([{count: 25}])
+        }),
+        fields: undefined,
+        session: undefined,
+        dialect: undefined,
+        withList: undefined,
+        distinct: undefined
       });
 
       const result = await storage.getBusinessKPIs();
@@ -503,9 +567,14 @@ describe('Database Layer Tests', () => {
       vi.mocked(mockDb.db.select).mockReturnValue({
         from: vi.fn().mockReturnValue({
           groupBy: vi.fn().mockReturnValue({
-            having: vi.fn().mockResolvedValue([{ clientId: 1, count: 3 }])
+            having: vi.fn().mockResolvedValue([{clientId: 1, count: 3}])
           })
-        })
+        }),
+        fields: undefined,
+        session: undefined,
+        dialect: undefined,
+        withList: undefined,
+        distinct: undefined
       });
 
       const result = await storage.getClientMetrics();
@@ -528,7 +597,7 @@ describe('Database Layer Tests', () => {
       templateContent: 'Contract template content...',
       totalAmount: '2500.00',
       createdAt: new Date(),
-      client: { id: 1, name: 'John Doe', email: 'john@example.com' }
+      client: {id: 1, name: 'John Doe', email: 'john@example.com'}
     };
 
     it('should create contract', async () => {
@@ -536,7 +605,16 @@ describe('Database Layer Tests', () => {
       vi.mocked(mockDb.db.insert).mockReturnValue({
         values: vi.fn().mockReturnValue({
           returning: vi.fn().mockResolvedValue([mockContract])
-        })
+        }),
+        table: undefined,
+        session: undefined,
+        dialect: undefined,
+        overridingSystemValue: function (): Omit<PgInsertBuilder<PgTable<TableConfig>, NodePgQueryResultHKT, true>, 'overridingSystemValue'> {
+          throw new Error('Function not implemented.');
+        },
+        select: function (selectQuery: (qb: QueryBuilder) => PgInsertSelectQueryBuilder<PgTable<TableConfig>>): PgInsertBase<PgTable<TableConfig>, NodePgQueryResultHKT, undefined, undefined, false, never> {
+          throw new Error('Function not implemented.');
+        }
       });
 
       const result = await storage.createContract({
@@ -559,7 +637,12 @@ describe('Database Layer Tests', () => {
               clients: mockContract.client
             }])
           })
-        })
+        }),
+        fields: undefined,
+        session: undefined,
+        dialect: undefined,
+        withList: undefined,
+        distinct: undefined
       });
 
       const result = await storage.getContracts();
@@ -567,17 +650,26 @@ describe('Database Layer Tests', () => {
     });
 
     it('should update contract', async () => {
-      const updatedContract = { ...mockContract, status: 'sent' };
+      const updatedContract = {...mockContract, status: 'sent'};
       const mockDb = await import('./db');
       vi.mocked(mockDb.db.update).mockReturnValue({
         set: vi.fn().mockReturnValue({
           where: vi.fn().mockReturnValue({
             returning: vi.fn().mockResolvedValue([updatedContract])
           })
-        })
+        }),
+        table: undefined,
+        session: undefined,
+        dialect: undefined,
+        _: {
+          table: undefined
+        },
+        setToken: function (token: NeonAuthToken): PgUpdateBuilder<PgTable<TableConfig>, NodePgQueryResultHKT> {
+          throw new Error('Function not implemented.');
+        }
       });
 
-      const result = await storage.updateContract(1, { status: 'sent' });
+      const result = await storage.updateContract(1, {status: 'sent'});
       expect(result.status).toBe('sent');
     });
 
@@ -586,7 +678,16 @@ describe('Database Layer Tests', () => {
       vi.mocked(mockDb.db.update).mockReturnValue({
         set: vi.fn().mockReturnValue({
           where: vi.fn().mockResolvedValue(undefined)
-        })
+        }),
+        table: undefined,
+        session: undefined,
+        dialect: undefined,
+        _: {
+          table: undefined
+        },
+        setToken: function (token: NeonAuthToken): PgUpdateBuilder<PgTable<TableConfig>, NodePgQueryResultHKT> {
+          throw new Error('Function not implemented.');
+        }
       });
 
       const result = await storage.sendContractToPortal(1);
@@ -614,7 +715,16 @@ describe('Database Layer Tests', () => {
       vi.mocked(mockDb.db.insert).mockReturnValue({
         values: vi.fn().mockReturnValue({
           returning: vi.fn().mockResolvedValue([mockMessage])
-        })
+        }),
+        table: undefined,
+        session: undefined,
+        dialect: undefined,
+        overridingSystemValue: function (): Omit<PgInsertBuilder<PgTable<TableConfig>, NodePgQueryResultHKT, true>, 'overridingSystemValue'> {
+          throw new Error('Function not implemented.');
+        },
+        select: function (selectQuery: (qb: QueryBuilder) => PgInsertSelectQueryBuilder<PgTable<TableConfig>>): PgInsertBase<PgTable<TableConfig>, NodePgQueryResultHKT, undefined, undefined, false, never> {
+          throw new Error('Function not implemented.');
+        }
       });
 
       const result = await storage.createContactMessage({
@@ -632,7 +742,12 @@ describe('Database Layer Tests', () => {
       vi.mocked(mockDb.db.select).mockReturnValue({
         from: vi.fn().mockReturnValue({
           orderBy: vi.fn().mockResolvedValue([mockMessage])
-        })
+        }),
+        fields: undefined,
+        session: undefined,
+        dialect: undefined,
+        withList: undefined,
+        distinct: undefined
       });
 
       const result = await storage.getContactMessages();
@@ -640,24 +755,76 @@ describe('Database Layer Tests', () => {
     });
 
     it('should update contact message', async () => {
-      const updatedMessage = { ...mockMessage, status: 'read' };
+      const updatedMessage = {...mockMessage, status: 'read'};
       const mockDb = await import('./db');
       vi.mocked(mockDb.db.update).mockReturnValue({
         set: vi.fn().mockReturnValue({
           where: vi.fn().mockReturnValue({
             returning: vi.fn().mockResolvedValue([updatedMessage])
           })
-        })
+        }),
+        table: undefined,
+        session: undefined,
+        dialect: undefined,
+        _: {
+          table: undefined
+        },
+        setToken: function (token: NeonAuthToken): PgUpdateBuilder<PgTable<TableConfig>, NodePgQueryResultHKT> {
+          throw new Error('Function not implemented.');
+        }
       });
 
-      const result = await storage.updateContactMessage(1, { status: 'read' });
+      const result = await storage.updateContactMessage(1, {status: 'read'});
       expect(result.status).toBe('read');
     });
 
     it('should delete contact message', async () => {
       const mockDb = await import('./db');
       vi.mocked(mockDb.db.delete).mockReturnValue({
-        where: vi.fn().mockResolvedValue(undefined)
+        where: vi.fn().mockResolvedValue(undefined),
+        _: {
+          dialect: 'pg',
+          table: undefined,
+          queryResult: undefined,
+          selectedFields: undefined,
+          returning: undefined,
+          dynamic: false,
+          excludedMethods: [],
+          result: undefined
+        },
+        session: undefined,
+        dialect: undefined,
+        config: undefined,
+        returning: function (): Omit<PgDeleteBase<PgTable<TableConfig>, NodePgQueryResultHKT, Record<string, PgColumn<ColumnBaseConfig<ColumnDataType, string>, {}, {}>>, {
+          [x: string]: unknown;
+        }, false, 'returning'>, 'returning'> {
+          throw new Error('Function not implemented.');
+        },
+        toSQL: function (): Query {
+          throw new Error('Function not implemented.');
+        },
+        prepare: function (name: string): PgDeletePrepare<PgDeleteBase<PgTable<TableConfig>, NodePgQueryResultHKT, undefined, undefined, false, never>> {
+          throw new Error('Function not implemented.');
+        },
+        execute: function (placeholderValues?: Record<string, unknown>): Promise<QueryResult<never>> {
+          throw new Error('Function not implemented.');
+        },
+        $dynamic: function (): PgDeleteDynamic<PgDeleteBase<PgTable<TableConfig>, NodePgQueryResultHKT, undefined, undefined, false, never>> {
+          throw new Error('Function not implemented.');
+        },
+        catch: function <TResult = never>(onRejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null | undefined): Promise<QueryResult<never> | TResult> {
+          throw new Error('Function not implemented.');
+        },
+        finally: function (onFinally?: (() => void) | null | undefined): Promise<QueryResult<never>> {
+          throw new Error('Function not implemented.');
+        },
+        then: function <TResult1 = QueryResult<never>, TResult2 = never>(onFulfilled?: ((value: QueryResult<never>) => TResult1 | PromiseLike<TResult1>) | null | undefined, onRejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null | undefined): Promise<TResult1 | TResult2> {
+          throw new Error('Function not implemented.');
+        },
+        [Symbol.toStringTag]: '',
+        getSQL: function (): SQL {
+          throw new Error('Function not implemented.');
+        }
       });
 
       await expect(storage.deleteContactMessage(1)).resolves.toBeUndefined();

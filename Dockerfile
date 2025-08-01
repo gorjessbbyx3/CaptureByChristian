@@ -28,10 +28,13 @@ RUN echo '#!/bin/sh' > /app/start.sh && \
 
 USER nextjs
 
-EXPOSE 7000
+# Use environment variable for port - this is crucial for Render
+ENV PORT=10000
+EXPOSE $PORT
 
+# Update healthcheck to use environment PORT
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:7000/api/health || exit 1
+  CMD curl -f http://localhost:${PORT}/api/health || exit 1
 
 ENTRYPOINT ["dumb-init", "--"]
 CMD ["/app/start.sh"]

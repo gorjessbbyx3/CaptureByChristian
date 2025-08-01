@@ -30,7 +30,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const app = express();
-const PORT = Number(process.env.PORT) || 3000;
+const PORT = Number(process.env.PORT) || 7000;
 
 // Middleware
 app.use(cors({
@@ -72,7 +72,9 @@ app.get('/health', (req, res) => {
 app.use('/attached_assets', express.static(path.join(__dirname, '../attached_assets')));
 
 // API routes
-registerRoutes(app);
+registerRoutes(app).then(() => {
+  console.log("Routes registered");
+});
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {

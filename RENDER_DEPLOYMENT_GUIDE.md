@@ -18,7 +18,7 @@
 ```bash
 # Ensure your repo has these files:
 # - Dockerfile.render
-# - render-production.yaml
+# - render.yaml
 # - package.json
 # - All source code
 ```
@@ -86,7 +86,7 @@ Add these in Render dashboard:
 npm install -g @render/cli
 
 # Deploy
-render deploy --file render-production.yaml
+render deploy --file render.yaml
 ```
 
 ## **🔍 Verification Steps**

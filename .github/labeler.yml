@@ -48,7 +48,7 @@ deployment:
       - '.github/workflows/**/*'
       - 'deploy*'
       - 'vercel.json'
-      - 'render.yaml'
+      - 'render.bak.yaml'
       - '**/build*'
 
 security:

@@ -370,8 +370,7 @@
 │   │   ├── openai
 │   │   ├── provider
 │   │   ├── provider-utils
-│   │   ├── react
-│   │   └── ui-utils
+│   │   └── react
 │   ├── @ampproject
 │   │   └── remapping
 │   ├── @babel
@@ -461,18 +460,19 @@
 │   │   └── pluginutils
 │   ├── @rollup
 │   │   ├── rollup-linux-x64-gnu
-│   │   ├── rollup-linux-x64-musl
-│   │   └── rollup-win32-x64-msvc
+│   │   └── rollup-linux-x64-musl
 │   ├── @sinclair
 │   ├── @standard-schema
 │   │   ├── spec
 │   │   └── utils
 │   ├── @sveltejs
 │   ├── @testing-library
+│   │   ├── dom
 │   │   ├── jest-dom
 │   │   ├── react
 │   │   └── user-event
 │   ├── @types
+│   │   ├── aria-query
 │   │   ├── babel__core
 │   │   ├── babel__generator
 │   │   ├── babel__template
@@ -505,7 +505,6 @@
 │   │   ├── mime
 │   │   ├── multer
 │   │   ├── node
-│   │   ├── node-fetch
 │   │   ├── pg
 │   │   ├── qs
 │   │   ├── range-parser
@@ -545,15 +544,6 @@
 │   │   └── stream
 │   ├── @zxing
 │   │   └── text-encoding
-│   ├── abort-controller
-│   │   ├── LICENSE
-│   │   ├── README.md
-│   │   ├── browser.js
-│   │   ├── browser.mjs
-│   │   ├── dist
-│   │   ├── package.json
-│   │   ├── polyfill.js
-│   │   └── polyfill.mjs
 │   ├── accepts
 │   │   ├── HISTORY.md
 │   │   ├── LICENSE
@@ -579,20 +569,13 @@
 │   │   ├── dist
 │   │   ├── package.json
 │   │   └── src
-│   ├── agentkeepalive
-│   │   ├── LICENSE
-│   │   ├── README.md
-│   │   ├── browser.js
-│   │   ├── index.d.ts
-│   │   ├── index.js
-│   │   ├── lib
-│   │   └── package.json
 │   ├── ai
 │   │   ├── CHANGELOG.md
 │   │   ├── LICENSE
 │   │   ├── README.md
 │   │   ├── dist
 │   │   ├── mcp-stdio
+│   │   ├── node_modules
 │   │   ├── package.json
 │   │   ├── react
 │   │   ├── rsc
@@ -1006,11 +989,6 @@
 │   │   ├── cookiejar.js
 │   │   ├── package.json
 │   │   └── readme.md
-│   ├── core-util-is
-│   │   ├── LICENSE
-│   │   ├── README.md
-│   │   ├── lib
-│   │   └── package.json
 │   ├── cors
 │   │   ├── CONTRIBUTING.md
 │   │   ├── HISTORY.md
@@ -1745,6 +1723,7 @@
 │   │   ├── LICENSE
 │   │   ├── README.md
 │   │   ├── cjs
+│   │   ├── index.d.ts
 │   │   ├── index.js
 │   │   └── package.json
 │   ├── eslint-plugin-react-refresh
@@ -1835,12 +1814,6 @@
 │   │   ├── pipe.js
 │   │   ├── test
 │   │   └── unify.js
-│   ├── event-target-shim
-│   │   ├── LICENSE
-│   │   ├── README.md
-│   │   ├── dist
-│   │   ├── index.d.ts
-│   │   └── package.json
 │   ├── eventemitter3
 │   │   ├── LICENSE
 │   │   ├── README.md
@@ -2003,18 +1976,6 @@
 │   │   ├── index.d.ts
 │   │   ├── lib
 │   │   └── package.json
-│   ├── form-data-encoder
-│   │   ├── @type
-│   │   ├── lib
-│   │   ├── license
-│   │   ├── package.json
-│   │   └── readme.md
-│   ├── formdata-node
-│   │   ├── @type
-│   │   ├── lib
-│   │   ├── license
-│   │   ├── package.json
-│   │   └── readme.md
 │   ├── formidable
 │   │   ├── LICENSE
 │   │   ├── README.md
@@ -2211,12 +2172,6 @@
 │   │   ├── README.md
 │   │   ├── dist
 │   │   └── package.json
-│   ├── humanize-ms
-│   │   ├── History.md
-│   │   ├── LICENSE
-│   │   ├── README.md
-│   │   ├── index.js
-│   │   └── package.json
 │   ├── iconv-lite
 │   │   ├── Changelog.md
 │   │   ├── LICENSE
@@ -2351,13 +2306,6 @@
 │   │   ├── package.json
 │   │   ├── test
 │   │   └── tsconfig.json
-│   ├── isarray
-│   │   ├── Makefile
-│   │   ├── README.md
-│   │   ├── component.json
-│   │   ├── index.js
-│   │   ├── package.json
-│   │   └── test.js
 │   ├── isexe
 │   │   ├── LICENSE
 │   │   ├── README.md
@@ -3824,6 +3772,16 @@
 │   │   ├── index.js
 │   │   ├── package.json
 │   │   └── test
+│   ├── lz-string
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── bin
+│   │   ├── bower.json
+│   │   ├── libs
+│   │   ├── package.json
+│   │   ├── reference
+│   │   ├── tests
+│   │   └── typings
 │   ├── magic-string
 │   │   ├── LICENSE
 │   │   ├── README.md
@@ -3999,17 +3957,6 @@
 │   │   ├── index.js
 │   │   ├── package.json
 │   │   └── test
-│   ├── node-domexception
-│   │   ├── LICENSE
-│   │   ├── README.md
-│   │   ├── index.js
-│   │   └── package.json
-│   ├── node-fetch
-│   │   ├── LICENSE.md
-│   │   ├── README.md
-│   │   ├── browser.js
-│   │   ├── lib
-│   │   └── package.json
 │   ├── node-releases
 │   │   ├── LICENSE
 │   │   ├── README.md
@@ -4020,6 +3967,16 @@
 │   │   ├── license
 │   │   ├── package.json
 │   │   └── readme.md
+│   ├── npm
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── bin
+│   │   ├── docs
+│   │   ├── index.js
+│   │   ├── lib
+│   │   ├── man
+│   │   ├── node_modules
+│   │   └── package.json
 │   ├── object-assign
 │   │   ├── index.js
 │   │   ├── license
@@ -4057,16 +4014,36 @@
 │   │   ├── CHANGELOG.md
 │   │   ├── LICENSE
 │   │   ├── README.md
-│   │   ├── _shims
 │   │   ├── _vendor
+│   │   ├── api-promise.d.mts
+│   │   ├── api-promise.d.mts.map
+│   │   ├── api-promise.d.ts
+│   │   ├── api-promise.d.ts.map
+│   │   ├── api-promise.js
+│   │   ├── api-promise.js.map
+│   │   ├── api-promise.mjs
+│   │   ├── api-promise.mjs.map
+│   │   ├── azure.d.mts
+│   │   ├── azure.d.mts.map
+│   │   ├── azure.d.ts
+│   │   ├── azure.d.ts.map
+│   │   ├── azure.js
+│   │   ├── azure.js.map
+│   │   ├── azure.mjs
+│   │   ├── azure.mjs.map
 │   │   ├── beta
 │   │   ├── bin
-│   │   ├── core.d.ts
-│   │   ├── core.d.ts.map
-│   │   ├── core.js
-│   │   ├── core.js.map
-│   │   ├── core.mjs
-│   │   ├── core.mjs.map
+│   │   ├── client.d.mts
+│   │   ├── client.d.mts.map
+│   │   ├── client.d.ts
+│   │   ├── client.d.ts.map
+│   │   ├── client.js
+│   │   ├── client.js.map
+│   │   ├── client.mjs
+│   │   ├── client.mjs.map
+│   │   ├── core
+│   │   ├── error.d.mts
+│   │   ├── error.d.mts.map
 │   │   ├── error.d.ts
 │   │   ├── error.d.ts.map
 │   │   ├── error.js
@@ -4075,6 +4052,7 @@
 │   │   ├── error.mjs.map
 │   │   ├── helpers
 │   │   ├── index.d.mts
+│   │   ├── index.d.mts.map
 │   │   ├── index.d.ts
 │   │   ├── index.d.ts.map
 │   │   ├── index.js
@@ -4083,14 +4061,17 @@
 │   │   ├── index.mjs.map
 │   │   ├── internal
 │   │   ├── lib
-│   │   ├── node_modules
 │   │   ├── package.json
+│   │   ├── pagination.d.mts
+│   │   ├── pagination.d.mts.map
 │   │   ├── pagination.d.ts
 │   │   ├── pagination.d.ts.map
 │   │   ├── pagination.js
 │   │   ├── pagination.js.map
 │   │   ├── pagination.mjs
 │   │   ├── pagination.mjs.map
+│   │   ├── resource.d.mts
+│   │   ├── resource.d.mts.map
 │   │   ├── resource.d.ts
 │   │   ├── resource.d.ts.map
 │   │   ├── resource.js
@@ -4098,26 +4079,33 @@
 │   │   ├── resource.mjs
 │   │   ├── resource.mjs.map
 │   │   ├── resources
+│   │   ├── resources.d.mts
+│   │   ├── resources.d.mts.map
 │   │   ├── resources.d.ts
 │   │   ├── resources.d.ts.map
 │   │   ├── resources.js
 │   │   ├── resources.js.map
 │   │   ├── resources.mjs
 │   │   ├── resources.mjs.map
-│   │   ├── shims
 │   │   ├── src
+│   │   ├── streaming.d.mts
+│   │   ├── streaming.d.mts.map
 │   │   ├── streaming.d.ts
 │   │   ├── streaming.d.ts.map
 │   │   ├── streaming.js
 │   │   ├── streaming.js.map
 │   │   ├── streaming.mjs
 │   │   ├── streaming.mjs.map
+│   │   ├── uploads.d.mts
+│   │   ├── uploads.d.mts.map
 │   │   ├── uploads.d.ts
 │   │   ├── uploads.d.ts.map
 │   │   ├── uploads.js
 │   │   ├── uploads.js.map
 │   │   ├── uploads.mjs
 │   │   ├── uploads.mjs.map
+│   │   ├── version.d.mts
+│   │   ├── version.d.mts.map
 │   │   ├── version.d.ts
 │   │   ├── version.d.ts.map
 │   │   ├── version.js
@@ -4295,11 +4283,12 @@
 │   │   ├── README.md
 │   │   ├── lib
 │   │   └── package.json
-│   ├── process-nextick-args
-│   │   ├── index.js
-│   │   ├── license.md
-│   │   ├── package.json
-│   │   └── readme.md
+│   ├── pretty-format
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── build
+│   │   ├── node_modules
+│   │   └── package.json
 │   ├── proxy-addr
 │   │   ├── HISTORY.md
 │   │   ├── LICENSE
@@ -4352,6 +4341,47 @@
 │   │   ├── index.d.ts
 │   │   ├── index.js
 │   │   └── package.json
+│   ├── react
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── cjs
+│   │   ├── compiler-runtime.js
+│   │   ├── index.js
+│   │   ├── jsx-dev-runtime.js
+│   │   ├── jsx-dev-runtime.react-server.js
+│   │   ├── jsx-runtime.js
+│   │   ├── jsx-runtime.react-server.js
+│   │   ├── package.json
+│   │   └── react.react-server.js
+│   ├── react-dom
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── cjs
+│   │   ├── client.js
+│   │   ├── client.react-server.js
+│   │   ├── index.js
+│   │   ├── package.json
+│   │   ├── profiling.js
+│   │   ├── profiling.react-server.js
+│   │   ├── react-dom.react-server.js
+│   │   ├── server.browser.js
+│   │   ├── server.bun.js
+│   │   ├── server.edge.js
+│   │   ├── server.js
+│   │   ├── server.node.js
+│   │   ├── server.react-server.js
+│   │   ├── static.browser.js
+│   │   ├── static.edge.js
+│   │   ├── static.js
+│   │   ├── static.node.js
+│   │   ├── static.react-server.js
+│   │   └── test-utils.js
+│   ├── react-is
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── cjs
+│   │   ├── index.js
+│   │   └── package.json
 │   ├── react-redux
 │   │   ├── LICENSE.md
 │   │   ├── README.md
@@ -4392,18 +4422,13 @@
 │   │   ├── GOVERNANCE.md
 │   │   ├── LICENSE
 │   │   ├── README.md
-│   │   ├── doc
-│   │   ├── duplex-browser.js
-│   │   ├── duplex.js
+│   │   ├── errors-browser.js
+│   │   ├── errors.js
+│   │   ├── experimentalWarning.js
 │   │   ├── lib
-│   │   ├── node_modules
 │   │   ├── package.json
-│   │   ├── passthrough.js
 │   │   ├── readable-browser.js
-│   │   ├── readable.js
-│   │   ├── transform.js
-│   │   ├── writable-browser.js
-│   │   └── writable.js
+│   │   └── readable.js
 │   ├── recharts
 │   │   ├── CHANGELOG.md
 │   │   ├── CONTRIBUTING.md
@@ -4534,6 +4559,15 @@
 │   │   ├── package.json
 │   │   ├── safer.js
 │   │   └── tests.js
+│   ├── scheduler
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── cjs
+│   │   ├── index.js
+│   │   ├── index.native.js
+│   │   ├── package.json
+│   │   ├── unstable_mock.js
+│   │   └── unstable_post_task.js
 │   ├── scmp
 │   │   ├── HISTORY.md
 │   │   ├── LICENSE
@@ -4711,7 +4745,6 @@
 │   │   ├── LICENSE
 │   │   ├── README.md
 │   │   ├── lib
-│   │   ├── node_modules
 │   │   └── package.json
 │   ├── strip-ansi
 │   │   ├── index.d.ts
@@ -4846,10 +4879,6 @@
 │   │   ├── LICENSE
 │   │   ├── README.md
 │   │   ├── index.js
-│   │   └── package.json
-│   ├── tr46
-│   │   ├── index.js
-│   │   ├── lib
 │   │   └── package.json
 │   ├── tree-kill
 │   │   ├── LICENSE
@@ -5149,24 +5178,6 @@
 │   │   ├── package.json
 │   │   ├── src
 │   │   └── test
-│   ├── web-streams-polyfill
-│   │   ├── LICENSE
-│   │   ├── README.md
-│   │   ├── dist
-│   │   ├── es5
-│   │   ├── package.json
-│   │   ├── polyfill
-│   │   └── types
-│   ├── webidl-conversions
-│   │   ├── LICENSE.md
-│   │   ├── README.md
-│   │   ├── lib
-│   │   └── package.json
-│   ├── whatwg-url
-│   │   ├── LICENSE.txt
-│   │   ├── README.md
-│   │   ├── lib
-│   │   └── package.json
 │   ├── which
 │   │   ├── CHANGELOG.md
 │   │   ├── LICENSE
@@ -5300,7 +5311,7 @@
 │   └── src
 │       ├── inference-engine.test.ts
 │       └── inference-engine.ts
-├── render-production.yaml
+├── render.bak.yaml
 ├── render.yaml
 ├── replit.md
 ├── requirements.txt
@@ -5349,4 +5360,4 @@
 ├── vite.config.js
 └── vitest.config.ts
 
-1418 directories, 3932 files
+1405 directories, 3956 files

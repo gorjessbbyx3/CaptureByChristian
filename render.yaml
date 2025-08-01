@@ -1,27 +1,62 @@
 services:
+  # Main Application Service
   - type: web
-    name: capturebychristian
-    env: node
-    region: oregon
-    plan: starter
-    buildCommand: npm install --include=dev && npm run build && npm run db:push
-    startCommand: node dist/server/index.js
+    name: capturedbychristian-app
+    runtime: docker
+    dockerfilePath: ./Dockerfile.render
     envVars:
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 7000
       - key: DATABASE_URL
         fromDatabase:
-          name: capturebychristian-db
+          name: capturedbychristian-db
           property: connectionString
-      - key: OPENAI_API_KEY
-        sync: false
-      - key: PORT
-        value: 10000
-    healthCheckPath: /health
-
-databases:
-  - name: capturebychristian-db
-    databaseName: capturedccollective
-    user: postgres
-    region: oregon
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: JWT_SECRET
+        generateValue: true
+    healthCheckPath: /api/health
+    buildFilter:
+      paths:
+        - Dockerfile.render
+        - package*.json
+        - server/**
+        - client/**
+        - migrations/**
+        - docker-scripts/**
+    autoDeploy: true
+    
+  # PostgreSQL Database
+  - type: pserv
+    name: capturedbychristian-db
+    runtime: postgresql
     plan: starter
+    databaseName: capturedcollective
+    databaseUser: postgres
+    ipAllowList: []  # Allow all connections
+    
+  # Redis for caching (optional)
+  - type: pserv
+    name: capturedbychristian-redis
+    runtime: redis
+    plan: starter
+    maxmemoryPolicy: allkeys-lru
+
+# Environment-specific configurations
+environments:
+  - name: production
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: RENDER_EXTERNAL_URL
+        fromService:
+          type: web
+          name: capturedbychristian-app
+          property: host
+          
+# Previews for PRs
+previews:
+  generation: automatic
+  expiration: 7d

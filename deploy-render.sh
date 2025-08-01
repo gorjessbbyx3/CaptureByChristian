@@ -43,7 +43,7 @@ docker rm capturedbychristian-test
 echo "📋 Creating deployment package..."
 tar -czf render-deployment.tar.gz \
     Dockerfile.render \
-    render-production.yaml \
+    render.yaml \
     .env.render \
     package*.json \
     server/ \

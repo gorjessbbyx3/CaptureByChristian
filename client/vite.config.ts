@@ -4,6 +4,12 @@ import path from "path";
 
 export default defineConfig({
   plugins: [react()],
+  css: {
+    postcss: './postcss.config.js',
+  },
+  build: {
+    cssMinify: 'lightningcss',
+  },
   server: {
     host: '0.0.0.0',
     port: 5173,

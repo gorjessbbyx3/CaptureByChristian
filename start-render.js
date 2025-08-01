@@ -2,6 +2,7 @@
 
 import { execSync } from 'child_process';
 import fs from 'fs';
+import './dist/server/index.js';
 
 console.log('🚀 Starting Render deployment process...');
 

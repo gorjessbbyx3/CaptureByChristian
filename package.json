@@ -36,7 +36,7 @@
     "comment_render": "Render-specific deployment scripts",
     "render:build": "npm run build",
     "render:start": "npm run start:production",
-    "postinstall": "cd ./client && npm install"
+    "postinstall": "echo 'Skipping client install - handled by Dockerfile'"
   },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.66",

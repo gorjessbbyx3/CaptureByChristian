@@ -50,7 +50,7 @@ export const createSecureUpload = () => {
       files: 10, // Maximum 10 files per upload
       fieldSize: 1024 * 1024, // 1MB field size limit
     },
-    fileFilter: (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+    fileFilter: (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
       try {
         // Check MIME type
         if (!file.mimetype.startsWith('image/')) {
@@ -76,7 +76,8 @@ export const createSecureUpload = () => {
 };
 
 // Middleware to validate uploaded files after multer processing
-export const validateUploadedFiles = (req: Request, res: Response, next: NextFunction) => {  try {
+export const validateUploadedFiles = (req: Request, res: Response, next: NextFunction) => {
+  try {
     if (req.files) {
       const files = Array.isArray(req.files) ? req.files : Object.values(req.files).flat();
       

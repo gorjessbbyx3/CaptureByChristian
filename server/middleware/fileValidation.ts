@@ -3,7 +3,14 @@ import multer from 'multer';
 import path from 'path';
 import { Request, Response, NextFunction } from 'express';
 
-type MulterFile = Express.Multer.File;
+interface MulterFile {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
+  buffer: Buffer;
+}
 // File signature validation (magic numbers)
 const IMAGE_SIGNATURES = {
   'image/jpeg': [0xFF, 0xD8, 0xFF],

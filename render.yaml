@@ -2,10 +2,8 @@ services:
   # Main Application Service
   - type: web
     name: capturedbychristian-app
-    runtime: node
-    buildCommand: npm ci && cd client && npm ci && cd .. && npm run build
-    startCommand: npm start
-    nodeVersion: 18
+    runtime: docker
+    dockerfilePath: ./Dockerfile.render
     envVars:
       - key: NODE_ENV
         value: production

@@ -120,3 +120,8 @@ All tables use Drizzle ORM with proper relations and Zod validation schemas.
 
 ### Commit Message Guidelines
 - Do not add your signature to commit messages
+
+### File Management Guidelines
+- Choose the most efficient approach - create new files if it's faster/easier than editing existing ones
+- Actively remove unused files to keep the codebase clean
+- NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.

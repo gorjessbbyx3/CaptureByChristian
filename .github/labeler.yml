@@ -43,7 +43,7 @@ database:
 deployment:
   - changed-files:
     - any-glob-to-any-file:
-      - 'Dockerfile*'
+      - 'Dockerfile.ignore*'
       - 'docker-compose*'
       - '.github/workflows/**/*'
       - 'deploy*'

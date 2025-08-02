@@ -3,6 +3,7 @@ import multer from 'multer';
 import path from 'path';
 import { Request, Response, NextFunction } from 'express';
 
+type MulterFile = Express.Multer.File;
 // File signature validation (magic numbers)
 const IMAGE_SIGNATURES = {
   'image/jpeg': [0xFF, 0xD8, 0xFF],
@@ -28,7 +29,7 @@ const sanitizeFilename = (filename: string): string => {
     .substring(0, 100); // Limit filename length
 };
 
-const validateImageFile = (file: Express.Multer.File): boolean => {
+const validateImageFile = (file: MulterFile): boolean => {
   // Check file signature
   if (!validateFileSignature(file.buffer, file.mimetype)) {
     return false;
@@ -50,7 +51,7 @@ export const createSecureUpload = () => {
       files: 10, // Maximum 10 files per upload
       fieldSize: 1024 * 1024, // 1MB field size limit
     },
-    fileFilter: (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+    fileFilter: (_req: Request, file: MulterFile, cb: multer.FileFilterCallback) => {
       try {
         // Check MIME type
         if (!file.mimetype.startsWith('image/')) {

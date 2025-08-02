@@ -3,8 +3,8 @@ FROM node:24-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 COPY client/package*.json ./client/
-RUN npm ci --only=production
-RUN cd client && npm ci --only=production
+RUN npm ci
+RUN cd client && npm ci
 COPY . .
 RUN npm run build
 

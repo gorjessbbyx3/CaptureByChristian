@@ -40,7 +40,7 @@
 docker-compose -f docker-compose.render.yml up
 
 # Test build
-docker build -f Dockerfile.ignore.render -t capturedbychristian:latest .
+docker build -f Dockerfile.render -t capturedbychristian:latest .
 ```
 
 ### **2. Render Deployment**

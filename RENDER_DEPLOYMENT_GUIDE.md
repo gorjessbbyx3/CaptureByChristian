@@ -17,7 +17,7 @@
 ### **1. Repository Setup**
 ```bash
 # Ensure your repo has these files:
-# - Dockerfile.ignore.render
+# - Dockerfile.render
 # - render.yaml
 # - package.json
 # - All source code
@@ -129,7 +129,7 @@ render deploy --file render.yaml
 # Check logs in Render dashboard
 # Common fixes:
 1. Ensure all dependencies in package.json
-2. Check Dockerfile.ignore.render syntax
+2. Check Dockerfile.render syntax
 3. Verify build command works locally
 ```
 

@@ -72,13 +72,19 @@ app.get('/health', (req, res) => {
 app.use('/attached_assets', express.static(path.join(__dirname, '../attached_assets')));
 
 // API routes
-registerRoutes(app).then(() => {
-  console.log("Routes registered");
-});
+registerRoutes(app)
+    .then(() => {
+      console.log("✅ Routes registered");
+    })
+    .catch((err) => {
+      console.error("❌ Failed to register routes:", err);
+      process.exit(1);
+    });
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
   const clientDistPath = path.join(__dirname, '../../client/dist');
+  app.set('trust proxy', 1); // trust first proxy
   app.use(express.static(clientDistPath));
 
   // Handle client-side routing
@@ -107,6 +113,13 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📊 Environment: ${process.env.NODE_ENV}`);
   console.log(`🗄️  Database: ${process.env.DATABASE_URL ? 'Connected' : 'Not configured'}`);
+});
+
+console.log({
+  FRONTEND_URL: process.env.FRONTEND_URL,
+  PORT,
+  NODE_ENV: process.env.NODE_ENV,
+  SESSION_SECRET: !!process.env.SESSION_SECRET,
 });
 
 export default app;

@@ -11,7 +11,7 @@ export function Hero() {
 
   return (
     <section className="relative h-screen overflow-hidden">
-      {/* Video Background */}
+      {/* Background Video */}
       <div className="absolute inset-0">
         <video
           autoPlay
@@ -19,12 +19,13 @@ export function Hero() {
           loop
           playsInline
           className="w-full h-full object-cover"
+          poster="https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80"
         >
           <source src="/attached_assets/20250619_1046_Honolulu Sunset Vibes_simple_compose_01jy4z2q86e6mbdtxctwr6e8mn_1752351152753.mp4" type="video/mp4" />
           {/* Fallback image if video fails to load */}
           <img 
             src="https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80"
-            alt="Hawaii landscape photography"
+            alt="Honolulu Sunset Vibes background"
             className="w-full h-full object-cover"
           />
         </video>

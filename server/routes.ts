@@ -11,7 +11,6 @@ import multer from "multer";
 import { insertServiceSchema, insertClientSchema, insertBookingSchema } from "../shared/schema.js";
 import { z } from "zod";
 import { generateBookingResponse, analyzeImage } from "./openai.js";
-import './vite.js'
 import { getDatabaseInitializer } from "./database-init.js";
 
 export async function registerRoutes(app: Express): Promise<Server> {

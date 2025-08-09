@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && tsc",
+    "typecheck": "tsc --noEmit",
     "start": "serve ../dist",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
@@ -32,15 +33,19 @@
     "@radix-ui/react-tooltip": "^1.0.7",
     "@radix-ui/themes": "^3.2.1",
     "@tanstack/react-query": "^5.45.1",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.21",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.395.0",
+    "postcss": "^8.5.6",
     "react": "^18.3.1",
     "react-day-picker": "^9.8.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.52.0",
     "tailwind-merge": "^3.3.1",
+    "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",
     "wouter": "^3.3.0",
     "zod": "^4.0.14"
@@ -50,13 +55,9 @@
     "@types/react-dom": "^19.1.7",
     "@typescript-eslint/eslint-plugin": "^7.13.1",
     "@typescript-eslint/parser": "^7.13.1",
-    "@vitejs/plugin-react": "^4.3.1",
-    "autoprefixer": "^10.4.21",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.7",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.17",
     "typescript": "^5.2.2",
     "vite": "^7.0.6"
   }

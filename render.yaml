@@ -2,8 +2,9 @@ services:
   # Main Application Service
   - type: web
     name: capturedbychristian-app
-    runtime: docker
-    dockerfilePath: ./Dockerfile.render
+    runtime: node
+    buildCommand: npm run build
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
@@ -20,12 +21,11 @@ services:
     healthCheckPath: /api/health
     buildFilter:
       paths:
-        - Dockerfile.render
         - package*.json
         - server/**
         - client/**
         - migrations/**
-        - docker-scripts/**
+        - shared/**
     autoDeploy: true
     
   # PostgreSQL Database

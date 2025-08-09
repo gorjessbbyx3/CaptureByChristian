@@ -15,10 +15,6 @@ const __dirname = path.dirname(__filename);
 
 // Validate required environment variables in production
 if (process.env.NODE_ENV === 'production') {
-  if (!process.env.FRONTEND_URL) {
-    console.error('❌ FRONTEND_URL is required in production');
-    process.exit(1);
-  }
   if (!process.env.DATABASE_URL) {
     console.error('❌ DATABASE_URL is required in production');
     process.exit(1);
@@ -35,7 +31,7 @@ const PORT = Number(process.env.PORT) || 7000;
 // Middleware
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? (process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : false)
+    ? (process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : true)
     : ['http://localhost:5173', 'http://127.0.0.1:5173'],
   credentials: true,
   optionsSuccessStatus: 200, // For legacy browser support

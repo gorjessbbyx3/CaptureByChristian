@@ -2,7 +2,9 @@ FROM node:24-alpine AS builder
 
 WORKDIR /app
 COPY package*.json ./
+COPY client/package*.json ./client/
 RUN npm ci
+RUN cd client && npm ci
 COPY . .
 RUN npm run build
 
@@ -22,7 +24,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/docker-scripts ./docker-scripts
 RUN chmod +x ./docker-scripts/start.sh
 
 RUN echo '#!/bin/sh' > /app/start.sh && \
-    echo 'node dist/index.js' >> /app/start.sh && \
+    echo 'node dist/server/index.js' >> /app/start.sh && \
     chmod +x /app/start.sh && \
     chown nextjs:nodejs /app/start.sh
 

@@ -1,7 +1,16 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import multer from 'multer';
 import path from 'path';
-import express, { Request } from 'express';
+import { Request, Response, NextFunction } from 'express';
 
+interface MulterFile {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
+  buffer: Buffer;
+}
 // File signature validation (magic numbers)
 const IMAGE_SIGNATURES = {
   'image/jpeg': [0xFF, 0xD8, 0xFF],
@@ -27,7 +36,7 @@ const sanitizeFilename = (filename: string): string => {
     .substring(0, 100); // Limit filename length
 };
 
-const validateImageFile = (file: Express.Multer.File): boolean => {
+const validateImageFile = (file: MulterFile): boolean => {
   // Check file signature
   if (!validateFileSignature(file.buffer, file.mimetype)) {
     return false;
@@ -49,7 +58,7 @@ export const createSecureUpload = () => {
       files: 10, // Maximum 10 files per upload
       fieldSize: 1024 * 1024, // 1MB field size limit
     },
-    fileFilter: (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+    fileFilter: (_req: Request, file: MulterFile, cb: multer.FileFilterCallback) => {
       try {
         // Check MIME type
         if (!file.mimetype.startsWith('image/')) {
@@ -75,16 +84,16 @@ export const createSecureUpload = () => {
 };
 
 // Middleware to validate uploaded files after multer processing
-export const validateUploadedFiles = (req: Request, res: express.Response, next: express.NextFunction) => {
+export const validateUploadedFiles = (req: Request, res: Response, next: NextFunction) => {
   try {
     if (req.files) {
       const files = Array.isArray(req.files) ? req.files : Object.values(req.files).flat();
       
       for (const file of files) {
-        if (!validateImageFile(file as Express.Multer.File)) {
+        if (!validateImageFile(file)) {
           return res.status(400).json({ 
             error: 'Invalid file detected',
-            filename: (file as Express.Multer.File).originalname 
+            filename: file.originalname 
           });
         }
       }

@@ -60,7 +60,10 @@
       "Bash(docker exec:*)",
       "Bash(cd:*)",
       "Bash(VITE_API_URL=http://localhost:3002 npm run dev)",
-      "Bash(cd:*)"
+      "Bash(cd:*)",
+      "Bash(docker build:*)",
+      "Bash(npm ci:*)",
+      "Bash(rsync:*)"
     ],
     "deny": []
   }

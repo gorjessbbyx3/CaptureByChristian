@@ -51,7 +51,7 @@ export interface IStorage {
   createInvoice(invoice: InsertInvoice): Promise<Invoice>;
   updateInvoice(id: number, invoice: Partial<InsertInvoice>): Promise<Invoice>;
 
-  // Gallery
+  // Gallery Images
   getGalleryImages(): Promise<GalleryImage[]>;
   getFeaturedImages(): Promise<GalleryImage[]>;
   getImagesByBooking(bookingId: number): Promise<GalleryImage[]>;
@@ -233,6 +233,7 @@ export class DatabaseStorage implements IStorage {
     const [booking] = await db.update(bookings).set(updateBooking).where(eq(bookings.id, id)).returning();
     return booking;
   }
+
 
   // Contracts
   async getContracts(): Promise<(Contract & { client: Client })[]> {

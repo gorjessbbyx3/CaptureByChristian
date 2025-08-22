@@ -120,6 +120,46 @@ export const contracts = pgTable("contracts", {
   updated_at: timestamp("updated_at").defaultNow()
 });
 
+// Legacy tables for backward compatibility
+export const services = pgTable("services", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  price: decimal("price", { precision: 10, scale: 2 }),
+  duration: integer("duration"), // in minutes
+  category: text("category"),
+  active: boolean("active").default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const bookings = pgTable("bookings", {
+  id: serial("id").primaryKey(),
+  clientId: integer("client_id").references(() => clients.id).notNull(),
+  serviceId: integer("service_id").references(() => services.id),
+  date: timestamp("date").notNull(),
+  duration: integer("duration"),
+  location: text("location"),
+  totalPrice: text("total_price"),
+  depositPaid: boolean("deposit_paid").default(false),
+  status: text("status").default("pending"),
+  notes: text("notes"),
+  addOns: json("add_ons"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const galleryImages = pgTable("gallery_images", {
+  id: serial("id").primaryKey(),
+  filename: text("filename").notNull(),
+  original_name: text("original_name").notNull(),
+  url: text("url").notNull(),
+  thumbnail_url: text("thumbnail_url"),
+  category: text("category"),
+  tags: text("tags").array(),
+  featured: boolean("featured").default(false),
+  booking_id: integer("booking_id").references(() => bookings.id),
+  uploaded_at: timestamp("uploaded_at").defaultNow().notNull(),
+});
+
 export const invoices = pgTable("invoices", {
   id: serial("id").primaryKey(),
   booking_id: integer("booking_id").references(() => bookings.id).notNull(),
@@ -532,6 +572,22 @@ export const insertDealSchema = createInsertSchema(deals).omit({
   updatedAt: true,
 });
 
+// Legacy schema exports for backward compatibility
+export const insertServiceSchema = createInsertSchema(services).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertBookingSchema = createInsertSchema(bookings).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertGalleryImageSchema = createInsertSchema(galleryImages).omit({
+  id: true,
+  uploaded_at: true,
+});
+
 // Contract schema - custom definition to handle date strings properly
 export const insertContractSchema = z.object({
   client_id: z.number(),
@@ -656,6 +712,16 @@ export type InsertDeal = typeof deals.$inferInsert;
 
 export type Contract = typeof contracts.$inferSelect;
 export type InsertContract = typeof contracts.$inferInsert;
+
+// Legacy table types for backward compatibility
+export type Service = typeof services.$inferSelect;
+export type InsertService = typeof services.$inferInsert;
+
+export type Booking = typeof bookings.$inferSelect;
+export type InsertBooking = typeof bookings.$inferInsert;
+
+export type GalleryImage = typeof galleryImages.$inferSelect;
+export type InsertGalleryImage = typeof galleryImages.$inferInsert;
 
 export type Invoice = typeof invoices.$inferSelect;
 export type InsertInvoice = typeof invoices.$inferInsert;

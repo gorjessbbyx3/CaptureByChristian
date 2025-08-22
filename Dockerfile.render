@@ -24,10 +24,10 @@ RUN npm run build
 RUN mkdir -p /tmp/uploads && chmod 755 /tmp/uploads
 
 # Expose port
-EXPOSE 10000
+EXPOSE 7000
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3   CMD curl -f http://localhost:10000/health || exit 1
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3   CMD curl -f http://localhost:7000/health || exit 1
 
 # Start the application
 CMD ["npm", "start"]

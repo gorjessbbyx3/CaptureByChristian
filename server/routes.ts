@@ -3,12 +3,12 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage.js";
 import type { InsertClient, InsertService, InsertBooking, InsertGalleryImage, InsertInvoice, InsertContract } from "../shared/schema.js";
 import { validateParams, validateBody, idParamSchema } from "./middleware/validation.js";
-import { createSecureUpload, validateUploadedFiles } from "./middleware/fileValidation.js";
+import { createSecureUpload } from "./middleware/fileValidation.js";
 
 // Configure secure multer for file uploads
 const upload = createSecureUpload();
 import multer from "multer";
-import { insertServiceSchema, insertClientSchema, insertBookingSchema } from "../shared/schema.js";
+import { insertServiceSchema, insertClientSchema } from "../shared/schema.js";
 import { z } from "zod";
 import { generateBookingResponse, analyzeImage } from "./openai.js";
 import { getDatabaseInitializer } from "./database-init.js";
@@ -515,7 +515,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           session_id: sessionId,
           client_email: clientEmail || null,
           messages: [],
-          booking_data: {},
+          deal_data: {},
         });
       }
 
@@ -530,7 +530,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       ];
 
       // Generate AI response
-      const aiResponse = await generateBookingResponse(messages, chat.booking_data);
+      const aiResponse = await generateBookingResponse(messages, chat.deal_data || {});
 
       // Add AI response
       messages.push({
@@ -542,7 +542,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Update chat
       await storage.updateAiChat(sessionId, {
         messages,
-        booking_data: { ...chat.booking_data, ...aiResponse.bookingData },
+        deal_data: { ...chat.deal_data, ...aiResponse.bookingData },
         client_email: clientEmail || chat.client_email,
       });
 
@@ -1263,7 +1263,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       // Create invoice data automatically from booking  
       const invoiceData = {
         booking_id: booking.id,
-        amount: booking.totalPrice, // This comes as string from DB
+        amount: booking.totalPrice || "0.00", // This comes as string from DB
         due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
         status: 'pending' as const
       };

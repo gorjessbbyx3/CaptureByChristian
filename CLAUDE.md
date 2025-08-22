@@ -223,3 +223,5 @@ All tables use Drizzle ORM with proper relations and Zod validation schemas.
 - Maintain consistent terminology across UI and database
 - Follow Pace Morby's methodology and terminology where applicable
 - Consider both beginner and advanced investor needs
+
+- You're connected to the Render MCP

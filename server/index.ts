@@ -44,6 +44,7 @@ registerRoutes(app)
       // Serve built client from dist/public (aligned with build pipeline)
       const clientDistPath = path.join(__dirname, "../public");
       app.set("trust proxy", 1); // trust first proxy
+      console.log('📦 Client dist path:', clientDistPath);
       app.use(express.static(clientDistPath));
 
       // Handle client-side routing (this must come last)

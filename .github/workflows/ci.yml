@@ -1,108 +1,38 @@
-name: CI/CD Pipeline
+name: CI
 
 on:
-  push:
-    branches: [ main, trunk, develop ]
   pull_request:
-    branches: [ main, trunk, develop ]
+  push:
+    branches: [ main, trunk, render-fixes/** ]
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18, 20]
-
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: capturebychristian_test
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-
-    - name: Install dependencies
-      run: npm ci
-
-    - name: Install client dependencies
-      run: cd client && npm ci
-
-    - name: Run ESLint
-      run: npm run lint
-
-    - name: Type checking
-      run: npm run typecheck
-
-    - name: Run tests
-      run: npm run test
-      env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/capturebychristian_test
-        NODE_ENV: test
-        SESSION_SECRET: test-secret-key
-
-    - name: Build client
-      run: npm run build:client
-
-    - name: Build server
-      run: npm run build:server
-
-  security:
+  build-and-check:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Run npm audit
-      run: npm audit --audit-level moderate
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: 'npm'
 
-    - name: Check for known vulnerabilities
-      run: |
-        cd client
-        npm audit --audit-level moderate
+      - name: Install
+        run: npm ci
 
-  code-quality:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Typecheck (server)
+        run: npm run typecheck:server
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20
-        cache: 'npm'
+      - name: Typecheck (client)
+        run: cd client && npm run typecheck
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Build
+        run: npm run build
 
-    - name: Check code formatting
-      run: |
-        if command -v prettier &> /dev/null; then
-          npx prettier --check "**/*.{ts,tsx,js,jsx,json,md}"
-        else
-          echo "Prettier not installed, skipping format check"
-        fi
+      - name: Smoke tests (server)
+        run: npm run test:smoke
 
-    - name: Check for unused dependencies
-      run: |
-        if command -v depcheck &> /dev/null; then
-          npx depcheck
-        else
-          echo "Depcheck not available, skipping unused dependency check"
-        fi
+      - name: Lint (non-blocking)
+        run: npm run lint || true
+

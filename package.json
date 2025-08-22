@@ -34,6 +34,7 @@
     "clean": "rimraf dist node_modules client/node_modules",
     "reinstall": "npm run clean && npm install && cd client && npm install",
     "typecheck": "tsc --noEmit && cd client && npm run typecheck",
+    "typecheck:server": "tsc -p tsconfig.build.json --noEmit",
     "comment_render": "Render-specific deployment scripts",
     "render:build": "npm run build",
     "render:start": "npm run start:production",

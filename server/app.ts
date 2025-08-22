@@ -12,14 +12,21 @@ export function createApp() {
   const isProd = String(process.env.NODE_ENV || '').toLowerCase() === 'production';
   const app = express();
 
+  const allowedOrigins = isProd
+    ? (process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : true)
+    : ['http://localhost:5173', 'http://127.0.0.1:5173'];
+
+  // Startup diagnostics (safe values only)
+  console.log('🧭 Runtime', {
+    NODE_ENV: process.env.NODE_ENV,
+    isProd,
+    PORT: process.env.PORT,
+    FRONTEND_URL: process.env.FRONTEND_URL,
+  });
+
   app.use(
     cors({
-      origin:
-        isProd
-          ? process.env.FRONTEND_URL
-            ? process.env.FRONTEND_URL.split(',')
-            : true
-          : ['http://localhost:5173', 'http://127.0.0.1:5173'],
+      origin: allowedOrigins,
       credentials: true,
       optionsSuccessStatus: 200,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -49,6 +56,7 @@ export function createApp() {
   });
 
   const assetsPath = path.join(__dirname, '../attached_assets');
+  console.log('📁 Assets path:', assetsPath);
   app.use('/attached_assets', express.static(assetsPath));
 
   return app;

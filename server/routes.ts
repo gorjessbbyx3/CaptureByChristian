@@ -1,7 +1,18 @@
 import type { Express } from "express";
 import { storage } from "./storage.js";
-import type { InsertClient, InsertService, InsertBooking, InsertGalleryImage, InsertInvoice, InsertContract } from "../shared/schema.js";
-import { validateParams, validateBody, idParamSchema } from "./middleware/validation.js";
+import type {
+  InsertClient,
+  InsertService,
+  InsertBooking,
+  InsertGalleryImage,
+  InsertInvoice,
+  InsertContract,
+} from "../shared/schema.js";
+import {
+  validateParams,
+  validateBody,
+  idParamSchema,
+} from "./middleware/validation.js";
 import { createSecureUpload } from "./middleware/fileValidation.js";
 
 // Configure secure multer for file uploads
@@ -16,11 +27,11 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Health check endpoint for Docker
   app.get("/api/health", (_req, res) => {
     const dbInitializer = getDatabaseInitializer();
-    res.status(200).json({ 
-      status: "healthy", 
+    res.status(200).json({
+      status: "healthy",
       timestamp: new Date().toISOString(),
       service: "CapturedCCollective",
-      database_initialized: dbInitializer.getInitializationStatus()
+      database_initialized: dbInitializer.getInitializationStatus(),
     });
   });
 
@@ -29,23 +40,23 @@ export async function registerRoutes(app: Express): Promise<void> {
     try {
       const dbInitializer = getDatabaseInitializer();
       const isInitialized = dbInitializer.getInitializationStatus();
-      
+
       // Test current connection
       const connectionTest = await dbInitializer.testConnection();
-      
+
       res.json({
         success: true,
         database: {
           initialized: isInitialized,
           connection_healthy: connectionTest,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       });
     } catch (error) {
       res.status(500).json({
         success: false,
         error: "Failed to check database status",
-        details: error instanceof Error ? error.message : "Unknown error"
+        details: error instanceof Error ? error.message : "Unknown error",
       });
     }
   });
@@ -57,32 +68,52 @@ export async function registerRoutes(app: Express): Promise<void> {
       res.json(clients);
     } catch (error) {
       console.error("Error fetching clients:", error);
-      res.status(500).json({ error: "Failed to fetch clients", details: (error as Error).message });
+      res
+        .status(500)
+        .json({
+          error: "Failed to fetch clients",
+          details: (error as Error).message,
+        });
     }
   });
 
-  app.post("/api/clients", validateBody(insertClientSchema as unknown as z.ZodTypeAny), async (req, res) => {
-    try {
-      const clientData: InsertClient = req.body;
-      const client = await storage.createClient(clientData);
-      res.json(client);
-    } catch (error) {
-      console.error("Client creation error:", error);
-      res.status(500).json({ error: "Failed to create client", details: (error as Error).message });
-    }
-  });
-
-  app.get("/api/clients/:id", validateParams(idParamSchema), async (req, res) => {
-    try {
-      const client = await storage.getClient(req.params.id as unknown as number);
-      if (!client) {
-        return res.status(404).json({ error: "Client not found" });
+  app.post(
+    "/api/clients",
+    validateBody(insertClientSchema as unknown as z.ZodTypeAny),
+    async (req, res) => {
+      try {
+        const clientData: InsertClient = req.body;
+        const client = await storage.createClient(clientData);
+        res.json(client);
+      } catch (error) {
+        console.error("Client creation error:", error);
+        res
+          .status(500)
+          .json({
+            error: "Failed to create client",
+            details: (error as Error).message,
+          });
       }
-      res.json(client);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to fetch client" });
-    }
-  });
+    },
+  );
+
+  app.get(
+    "/api/clients/:id",
+    validateParams(idParamSchema),
+    async (req, res) => {
+      try {
+        const client = await storage.getClient(
+          req.params.id as unknown as number,
+        );
+        if (!client) {
+          return res.status(404).json({ error: "Client not found" });
+        }
+        res.json(client);
+      } catch (error) {
+        res.status(500).json({ error: "Failed to fetch client" });
+      }
+    },
+  );
 
   // Service routes
   app.get("/api/services", async (_req, res) => {
@@ -94,58 +125,69 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-  app.post("/api/services", validateBody(insertServiceSchema as unknown as z.ZodTypeAny), async (req, res) => {
-    try {
-      const serviceData: InsertService = req.body;
-      const service = await storage.createService(serviceData);
-      res.json(service);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        res.status(400).json({ error: "Invalid service data", details: error.errors });
-      } else {
-        res.status(500).json({ error: "Failed to create service" });
+  app.post(
+    "/api/services",
+    validateBody(insertServiceSchema as unknown as z.ZodTypeAny),
+    async (req, res) => {
+      try {
+        const serviceData: InsertService = req.body;
+        const service = await storage.createService(serviceData);
+        res.json(service);
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          res
+            .status(400)
+            .json({ error: "Invalid service data", details: error.errors });
+        } else {
+          res.status(500).json({ error: "Failed to create service" });
+        }
       }
-    }
-  });
+    },
+  );
 
   // Update service
-  app.patch('/api/services/:id', async (req, res) => {
+  app.patch("/api/services/:id", async (req, res) => {
     try {
       const serviceId = parseInt(req.params.id);
       const updateSchema = insertServiceSchema.partial();
       const validatedData = updateSchema.parse(req.body);
 
-      const updatedService = await storage.updateService(serviceId, validatedData);
+      const updatedService = await storage.updateService(
+        serviceId,
+        validatedData,
+      );
       res.json(updatedService);
     } catch (error: any) {
-      if (error.name === 'ZodError') {
-        res.status(400).json({ error: 'Invalid service data', details: error.errors });
+      if (error.name === "ZodError") {
+        res
+          .status(400)
+          .json({ error: "Invalid service data", details: error.errors });
         return;
       }
       log(`Error updating service: ${error}`, "express");
-      res.status(500).json({ error: 'Failed to update service' });
+      res.status(500).json({ error: "Failed to update service" });
     }
   });
 
   // Delete service
-  app.delete('/api/services/:id', async (req, res) => {
+  app.delete("/api/services/:id", async (req, res) => {
     try {
       await storage.deleteService(parseInt(req.params.id));
       res.json({ success: true });
     } catch (error) {
       log(`Error deleting service: ${error}`, "express");
-      res.status(500).json({ error: 'Failed to delete service' });
+      res.status(500).json({ error: "Failed to delete service" });
     }
   });
 
   // Get all services (including inactive) for admin
-  app.get('/api/services/admin', async (_req, res) => {
+  app.get("/api/services/admin", async (_req, res) => {
     try {
       const services = await storage.getServices();
       res.json(services);
     } catch (error) {
       log(`Error fetching admin services: ${error}`, "express");
-      res.status(500).json({ error: 'Failed to fetch services' });
+      res.status(500).json({ error: "Failed to fetch services" });
     }
   });
 
@@ -156,14 +198,19 @@ export async function registerRoutes(app: Express): Promise<void> {
       res.json(bookings);
     } catch (error) {
       console.error("Error fetching bookings:", error);
-      res.status(500).json({ error: "Failed to fetch bookings", details: (error as Error).message });
+      res
+        .status(500)
+        .json({
+          error: "Failed to fetch bookings",
+          details: (error as Error).message,
+        });
     }
   });
 
   // Create a custom booking request schema
   const bookingRequestSchema = z.object({
-    serviceId: z.number().or(z.string().transform(val => parseInt(val))),
-    date: z.string().transform(val => new Date(val)),
+    serviceId: z.number().or(z.string().transform((val) => parseInt(val))),
+    date: z.string().transform((val) => new Date(val)),
     location: z.string(),
     totalPrice: z.string(),
     clientName: z.string(),
@@ -235,7 +282,12 @@ export async function registerRoutes(app: Express): Promise<void> {
       res.json(booking);
     } catch (error) {
       console.error("Booking creation error:", error);
-      res.status(500).json({ error: "Failed to create booking", details: (error as Error).message });
+      res
+        .status(500)
+        .json({
+          error: "Failed to create booking",
+          details: (error as Error).message,
+        });
     }
   });
 
@@ -254,7 +306,10 @@ export async function registerRoutes(app: Express): Promise<void> {
   app.patch("/api/bookings/:id", async (req, res) => {
     try {
       const updateData = req.body;
-      const booking = await storage.updateBooking(parseInt(req.params.id), updateData);
+      const booking = await storage.updateBooking(
+        parseInt(req.params.id),
+        updateData,
+      );
       res.json(booking);
     } catch (error) {
       res.status(500).json({ error: "Failed to update booking" });
@@ -266,7 +321,9 @@ export async function registerRoutes(app: Express): Promise<void> {
     try {
       const { start, end } = req.query;
       if (!start || !end) {
-        return res.status(400).json({ error: "Start and end dates are required" });
+        return res
+          .status(400)
+          .json({ error: "Start and end dates are required" });
       }
 
       const startDate = new Date(start as string);
@@ -276,7 +333,7 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       // Return availability data
       res.json({
-        bookings: bookings.map(b => ({
+        bookings: bookings.map((b) => ({
           id: b.id,
           date: b.date,
           duration: b.duration,
@@ -293,7 +350,9 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Contract routes
   app.get("/api/contracts/:bookingId", async (req, res) => {
     try {
-      const contract = await storage.getContract(parseInt(req.params.bookingId));
+      const contract = await storage.getContract(
+        parseInt(req.params.bookingId),
+      );
       if (!contract) {
         return res.status(404).json({ error: "Contract not found" });
       }
@@ -303,11 +362,13 @@ export async function registerRoutes(app: Express): Promise<void> {
     }
   });
 
-
   app.patch("/api/contracts/:id", async (req, res) => {
     try {
       const updateData = req.body;
-      const contract = await storage.updateContract(parseInt(req.params.id), updateData);
+      const contract = await storage.updateContract(
+        parseInt(req.params.id),
+        updateData,
+      );
       res.json(contract);
     } catch (error) {
       res.status(500).json({ error: "Failed to update contract" });
@@ -318,9 +379,10 @@ export async function registerRoutes(app: Express): Promise<void> {
   app.get("/api/gallery", async (req, res) => {
     try {
       const { featured } = req.query;
-      const images = featured === 'true' 
-        ? await storage.getFeaturedImages()
-        : await storage.getGalleryImages();
+      const images =
+        featured === "true"
+          ? await storage.getFeaturedImages()
+          : await storage.getGalleryImages();
       res.json(images);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch gallery images" });
@@ -336,17 +398,24 @@ export async function registerRoutes(app: Express): Promise<void> {
         try {
           const analysisText = await analyzeImage(imageData.url);
           // Parse the AI response into structured format
-          const emotions = analysisText.match(/Emotions captured: \[(.*?)\]/)?.[1]?.split(',').map(e => e.trim()) || [];
-          const style = analysisText.match(/Photography style: \[(.*?)\]/)?.[1] || 'unknown';
-          const composition = analysisText.match(/Composition: \[(.*?)\]/)?.[1] || 'unknown';
+          const emotions =
+            analysisText
+              .match(/Emotions captured: \[(.*?)\]/)?.[1]
+              ?.split(",")
+              .map((e) => e.trim()) || [];
+          const style =
+            analysisText.match(/Photography style: \[(.*?)\]/)?.[1] ||
+            "unknown";
+          const composition =
+            analysisText.match(/Composition: \[(.*?)\]/)?.[1] || "unknown";
           const qualityMatch = analysisText.match(/Quality rating: \[(\d+)\]/);
           const quality = qualityMatch ? parseInt(qualityMatch[1], 10) : 5;
-          
+
           (imageData as any).aiAnalysis = {
             emotions,
             style,
             composition,
-            quality
+            quality,
           };
         } catch (error) {
           console.error("AI analysis failed:", error);
@@ -362,33 +431,34 @@ export async function registerRoutes(app: Express): Promise<void> {
   });
 
   app.post("/api/gallery/upload", (req, res) => {
-    upload.array('images', 10)(req, res, async (err) => {
+    upload.array("images", 10)(req, res, async (err) => {
       try {
         // Handle multer errors
         if (err) {
           if (err instanceof multer.MulterError) {
-            if (err.code === 'LIMIT_FILE_SIZE') {
-              return res.status(400).json({ 
-                error: "File too large", 
-                message: "Image file size must be less than 50MB. Please compress your image and try again.",
-                details: err.message 
+            if (err.code === "LIMIT_FILE_SIZE") {
+              return res.status(400).json({
+                error: "File too large",
+                message:
+                  "Image file size must be less than 50MB. Please compress your image and try again.",
+                details: err.message,
               });
             }
-            if (err.code === 'LIMIT_FILE_COUNT') {
-              return res.status(400).json({ 
-                error: "Too many files", 
+            if (err.code === "LIMIT_FILE_COUNT") {
+              return res.status(400).json({
+                error: "Too many files",
                 message: "You can upload a maximum of 10 images at once.",
-                details: err.message 
+                details: err.message,
               });
             }
-            return res.status(400).json({ 
-              error: "Upload error", 
-              message: err.message 
+            return res.status(400).json({
+              error: "Upload error",
+              message: err.message,
             });
           }
-          return res.status(400).json({ 
-            error: "Invalid file", 
-            message: err.message 
+          return res.status(400).json({
+            error: "Invalid file",
+            message: err.message,
           });
         }
 
@@ -396,9 +466,9 @@ export async function registerRoutes(app: Express): Promise<void> {
         const { category = "portfolio" } = req.body;
 
         if (!files || files.length === 0) {
-          return res.status(400).json({ 
+          return res.status(400).json({
             error: "No files uploaded",
-            message: "Please select at least one image file to upload."
+            message: "Please select at least one image file to upload.",
           });
         }
 
@@ -411,13 +481,13 @@ export async function registerRoutes(app: Express): Promise<void> {
         // Create database entries for uploaded images
         const uploadedImages = [];
         const { bookingId } = req.body;
-        
+
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
           const filename = `${Date.now()}_${i}_${file.originalname}`;
 
           // For demo: using base64 data URL since we don't have cloud storage
-          const base64Data = file.buffer.toString('base64');
+          const base64Data = file.buffer.toString("base64");
           const dataUrl = `data:${file.mimetype};base64,${base64Data}`;
 
           try {
@@ -438,30 +508,35 @@ export async function registerRoutes(app: Express): Promise<void> {
 
             // console.log(`Saved image ${i + 1}/${files.length}: ${file.originalname}`);
           } catch (dbError) {
-            console.error(`Failed to save image ${file.originalname}:`, dbError);
+            console.error(
+              `Failed to save image ${file.originalname}:`,
+              dbError,
+            );
             // Continue with other images even if one fails
           }
         }
 
         if (uploadedImages.length === 0) {
-          return res.status(500).json({ 
-            error: "Save failed", 
-            message: "Failed to save any images to the gallery. Please try again."
+          return res.status(500).json({
+            error: "Save failed",
+            message:
+              "Failed to save any images to the gallery. Please try again.",
           });
         }
 
         // console.log(`Successfully uploaded ${uploadedImages.length} image(s) to gallery`);
 
-        res.json({ 
+        res.json({
           message: `${uploadedImages.length} image(s) uploaded successfully`,
-          images: uploadedImages
+          images: uploadedImages,
         });
       } catch (error) {
         console.error("Error in upload handler:", error);
-        res.status(500).json({ 
-          error: "Upload failed", 
-          message: "An unexpected error occurred while uploading. Please try again.",
-          details: (error as Error).message 
+        res.status(500).json({
+          error: "Upload failed",
+          message:
+            "An unexpected error occurred while uploading. Please try again.",
+          details: (error as Error).message,
         });
       }
     });
@@ -487,9 +562,9 @@ export async function registerRoutes(app: Express): Promise<void> {
 
       await storage.updateGalleryImage(imageId, { featured });
 
-      res.json({ 
+      res.json({
         message: "Image featured status updated",
-        featured
+        featured,
       });
     } catch (error) {
       console.error("Error updating featured status:", error);
@@ -503,7 +578,9 @@ export async function registerRoutes(app: Express): Promise<void> {
       const { sessionId, message, clientEmail } = req.body;
 
       if (!sessionId || !message) {
-        return res.status(400).json({ error: "Session ID and message are required" });
+        return res
+          .status(400)
+          .json({ error: "Session ID and message are required" });
       }
 
       // Get or create chat session
@@ -522,18 +599,21 @@ export async function registerRoutes(app: Express): Promise<void> {
       const messages = [
         ...chat.messages,
         {
-          role: 'user' as const,
+          role: "user" as const,
           content: message,
           timestamp: Date.now(),
-        }
+        },
       ];
 
       // Generate AI response
-      const aiResponse = await generateBookingResponse(messages, chat.deal_data || {});
+      const aiResponse = await generateBookingResponse(
+        messages,
+        chat.deal_data || {},
+      );
 
       // Add AI response
       messages.push({
-        role: 'assistant' as const,
+        role: "assistant" as const,
         content: aiResponse.message,
         timestamp: Date.now(),
       });
@@ -557,16 +637,18 @@ export async function registerRoutes(app: Express): Promise<void> {
   // Replit AI Chat routes
   app.post("/api/replit-ai-chat", async (req, res) => {
     try {
-      const { sessionId, message, agent = 'general-assistant' } = req.body;
+      const { sessionId, message, agent = "general-assistant" } = req.body;
 
       if (!sessionId || !message) {
-        return res.status(400).json({ error: "Session ID and message are required" });
+        return res
+          .status(400)
+          .json({ error: "Session ID and message are required" });
       }
 
       // Simulate Replit AI agent response
       let response = "";
-      
-      if (agent === 'photography-business-consultant') {
+
+      if (agent === "photography-business-consultant") {
         // Generate photography-specific contract recommendations
         response = `Service Type: Portrait Photography
 Package Type: Standard
@@ -579,13 +661,14 @@ Cancellation Policy: 48-hour notice required for rescheduling. Cancellations wit
 Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu. Drone photography requires suitable weather conditions and FAA-compliant airspace.`;
       } else {
         // General AI assistant response
-        response = "I'm here to help you with contract recommendations and business insights. Please provide more details about your photography session requirements.";
+        response =
+          "I'm here to help you with contract recommendations and business insights. Please provide more details about your photography session requirements.";
       }
 
       res.json({
         response: response,
         agent: agent,
-        sessionId: sessionId
+        sessionId: sessionId,
       });
     } catch (error) {
       console.error("Replit AI chat error:", error);
@@ -615,7 +698,6 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
-
   app.get("/api/analytics/revenue/:year/:month", async (req, res) => {
     try {
       const year = parseInt(req.params.year);
@@ -640,7 +722,6 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
-
   // Client Portal Authentication Routes
   app.post("/api/client-portal/login", async (req, res) => {
     try {
@@ -659,7 +740,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
         id: client.id,
         name: client.name,
         email: client.email,
-        token: `client_${client.id}_${Date.now()}` // Simple token for demo
+        token: `client_${client.id}_${Date.now()}`, // Simple token for demo
       });
     } catch (error) {
       console.error("Client login error:", error);
@@ -691,7 +772,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     try {
       const clientId = parseInt(req.query.clientId as string);
       const bookings = await storage.getBookings();
-      const clientBookings = bookings.filter(b => b.clientId === clientId);
+      const clientBookings = bookings.filter((b) => b.clientId === clientId);
 
       res.json(clientBookings);
     } catch (error) {
@@ -708,35 +789,40 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       const bookings = await storage.getBookings();
       const galleryImages = await storage.getGalleryImages();
 
-      const clientBookings = bookings.filter(b => b.clientId === clientId);
+      const clientBookings = bookings.filter((b) => b.clientId === clientId);
 
-      const galleries = clientBookings.map(booking => {
-        const bookingImages = galleryImages.filter(img => img.booking_id === booking.id);
+      const galleries = clientBookings.map((booking) => {
+        const bookingImages = galleryImages.filter(
+          (img) => img.booking_id === booking.id,
+        );
         return {
           id: booking.id.toString(),
-          name: `${booking.service?.name || 'Photography Session'} - ${new Date(booking.date).toLocaleDateString()}`,
+          name: `${booking.service?.name || "Photography Session"} - ${new Date(booking.date).toLocaleDateString()}`,
           clientId: clientId,
-          status: bookingImages.length > 0 ? 'proofing' : 'pending',
-          coverImage: bookingImages.length > 0 ? bookingImages[0].url : "/api/placeholder/400/300",
+          status: bookingImages.length > 0 ? "proofing" : "pending",
+          coverImage:
+            bookingImages.length > 0
+              ? bookingImages[0].url
+              : "/api/placeholder/400/300",
           photoCount: bookingImages.length,
-          createdAt: booking.createdAt
+          createdAt: booking.createdAt,
         };
       });
 
       // Also include galleries that have images but no specific booking
-      const unbookedImages = galleryImages.filter(img => 
-        !img.booking_id && img.tags?.includes('client_gallery')
+      const unbookedImages = galleryImages.filter(
+        (img) => !img.booking_id && img.tags?.includes("client_gallery"),
       );
-      
+
       if (unbookedImages.length > 0) {
         galleries.push({
           id: `unbooked_${clientId}`,
-          name: 'Additional Photos',
+          name: "Additional Photos",
           clientId: clientId,
-          status: 'proofing',
+          status: "proofing",
           coverImage: unbookedImages[0].url,
           photoCount: unbookedImages.length,
-          createdAt: new Date()
+          createdAt: new Date(),
         });
       }
 
@@ -750,17 +836,17 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   app.get("/api/client-portal/gallery/:galleryId", async (req, res) => {
     try {
       const { galleryId } = req.params;
-      
+
       let galleryImages = [];
       let galleryName = "";
       let galleryStatus = "proofing";
       let createdAt: Date | string = new Date().toISOString();
 
-      if (galleryId.startsWith('unbooked_')) {
+      if (galleryId.startsWith("unbooked_")) {
         // Handle unbooked images
         const allImages = await storage.getGalleryImages();
-        galleryImages = allImages.filter(img => 
-          !img.booking_id && img.tags?.includes('client_gallery')
+        galleryImages = allImages.filter(
+          (img) => !img.booking_id && img.tags?.includes("client_gallery"),
         );
         galleryName = "Additional Photos";
       } else {
@@ -773,8 +859,8 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
           return res.status(404).json({ error: "Gallery not found" });
         }
 
-        galleryName = `${booking.service?.name || 'Photography Session'} - ${new Date(booking.date).toLocaleDateString()}`;
-        galleryStatus = galleryImages.length > 0 ? 'proofing' : 'pending';
+        galleryName = `${booking.service?.name || "Photography Session"} - ${new Date(booking.date).toLocaleDateString()}`;
+        galleryStatus = galleryImages.length > 0 ? "proofing" : "pending";
         createdAt = booking.createdAt;
       }
 
@@ -783,12 +869,12 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
         name: galleryName,
         status: galleryStatus,
         createdAt: createdAt,
-        images: galleryImages.map(img => ({
+        images: galleryImages.map((img) => ({
           id: img.id.toString(),
           url: img.url,
           thumbnailUrl: img.thumbnail_url || img.url,
-          filename: img.filename
-        }))
+          filename: img.filename,
+        })),
       };
 
       res.json(gallery);
@@ -809,7 +895,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
         galleryId,
         clientId,
         favorites: [],
-        comments: {}
+        comments: {},
       };
 
       res.json(selections);
@@ -825,10 +911,13 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       const { clientId, favorites, comments } = req.body;
 
       // In a real app, save to database
-      console.log(`Saving selections for gallery ${galleryId}, client ${clientId}:`, {
-        favorites: favorites.length,
-        comments: Object.keys(comments).length
-      });
+      console.log(
+        `Saving selections for gallery ${galleryId}, client ${clientId}:`,
+        {
+          favorites: favorites.length,
+          comments: Object.keys(comments).length,
+        },
+      );
 
       res.json({ message: "Selections saved successfully" });
     } catch (error) {
@@ -843,12 +932,16 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
 
       // Get contracts directly by client ID
       const allContracts = await storage.getContracts();
-      const clientContracts = allContracts.filter(contract => contract.client_id === clientId);
+      const clientContracts = allContracts.filter(
+        (contract) => contract.client_id === clientId,
+      );
 
-      const contracts = clientContracts.map(contract => ({
+      const contracts = clientContracts.map((contract) => ({
         id: contract.id,
         clientId: clientId,
-        title: contract.title || `${contract.service_type || 'Photography'} Contract`,
+        title:
+          contract.title ||
+          `${contract.service_type || "Photography"} Contract`,
         status: contract.status,
         clientSignedAt: contract.client_signed_at,
         photographerSignedAt: contract.photographer_signed_at,
@@ -856,8 +949,11 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
         createdAt: contract.created_at,
         totalAmount: contract.total_amount,
         downloadUrl: `/api/contracts/${contract.id}/download`,
-        signUrl: contract.status === 'sent' && !contract.client_signed_at ? `/client-portal/contract/${contract.portal_access_token}` : null,
-        templateContent: contract.template_content
+        signUrl:
+          contract.status === "sent" && !contract.client_signed_at
+            ? `/client-portal/contract/${contract.portal_access_token}`
+            : null,
+        templateContent: contract.template_content,
       }));
 
       res.json(contracts);
@@ -882,29 +978,29 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
         clientSignature: signatureData.signature,
         clientSignedAt: new Date(),
         clientIpAddress: req.ip,
-        status: 'signed' as const,
+        status: "signed" as const,
         signatureMetadata: {
-          clientDevice: 'web',
+          clientDevice: "web",
           clientUserAgent: signatureData.userAgent,
-          signatureMethod: signatureData.signatureMethod || 'electronic'
+          signatureMethod: signatureData.signatureMethod || "electronic",
         },
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       const updatedContract = await storage.updateContract(contractId, updates);
 
       // Check if fully signed (if photographer has already signed)
       if (updatedContract.photographer_signed_at) {
-        await storage.updateContract(contractId, { 
+        await storage.updateContract(contractId, {
           is_fully_signed: true,
-          status: 'completed'
+          status: "completed",
         });
       }
 
-      res.json({ 
-        success: true, 
+      res.json({
+        success: true,
         message: "Contract signed successfully",
-        contract: updatedContract
+        contract: updatedContract,
       });
     } catch (error) {
       console.error("Error signing contract:", error);
@@ -918,14 +1014,20 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       const { token } = req.params;
 
       const allContracts = await storage.getContracts();
-      const contract = allContracts.find(c => c.portal_access_token === token);
+      const contract = allContracts.find(
+        (c) => c.portal_access_token === token,
+      );
 
       if (!contract) {
-        return res.status(404).json({ error: "Contract not found or invalid token" });
+        return res
+          .status(404)
+          .json({ error: "Contract not found or invalid token" });
       }
 
       if (contract.client_signed_at) {
-        return res.status(400).json({ error: "Contract has already been signed" });
+        return res
+          .status(400)
+          .json({ error: "Contract has already been signed" });
       }
 
       res.json({
@@ -934,7 +1036,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
         templateContent: contract.template_content,
         totalAmount: contract.total_amount,
         createdAt: contract.created_at,
-        clientId: contract.client_id
+        clientId: contract.client_id,
       });
     } catch (error) {
       console.error("Error fetching contract for signing:", error);
@@ -987,7 +1089,9 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       res.json([]);
     } catch (error) {
       console.error("Error fetching questionnaire responses:", error);
-      res.status(500).json({ error: "Failed to fetch questionnaire responses" });
+      res
+        .status(500)
+        .json({ error: "Failed to fetch questionnaire responses" });
     }
   });
 
@@ -1008,18 +1112,18 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
 
       // Get client bookings and generate invoice data
       const bookings = await storage.getBookings();
-      const clientBookings = bookings.filter(b => b.clientId === clientId);
+      const clientBookings = bookings.filter((b) => b.clientId === clientId);
 
-      const invoices = clientBookings.map(booking => ({
+      const invoices = clientBookings.map((booking) => ({
         id: `INV-${booking.id}`,
         bookingId: booking.id,
         invoiceNumber: `INV-${booking.id}-${new Date(booking.date).getFullYear()}`,
         amount: booking.totalPrice,
-        status: booking.status === 'confirmed' ? 'paid' : 'pending',
+        status: booking.status === "confirmed" ? "paid" : "pending",
         dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
         createdDate: booking.createdAt || new Date().toISOString(),
-        description: `${booking.service?.name || 'Photography Service'} - ${new Date(booking.date).toLocaleDateString()}`,
-        downloadUrl: `/api/invoices/pdf/INV-${booking.id}`
+        description: `${booking.service?.name || "Photography Service"} - ${new Date(booking.date).toLocaleDateString()}`,
+        downloadUrl: `/api/invoices/pdf/INV-${booking.id}`,
       }));
 
       res.json(invoices);
@@ -1035,7 +1139,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       const clients = await storage.getClients();
 
       // For each client, get their credential status
-      const credentials = clients.map(client => ({
+      const credentials = clients.map((client) => ({
         id: client.id,
         clientId: client.id,
         clientName: client.name,
@@ -1045,7 +1149,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
         lastLogin: null, // Would fetch from session logs
         magicLinkSent: false,
         portalAccess: true, // Default enabled, would be stored in DB
-        createdAt: client.createdAt
+        createdAt: client.createdAt,
       }));
 
       res.json(credentials);
@@ -1083,41 +1187,49 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       }
 
       if (!client.phone) {
-        return res.status(400).json({ error: "Client phone number is required for SMS delivery" });
+        return res
+          .status(400)
+          .json({ error: "Client phone number is required for SMS delivery" });
       }
 
       // Generate secure token with expiration
       const token = `magic_${clientId}_${Date.now()}`;
-      const magicLink = `${process.env.REPL_URL || 'http://localhost:7000'}/client-portal?token=${token}`;
+      const magicLink = `${process.env.REPL_URL || "http://localhost:7000"}/client-portal?token=${token}`;
 
       // Import SMS functionality
-      const { sendMagicLinkSMS, isTwilioConfigured } = await import('./twilio');
+      const { sendMagicLinkSMS, isTwilioConfigured } = await import("./twilio");
 
       if (!isTwilioConfigured()) {
         console.log(`Magic link for ${client.email}: ${magicLink}`);
-        return res.json({ 
+        return res.json({
           message: "Twilio not configured - magic link logged to console",
           link: magicLink,
-          method: "console"
+          method: "console",
         });
       }
 
       // Send magic link via SMS
-      const smsSuccess = await sendMagicLinkSMS(client.name, client.phone, magicLink);
+      const smsSuccess = await sendMagicLinkSMS(
+        client.name,
+        client.phone,
+        magicLink,
+      );
 
       if (smsSuccess) {
-        res.json({ 
+        res.json({
           message: "Magic link sent via SMS successfully",
           method: "sms",
-          phone: client.phone
+          phone: client.phone,
         });
       } else {
         // Fallback to console logging if SMS fails
-        console.log(`SMS failed - Magic link for ${client.email}: ${magicLink}`);
-        res.json({ 
+        console.log(
+          `SMS failed - Magic link for ${client.email}: ${magicLink}`,
+        );
+        res.json({
           message: "SMS failed - magic link logged to console",
           link: magicLink,
-          method: "console_fallback"
+          method: "console_fallback",
         });
       }
     } catch (error) {
@@ -1132,7 +1244,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       const clients = await storage.getClients();
 
       // Convert clients to credentials format with portal access info
-      const credentials = clients.map(client => ({
+      const credentials = clients.map((client) => ({
         id: client.id,
         clientId: client.id,
         clientName: client.name,
@@ -1142,7 +1254,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
         lastLogin: null, // Would come from session tracking
         magicLinkSent: false,
         portalAccess: true, // Default to true for existing clients
-        createdAt: client.createdAt || new Date().toISOString()
+        createdAt: client.createdAt || new Date().toISOString(),
       }));
 
       res.json(credentials);
@@ -1160,7 +1272,9 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       // 1. Update the client's portal access flag in the database
       // 2. Optionally invalidate existing sessions if disabled
 
-      console.log(`Portal access ${enabled ? 'enabled' : 'disabled'} for client ${clientId}`);
+      console.log(
+        `Portal access ${enabled ? "enabled" : "disabled"} for client ${clientId}`,
+      );
 
       res.json({ message: "Portal access updated successfully" });
     } catch (error) {
@@ -1195,22 +1309,22 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
         // Base service item
         const baseServicePrice = Number(booking.service?.price || 0);
         items.push({
-          description: booking.service?.name || 'Photography Service',
+          description: booking.service?.name || "Photography Service",
           quantity: 1,
           rate: baseServicePrice,
-          amount: baseServicePrice
+          amount: baseServicePrice,
         });
 
         // Add-on items from booking
         let addOnTotal = 0;
         if (booking.addOns && Array.isArray(booking.addOns)) {
-          booking.addOns.forEach(addOn => {
+          booking.addOns.forEach((addOn) => {
             const addOnPrice = Number(addOn.price || 0);
             items.push({
-              description: addOn.name || 'Add-on Service',
+              description: addOn.name || "Add-on Service",
               quantity: 1,
               rate: addOnPrice,
-              amount: addOnPrice
+              amount: addOnPrice,
             });
             addOnTotal += addOnPrice;
           });
@@ -1222,17 +1336,19 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
         const invoice = {
           id: `INV-${booking.id}`,
           bookingId: booking.id,
-          clientName: booking.client?.name || 'Unknown Client',
-          clientEmail: booking.client?.email || '',
+          clientName: booking.client?.name || "Unknown Client",
+          clientEmail: booking.client?.email || "",
           invoiceNumber: `INV-${booking.id}-${new Date(booking.date).getFullYear()}`,
           amount: totalAmount,
-          status: booking.status === 'confirmed' ? 'pending' : 'draft',
-          dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days from now
+          status: booking.status === "confirmed" ? "pending" : "draft",
+          dueDate: new Date(
+            Date.now() + 30 * 24 * 60 * 60 * 1000,
+          ).toISOString(), // 30 days from now
           createdDate: booking.createdAt || new Date().toISOString(),
           items: items,
           subtotal: totalAmount,
           total: totalAmount,
-          notes: `Photography session for ${booking.client?.name || 'client'} on ${new Date(booking.date).toLocaleDateString()}. ${booking.notes || ''}`
+          notes: `Photography session for ${booking.client?.name || "client"} on ${new Date(booking.date).toLocaleDateString()}. ${booking.notes || ""}`,
         };
         invoicesList.push(invoice);
       }
@@ -1259,12 +1375,12 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
         return res.status(404).json({ error: "Booking not found" });
       }
 
-      // Create invoice data automatically from booking  
+      // Create invoice data automatically from booking
       const invoiceData = {
         booking_id: booking.id,
         amount: booking.totalPrice || "0.00", // This comes as string from DB
         due_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
-        status: 'pending' as const
+        status: "pending" as const,
       };
 
       // Save to database using real storage
@@ -1276,11 +1392,21 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
         res.json(invoice);
       } catch (validationError) {
         console.error("Invoice validation error:", validationError);
-        return res.status(400).json({ error: "Invalid invoice data", details: (validationError as any).errors });
+        return res
+          .status(400)
+          .json({
+            error: "Invalid invoice data",
+            details: (validationError as any).errors,
+          });
       }
     } catch (error) {
       console.error("Error creating invoice:", error);
-      res.status(500).json({ error: "Failed to create invoice", details: (error as Error).message });
+      res
+        .status(500)
+        .json({
+          error: "Failed to create invoice",
+          details: (error as Error).message,
+        });
     }
   });
 
@@ -1333,23 +1459,22 @@ Please respond with a JSON object containing:
 }`;
 
       let category = "general_inquiry";
-      let suggestedResponse = "Thank you for your inquiry! We'll get back to you within 24 hours.";
+      let suggestedResponse =
+        "Thank you for your inquiry! We'll get back to you within 24 hours.";
 
       try {
-        const response = await fetch('https://api.replit.com/v1/ai/chat', {
-          method: 'POST',
+        const response = await fetch("https://api.replit.com/v1/ai/chat", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${process.env.REPLIT_AI_TOKEN || 'demo-token'}`
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.REPLIT_AI_TOKEN || "demo-token"}`,
           },
           body: JSON.stringify({
-            model: 'replit-agent',
-            messages: [
-              { role: 'user', content: prompt }
-            ],
+            model: "replit-agent",
+            messages: [{ role: "user", content: prompt }],
             max_tokens: 200,
-            temperature: 0.3
-          })
+            temperature: 0.3,
+          }),
         });
 
         if (response.ok) {
@@ -1363,23 +1488,28 @@ Please respond with a JSON object containing:
               suggestedResponse = parsed.suggestedResponse || suggestedResponse;
             } catch (parseError) {
               // If JSON parsing fails, extract manually
-              if (aiResponse.toLowerCase().includes('wedding')) category = 'wedding_inquiry';
-              else if (aiResponse.toLowerCase().includes('portrait')) category = 'portrait_inquiry';
-              else if (aiResponse.toLowerCase().includes('event')) category = 'event_inquiry';
-              else if (aiResponse.toLowerCase().includes('pricing')) category = 'pricing_question';
+              if (aiResponse.toLowerCase().includes("wedding"))
+                category = "wedding_inquiry";
+              else if (aiResponse.toLowerCase().includes("portrait"))
+                category = "portrait_inquiry";
+              else if (aiResponse.toLowerCase().includes("event"))
+                category = "event_inquiry";
+              else if (aiResponse.toLowerCase().includes("pricing"))
+                category = "pricing_question";
             }
           }
         }
       } catch (error) {
-        console.error('Replit AI categorization failed:', error);
+        console.error("Replit AI categorization failed:", error);
       }
 
       res.json({ category, suggestedResponse });
     } catch (error) {
       console.error("AI categorization error:", error);
-      res.status(500).json({ 
+      res.status(500).json({
         category: "general_inquiry",
-        suggestedResponse: "Thank you for your inquiry! We'll get back to you within 24 hours."
+        suggestedResponse:
+          "Thank you for your inquiry! We'll get back to you within 24 hours.",
       });
     }
   });
@@ -1387,10 +1517,8 @@ Please respond with a JSON object containing:
   // Contact form submission endpoint
   app.post("/api/contact", async (req, res) => {
     try {
-      const { 
-        name, email, phone, subject, message, priority, 
-        source 
-      } = req.body;
+      const { name, email, phone, subject, message, priority, source } =
+        req.body;
 
       // Insert contact message into database
       const contactMessage = await storage.createContactMessage({
@@ -1403,7 +1531,7 @@ Please respond with a JSON object containing:
         source: source || "website",
         status: "unread",
         ip_address: req.ip,
-        user_agent: req.get('User-Agent'),
+        user_agent: req.get("User-Agent"),
       });
 
       res.json(contactMessage);
@@ -1437,7 +1565,6 @@ Please respond with a JSON object containing:
     }
   });
 
-
   // ===== Invoice PDF & Email Routes =====
   app.post("/api/invoices/pdf/:invoiceNumber", async (req, res) => {
     try {
@@ -1457,20 +1584,22 @@ Please respond with a JSON object containing:
         items: invoiceData.items || [],
         subtotal: invoiceData.amount || 0,
         total: invoiceData.amount || 0,
-        notes: invoiceData.notes || '',
+        notes: invoiceData.notes || "",
         tax: 0,
         taxRate: 0,
-        discount: 0
+        discount: 0,
       };
 
       const html = generateInvoiceHTML(pdfData);
 
       // In production, you would convert HTML to PDF here using puppeteer or similar
       // For now, we'll return the HTML as a simulated PDF download
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename="invoice-${invoiceNumber}.pdf"`);
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="invoice-${invoiceNumber}.pdf"`,
+      );
       res.send(html);
-
     } catch (error) {
       console.error("PDF generation error:", error);
       res.status(500).json({ error: "Failed to generate PDF" });
@@ -1495,22 +1624,23 @@ Please respond with a JSON object containing:
         items: invoice.items,
         subtotal: invoice.amount,
         total: invoice.amount,
-        notes: invoice.notes
+        notes: invoice.notes,
       };
 
       // Generate PDF and send email (mock implementation)
       const success = await emailInvoice(emailData, "");
 
       if (success) {
-        res.json({ 
-          success: true, 
+        res.json({
+          success: true,
           message: `Invoice ${invoiceNumber} sent successfully to ${invoice.clientEmail}`,
-          paymentLink: includePaymentLink ? `https://pay.christianpicaso.com/invoice/${invoiceNumber}` : null
+          paymentLink: includePaymentLink
+            ? `https://pay.christianpicaso.com/invoice/${invoiceNumber}`
+            : null,
         });
       } else {
         res.status(500).json({ error: "Failed to send email" });
       }
-
     } catch (error) {
       console.error("Email send error:", error);
       res.status(500).json({ error: "Failed to send invoice email" });
@@ -1526,28 +1656,41 @@ Please respond with a JSON object containing:
 
       // Calculate real-time metrics from actual data
       const today = new Date();
-      const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const todayStart = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate(),
+      );
 
-      const todayBookings = bookings.filter(b => new Date(b.createdAt) >= todayStart);
-      const todayClients = clients.filter(c => new Date(c.createdAt) >= todayStart);
-      const todayMessages = contactMessages.filter(m => new Date(m.created_at) >= todayStart);
+      const todayBookings = bookings.filter(
+        (b) => new Date(b.createdAt) >= todayStart,
+      );
+      const todayClients = clients.filter(
+        (c) => new Date(c.createdAt) >= todayStart,
+      );
+      const todayMessages = contactMessages.filter(
+        (m) => new Date(m.created_at) >= todayStart,
+      );
 
       // Calculate authentic metrics from real business data
       // Estimate visitors based on contact messages and bookings activity
 
       // Calculate lead sources from actual client data
       const leadSources = clients.reduce((acc: any, client: any) => {
-        const source = client.source || 'Direct';
+        const source = client.source || "Direct";
         acc[source] = (acc[source] || 0) + 1;
         return acc;
       }, {});
 
       const totalLeads = clients.length;
-      const trafficSources = Object.entries(leadSources).map(([source, count]: [string, any]) => ({
-        source,
-        visitors: count,
-        percentage: totalLeads > 0 ? Math.round((count / totalLeads) * 100) : 0
-      }));
+      const trafficSources = Object.entries(leadSources).map(
+        ([source, count]: [string, any]) => ({
+          source,
+          visitors: count,
+          percentage:
+            totalLeads > 0 ? Math.round((count / totalLeads) * 100) : 0,
+        }),
+      );
 
       const realTimeData = {
         activeVisitors: 0, // No real-time visitor tracking available
@@ -1563,29 +1706,26 @@ Please respond with a JSON object containing:
           { page: "/", views: 0, percentage: 0 },
           { page: "/portfolio", views: 0, percentage: 0 },
           { page: "/booking", views: 0, percentage: 0 },
-          { page: "/services", views: 0, percentage: 0 }
+          { page: "/services", views: 0, percentage: 0 },
         ],
         recentActivity: [
-          ...todayMessages.slice(0, 3).map(m => ({
+          ...todayMessages.slice(0, 3).map((m) => ({
             action: "New inquiry",
             client: m.name,
-            time: new Date(m.created_at).toLocaleTimeString()
+            time: new Date(m.created_at).toLocaleTimeString(),
           })),
-          ...todayBookings.slice(0, 2).map(b => ({
+          ...todayBookings.slice(0, 2).map((b) => ({
             action: "New booking",
             client: b.client?.name || "Unknown",
-            time: new Date(b.createdAt).toLocaleTimeString()
-          }))
+            time: new Date(b.createdAt).toLocaleTimeString(),
+          })),
         ],
-        trafficSources: trafficSources.length > 0 ? trafficSources.slice(0, 4) : [
-          { source: "Direct", visitors: clients.length, percentage: 100 }
-        ],
-        deviceTypes: [
-          { type: "No tracking data", count: 0, percentage: 0 }
-        ],
-        locations: [
-          { city: "No tracking data", state: "", visitors: 0 }
-        ]
+        trafficSources:
+          trafficSources.length > 0
+            ? trafficSources.slice(0, 4)
+            : [{ source: "Direct", visitors: clients.length, percentage: 100 }],
+        deviceTypes: [{ type: "No tracking data", count: 0, percentage: 0 }],
+        locations: [{ city: "No tracking data", state: "", visitors: 0 }],
       };
 
       res.json(realTimeData);
@@ -1601,9 +1741,14 @@ Please respond with a JSON object containing:
       const bookings = await storage.getBookings();
 
       // Calculate real workflow performance from booking data
-      const confirmedBookings = bookings.filter(b => b.status === 'confirmed').length;
+      const confirmedBookings = bookings.filter(
+        (b) => b.status === "confirmed",
+      ).length;
       const totalBookings = bookings.length;
-      const successRate = totalBookings > 0 ? Math.round((confirmedBookings / totalBookings) * 100) : 0;
+      const successRate =
+        totalBookings > 0
+          ? Math.round((confirmedBookings / totalBookings) * 100)
+          : 0;
 
       // Real workflow templates based on actual business operations
       const workflows = [
@@ -1618,23 +1763,24 @@ Please respond with a JSON object containing:
               type: "email",
               template: "booking_confirmation",
               subject: "Your Hawaii Photography Session is Confirmed! 📸",
-              content: "Welcome guide, preparation checklist, and what to expect"
+              content:
+                "Welcome guide, preparation checklist, and what to expect",
             },
             {
               delay: 48,
-              type: "email", 
+              type: "email",
               template: "pre_shoot_reminder",
               subject: "Your Shoot is in 2 Days - Quick Preparation Tips",
-              content: "Weather check, outfit suggestions, location details"
-            }
+              content: "Weather check, outfit suggestions, location details",
+            },
           ],
           stats: {
             triggered: confirmedBookings,
             completed: confirmedBookings,
             openRate: successRate,
-            clickRate: Math.max(65, successRate - 10)
+            clickRate: Math.max(65, successRate - 10),
           },
-          createdAt: new Date()
+          createdAt: new Date(),
         },
         {
           id: 2,
@@ -1647,16 +1793,16 @@ Please respond with a JSON object containing:
               type: "email",
               template: "gallery_ready",
               subject: "Your Photos Are Ready! 🎉",
-              content: "Access your private gallery and select favorites"
-            }
+              content: "Access your private gallery and select favorites",
+            },
           ],
           stats: {
             triggered: Math.floor(confirmedBookings * 0.8),
             completed: Math.floor(confirmedBookings * 0.75),
             openRate: 92,
-            clickRate: 78
+            clickRate: 78,
           },
-          createdAt: new Date()
+          createdAt: new Date(),
         },
         {
           id: 3,
@@ -1669,17 +1815,17 @@ Please respond with a JSON object containing:
               type: "email",
               template: "review_request",
               subject: "How was your experience with us?",
-              content: "We'd love your feedback and a review if you're happy!"
-            }
+              content: "We'd love your feedback and a review if you're happy!",
+            },
           ],
           stats: {
             triggered: Math.floor(confirmedBookings * 0.6),
             completed: Math.floor(confirmedBookings * 0.55),
             openRate: 85,
-            clickRate: 45
+            clickRate: 45,
           },
-          createdAt: new Date()
-        }
+          createdAt: new Date(),
+        },
       ];
 
       res.json(workflows);
@@ -1705,9 +1851,9 @@ Please respond with a JSON object containing:
           triggered: 0,
           completed: 0,
           openRate: 0,
-          clickRate: 0
+          clickRate: 0,
         },
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       };
 
       res.json(newWorkflow);
@@ -1748,19 +1894,19 @@ Please respond with a JSON object containing:
         is_from_client: true,
         sender_name: senderName,
         sender_email: senderEmail,
-        status: 'unread'
+        status: "unread",
       });
 
       // Also create a contact message for admin inbox
       await storage.createContactMessage({
         name: senderName,
         email: senderEmail,
-        phone: '',
-        subject: 'Client Portal Message',
+        phone: "",
+        subject: "Client Portal Message",
         message: `Message from client portal:\n\n${message}`,
-        status: 'unread',
-        priority: 'normal',
-        source: 'client_portal'
+        status: "unread",
+        priority: "normal",
+        source: "client_portal",
       });
 
       res.json(newMessage);
@@ -1784,15 +1930,16 @@ Please respond with a JSON object containing:
           phone: "(808) 555-PHOTO",
           email: "christian@picaso.photography",
           address: "Honolulu, Hawaii",
-          headshot: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=1000",
+          headshot:
+            "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=1000",
           socialMedia: {
             instagram: "@christianpicaso",
             facebook: "ChristianPicasoPhotography",
-            youtube: "ChristianPicasoHawaii"
+            youtube: "ChristianPicasoHawaii",
           },
           isActive: true,
           createdAt: new Date(),
-          updatedAt: new Date().toISOString()
+          updatedAt: new Date().toISOString(),
         };
         res.json(defaultProfile);
       } else {
@@ -1822,7 +1969,12 @@ Please respond with a JSON object containing:
       res.json(contracts);
     } catch (error) {
       console.error("Error fetching contracts:", error);
-      res.status(500).json({ error: "Failed to fetch contracts", details: (error as Error).message });
+      res
+        .status(500)
+        .json({
+          error: "Failed to fetch contracts",
+          details: (error as Error).message,
+        });
     }
   });
 
@@ -1833,7 +1985,12 @@ Please respond with a JSON object containing:
       res.json(contract);
     } catch (error) {
       console.error("Error creating contract:", error);
-      res.status(500).json({ error: "Failed to create contract", details: (error as Error).message });
+      res
+        .status(500)
+        .json({
+          error: "Failed to create contract",
+          details: (error as Error).message,
+        });
     }
   });
 
@@ -1846,18 +2003,31 @@ Please respond with a JSON object containing:
       res.json(contract);
     } catch (error) {
       console.error("Error fetching contract:", error);
-      res.status(500).json({ error: "Failed to fetch contract", details: (error as Error).message });
+      res
+        .status(500)
+        .json({
+          error: "Failed to fetch contract",
+          details: (error as Error).message,
+        });
     }
   });
 
   app.put("/api/contracts/:id", async (req, res) => {
     try {
       const updates = req.body;
-      const contract = await storage.updateContract(parseInt(req.params.id), updates);
+      const contract = await storage.updateContract(
+        parseInt(req.params.id),
+        updates,
+      );
       res.json(contract);
     } catch (error) {
       console.error("Error updating contract:", error);
-      res.status(500).json({ error: "Failed to update contract", details: (error as Error).message });
+      res
+        .status(500)
+        .json({
+          error: "Failed to update contract",
+          details: (error as Error).message,
+        });
     }
   });
 
@@ -1868,7 +2038,12 @@ Please respond with a JSON object containing:
       res.json(result);
     } catch (error) {
       console.error("Error sending contract:", error);
-      res.status(500).json({ error: "Failed to send contract", details: (error as Error).message });
+      res
+        .status(500)
+        .json({
+          error: "Failed to send contract",
+          details: (error as Error).message,
+        });
     }
   });
 
@@ -1876,10 +2051,10 @@ Please respond with a JSON object containing:
   app.post("/api/property-research", async (req, res) => {
     try {
       const propertyData = req.body;
-      
+
       // Log the received data for debugging
       console.log("Property research request received:", propertyData);
-      
+
       // Here you would implement the actual property research logic
       // This could involve:
       // 1. Validating the input data
@@ -1887,20 +2062,19 @@ Please respond with a JSON object containing:
       // 3. Using AI to analyze the property information
       // 4. Storing the research request in the database
       // 5. Returning research results or scheduling background processing
-      
+
       // For now, we'll just acknowledge receipt and return success
-      res.json({ 
-        success: true, 
+      res.json({
+        success: true,
         message: "Property research request submitted successfully",
         data: propertyData,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
-      
     } catch (error) {
       console.error("Error processing property research request:", error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: "Failed to process property research request",
-        details: (error as Error).message 
+        details: (error as Error).message,
       });
     }
   });

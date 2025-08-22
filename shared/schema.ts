@@ -1,4 +1,13 @@
-import { pgTable, text, serial, integer, boolean, timestamp, decimal, json } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  serial,
+  integer,
+  boolean,
+  timestamp,
+  decimal,
+  json,
+} from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -28,7 +37,9 @@ export const clients = pgTable("clients", {
   timezone: text("timezone").default("America/New_York"),
   lastContact: timestamp("last_contact"),
   nextFollowUp: timestamp("next_follow_up"),
-  lifetimeValue: decimal("lifetime_value", { precision: 10, scale: 2 }).default("0.00"),
+  lifetimeValue: decimal("lifetime_value", { precision: 10, scale: 2 }).default(
+    "0.00",
+  ),
   referralSource: text("referral_source"),
   motivationLevel: integer("motivation_level").default(5), // 1-10 scale
   timeframe: text("timeframe"), // asap, 30_days, 90_days, flexible
@@ -49,15 +60,24 @@ export const investmentStrategies = pgTable("investment_strategies", {
   riskLevel: text("risk_level").default("medium"), // low, medium, high
   timeToComplete: integer("time_to_complete"), // days
   active: boolean("active").default(true),
-  requirements: json("requirements").$type<Array<{requirement: string, critical: boolean}>>(),
+  requirements:
+    json("requirements").$type<
+      Array<{ requirement: string; critical: boolean }>
+    >(),
   resources: text("resources").array(),
 });
 
 export const deals = pgTable("deals", {
   id: serial("id").primaryKey(),
-  clientId: integer("client_id").references(() => clients.id).notNull(),
-  propertyId: integer("property_id").references(() => properties.id).notNull(),
-  strategyId: integer("strategy_id").references(() => investmentStrategies.id).notNull(),
+  clientId: integer("client_id")
+    .references(() => clients.id)
+    .notNull(),
+  propertyId: integer("property_id")
+    .references(() => properties.id)
+    .notNull(),
+  strategyId: integer("strategy_id")
+    .references(() => investmentStrategies.id)
+    .notNull(),
   dealName: text("deal_name").notNull(),
   stage: text("stage").notNull().default("prospect"), // prospect, under_contract, due_diligence, closing, closed, dead
   purchasePrice: decimal("purchase_price", { precision: 12, scale: 2 }),
@@ -82,7 +102,9 @@ export const deals = pgTable("deals", {
 export const contracts = pgTable("contracts", {
   id: serial("id").primaryKey(),
   booking_id: integer("booking_id").references(() => bookings.id),
-  client_id: integer("client_id").references(() => clients.id).notNull(),
+  client_id: integer("client_id")
+    .references(() => clients.id)
+    .notNull(),
   contract_type: text("contract_type").notNull(), // 'individual', 'business'
   service_type: text("service_type"), // 'portrait', 'wedding', 'commercial', etc.
   status: text("status").notNull().default("draft"), // 'draft', 'sent', 'signed', 'completed', 'cancelled'
@@ -112,12 +134,12 @@ export const contracts = pgTable("contracts", {
   signature_metadata: json("signature_metadata").$type<{
     clientDevice?: string;
     clientUserAgent?: string;
-    signatureMethod?: 'electronic' | 'digital';
+    signatureMethod?: "electronic" | "digital";
     witnessRequired?: boolean;
     notarizedRequired?: boolean;
   }>(),
   created_at: timestamp("created_at").defaultNow(),
-  updated_at: timestamp("updated_at").defaultNow()
+  updated_at: timestamp("updated_at").defaultNow(),
 });
 
 // Legacy tables for backward compatibility
@@ -134,7 +156,9 @@ export const services = pgTable("services", {
 
 export const bookings = pgTable("bookings", {
   id: serial("id").primaryKey(),
-  clientId: integer("client_id").references(() => clients.id).notNull(),
+  clientId: integer("client_id")
+    .references(() => clients.id)
+    .notNull(),
   serviceId: integer("service_id").references(() => services.id),
   date: timestamp("date").notNull(),
   duration: integer("duration"),
@@ -162,7 +186,9 @@ export const galleryImages = pgTable("gallery_images", {
 
 export const invoices = pgTable("invoices", {
   id: serial("id").primaryKey(),
-  booking_id: integer("booking_id").references(() => bookings.id).notNull(),
+  booking_id: integer("booking_id")
+    .references(() => bookings.id)
+    .notNull(),
   amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
   due_date: timestamp("due_date").notNull(),
   paid_at: timestamp("paid_at"),
@@ -196,11 +222,15 @@ export const aiChats = pgTable("ai_chats", {
   id: serial("id").primaryKey(),
   session_id: text("session_id").notNull(),
   client_email: text("client_email"),
-  messages: json("messages").$type<Array<{
-    role: 'user' | 'assistant';
-    content: string;
-    timestamp: number;
-  }>>().notNull(),
+  messages: json("messages")
+    .$type<
+      Array<{
+        role: "user" | "assistant";
+        content: string;
+        timestamp: number;
+      }>
+    >()
+    .notNull(),
   deal_data: json("deal_data").$type<{
     propertyAddress?: string;
     strategy?: string;
@@ -265,7 +295,9 @@ export const leads = pgTable("leads", {
 
 export const communicationLog = pgTable("communication_log", {
   id: serial("id").primaryKey(),
-  clientId: integer("client_id").references(() => clients.id).notNull(),
+  clientId: integer("client_id")
+    .references(() => clients.id)
+    .notNull(),
   userId: integer("user_id").references(() => users.id),
   type: text("type").notNull(),
   direction: text("direction").notNull(),
@@ -283,16 +315,26 @@ export const automationSequences = pgTable("automation_sequences", {
   name: text("name").notNull(),
   trigger: text("trigger").notNull(),
   active: boolean("active").default(true),
-  steps: json("steps").$type<Array<{delay: number, type: string, template: string}>>(),
+  steps:
+    json("steps").$type<
+      Array<{ delay: number; type: string; template: string }>
+    >(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const dealAnalysis = pgTable("deal_analysis", {
   id: serial("id").primaryKey(),
-  deal_id: integer("deal_id").references(() => deals.id).notNull(),
-  property_id: integer("property_id").references(() => properties.id).notNull(),
+  deal_id: integer("deal_id")
+    .references(() => deals.id)
+    .notNull(),
+  property_id: integer("property_id")
+    .references(() => properties.id)
+    .notNull(),
   analysis_type: text("analysis_type").notNull(), // flip, rental, wholesale, subject_to
-  purchase_price: decimal("purchase_price", { precision: 12, scale: 2 }).notNull(),
+  purchase_price: decimal("purchase_price", {
+    precision: 12,
+    scale: 2,
+  }).notNull(),
   arv: decimal("arv", { precision: 12, scale: 2 }),
   repair_costs: decimal("repair_costs", { precision: 10, scale: 2 }),
   holding_costs: decimal("holding_costs", { precision: 8, scale: 2 }),
@@ -301,7 +343,10 @@ export const dealAnalysis = pgTable("deal_analysis", {
   monthly_expenses: decimal("monthly_expenses", { precision: 8, scale: 2 }),
   cash_flow: decimal("cash_flow", { precision: 8, scale: 2 }),
   cap_rate: decimal("cap_rate", { precision: 5, scale: 3 }),
-  cash_on_cash_return: decimal("cash_on_cash_return", { precision: 5, scale: 3 }),
+  cash_on_cash_return: decimal("cash_on_cash_return", {
+    precision: 5,
+    scale: 3,
+  }),
   roi: decimal("roi", { precision: 5, scale: 3 }),
   profit_potential: decimal("profit_potential", { precision: 10, scale: 2 }),
   risk_score: integer("risk_score").default(5), // 1-10 scale
@@ -315,14 +360,25 @@ export const questionnaires = pgTable("questionnaires", {
   name: text("name").notNull(),
   description: text("description"),
   category: text("category"), // seller_intake, buyer_intake, investor_profile
-  questions: json("questions").$type<Array<{id: string, type: string, question: string, required: boolean, options?: string[]}>>(),
+  questions:
+    json("questions").$type<
+      Array<{
+        id: string;
+        type: string;
+        question: string;
+        required: boolean;
+        options?: string[];
+      }>
+    >(),
   active: boolean("active").default(true),
   created_at: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const clientPortalSessions = pgTable("client_portal_sessions", {
   id: serial("id").primaryKey(),
-  client_id: integer("client_id").references(() => clients.id).notNull(),
+  client_id: integer("client_id")
+    .references(() => clients.id)
+    .notNull(),
   session_token: text("session_token").notNull().unique(),
   expires_at: timestamp("expires_at").notNull(),
   ip_address: text("ip_address"),
@@ -352,7 +408,9 @@ export const serviceProviders = pgTable("service_providers", {
 
 export const tasks = pgTable("tasks", {
   id: serial("id").primaryKey(),
-  deal_id: integer("deal_id").references(() => deals.id).notNull(),
+  deal_id: integer("deal_id")
+    .references(() => deals.id)
+    .notNull(),
   client_id: integer("client_id").references(() => clients.id),
   assigned_to: integer("assigned_to").references(() => users.id),
   title: text("title").notNull(),
@@ -364,7 +422,9 @@ export const tasks = pgTable("tasks", {
   completed_at: timestamp("completed_at"),
   estimated_cost: decimal("estimated_cost", { precision: 10, scale: 2 }),
   actual_cost: decimal("actual_cost", { precision: 10, scale: 2 }),
-  service_provider_id: integer("service_provider_id").references(() => serviceProviders.id),
+  service_provider_id: integer("service_provider_id").references(
+    () => serviceProviders.id,
+  ),
   attachments: text("attachments").array(),
   created_at: timestamp("created_at").defaultNow().notNull(),
   updated_at: timestamp("updated_at").defaultNow().notNull(),
@@ -372,7 +432,9 @@ export const tasks = pgTable("tasks", {
 
 export const teamMembers = pgTable("team_members", {
   id: serial("id").primaryKey(),
-  user_id: integer("user_id").references(() => users.id).notNull(),
+  user_id: integer("user_id")
+    .references(() => users.id)
+    .notNull(),
   role: text("role").notNull(),
   permissions: json("permissions").$type<Array<string>>(),
   hourly_rate: decimal("hourly_rate", { precision: 10, scale: 2 }),
@@ -399,7 +461,9 @@ export const contactMessages = pgTable("contact_messages", {
 
 export const clientMessages = pgTable("client_messages", {
   id: serial("id").primaryKey(),
-  client_id: integer("client_id").references(() => clients.id).notNull(),
+  client_id: integer("client_id")
+    .references(() => clients.id)
+    .notNull(),
   message: text("message").notNull(),
   is_from_client: boolean("is_from_client").default(true).notNull(),
   sender_name: text("sender_name").notNull(),
@@ -410,7 +474,9 @@ export const clientMessages = pgTable("client_messages", {
 
 export const comparables = pgTable("comparables", {
   id: serial("id").primaryKey(),
-  property_id: integer("property_id").references(() => properties.id).notNull(),
+  property_id: integer("property_id")
+    .references(() => properties.id)
+    .notNull(),
   comp_address: text("comp_address").notNull(),
   distance: decimal("distance", { precision: 4, scale: 2 }), // miles
   sale_price: decimal("sale_price", { precision: 12, scale: 2 }),
@@ -423,7 +489,10 @@ export const comparables = pgTable("comparables", {
   condition: text("condition"),
   source: text("source"), // mls, public_records, automated_valuation
   confidence_score: integer("confidence_score"), // 1-100
-  adjustments: json("adjustments").$type<Array<{factor: string, amount: number, reason: string}>>(),
+  adjustments:
+    json("adjustments").$type<
+      Array<{ factor: string; amount: number; reason: string }>
+    >(),
   adjusted_value: decimal("adjusted_value", { precision: 12, scale: 2 }),
   created_at: timestamp("created_at").defaultNow().notNull(),
 });
@@ -440,13 +509,21 @@ export const profiles = pgTable("profiles", {
   license_number: text("license_number"),
   brokerage: text("brokerage"),
   specialties: text("specialties").array(),
-  social_media: json("social_media").$type<{
-    facebook: string;
-    instagram: string;
-    youtube: string;
-    linkedin: string;
-    tiktok: string;
-  }>().default({ facebook: "", instagram: "", youtube: "", linkedin: "", tiktok: "" }),
+  social_media: json("social_media")
+    .$type<{
+      facebook: string;
+      instagram: string;
+      youtube: string;
+      linkedin: string;
+      tiktok: string;
+    }>()
+    .default({
+      facebook: "",
+      instagram: "",
+      youtube: "",
+      linkedin: "",
+      tiktok: "",
+    }),
   is_active: boolean("is_active").default(true).notNull(),
   updated_at: timestamp("updated_at").defaultNow().notNull(),
   created_at: timestamp("created_at").defaultNow().notNull(),
@@ -465,9 +542,12 @@ export const propertiesRelations = relations(properties, ({ many }) => ({
   dealAnalysis: many(dealAnalysis),
 }));
 
-export const investmentStrategiesRelations = relations(investmentStrategies, ({ many }) => ({
-  deals: many(deals),
-}));
+export const investmentStrategiesRelations = relations(
+  investmentStrategies,
+  ({ many }) => ({
+    deals: many(deals),
+  }),
+);
 
 export const dealsRelations = relations(deals, ({ one, many }) => ({
   client: one(clients, {
@@ -562,7 +642,9 @@ export const insertPropertySchema = createInsertSchema(properties).omit({
   updatedAt: true,
 });
 
-export const insertInvestmentStrategySchema = createInsertSchema(investmentStrategies).omit({
+export const insertInvestmentStrategySchema = createInsertSchema(
+  investmentStrategies,
+).omit({
   id: true,
 });
 
@@ -591,11 +673,14 @@ export const insertGalleryImageSchema = createInsertSchema(galleryImages).omit({
 // Contract schema - custom definition to handle date strings properly
 export const insertContractSchema = z.object({
   client_id: z.number(),
-  contract_type: z.enum(['individual', 'business']),
+  contract_type: z.enum(["individual", "business"]),
   service_type: z.string().nullable(),
   title: z.string().min(1),
   template_content: z.string(),
-  session_date: z.string().nullable().transform(val => val ? new Date(val) : null),
+  session_date: z
+    .string()
+    .nullable()
+    .transform((val) => (val ? new Date(val) : null)),
   location: z.string().nullable(),
   package_type: z.string().nullable(),
   total_amount: z.string().nullable(),
@@ -614,7 +699,9 @@ export const insertInvoiceSchema = createInsertSchema(invoices).omit({
   id: true,
 });
 
-export const insertPropertyImageSchema = createInsertSchema(propertyImages).omit({
+export const insertPropertyImageSchema = createInsertSchema(
+  propertyImages,
+).omit({
   id: true,
   uploaded_at: true,
 });
@@ -629,7 +716,9 @@ export const insertComparableSchema = createInsertSchema(comparables).omit({
   created_at: true,
 });
 
-export const insertServiceProviderSchema = createInsertSchema(serviceProviders).omit({
+export const insertServiceProviderSchema = createInsertSchema(
+  serviceProviders,
+).omit({
   id: true,
   created_at: true,
 });
@@ -651,39 +740,49 @@ export const insertLeadSchema = createInsertSchema(leads).omit({
   createdAt: true,
 });
 
-export const insertCommunicationLogSchema = createInsertSchema(communicationLog).omit({
+export const insertCommunicationLogSchema = createInsertSchema(
+  communicationLog,
+).omit({
   id: true,
   createdAt: true,
 });
 
-export const insertAutomationSequenceSchema = createInsertSchema(automationSequences).omit({
+export const insertAutomationSequenceSchema = createInsertSchema(
+  automationSequences,
+).omit({
   id: true,
   createdAt: true,
 });
 
-export const insertQuestionnaireSchema = createInsertSchema(questionnaires).omit({
+export const insertQuestionnaireSchema = createInsertSchema(
+  questionnaires,
+).omit({
   id: true,
   created_at: true,
 });
 
-export const insertClientPortalSessionSchema = createInsertSchema(clientPortalSessions).omit({
+export const insertClientPortalSessionSchema = createInsertSchema(
+  clientPortalSessions,
+).omit({
   id: true,
   created_at: true,
 });
-
-
 
 export const insertTeamMemberSchema = createInsertSchema(teamMembers).omit({
   id: true,
   created_at: true,
 });
 
-export const insertContactMessageSchema = createInsertSchema(contactMessages).omit({
+export const insertContactMessageSchema = createInsertSchema(
+  contactMessages,
+).omit({
   id: true,
   created_at: true,
 });
 
-export const insertClientMessageSchema = createInsertSchema(clientMessages).omit({
+export const insertClientMessageSchema = createInsertSchema(
+  clientMessages,
+).omit({
   id: true,
   created_at: true,
 });
@@ -745,7 +844,8 @@ export type Questionnaire = typeof questionnaires.$inferSelect;
 export type InsertQuestionnaire = typeof questionnaires.$inferInsert;
 
 export type ClientPortalSession = typeof clientPortalSessions.$inferSelect;
-export type InsertClientPortalSession = typeof clientPortalSessions.$inferInsert;
+export type InsertClientPortalSession =
+  typeof clientPortalSessions.$inferInsert;
 
 export type ServiceProvider = typeof serviceProviders.$inferSelect;
 export type InsertServiceProvider = typeof serviceProviders.$inferInsert;

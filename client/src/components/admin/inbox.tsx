@@ -4,27 +4,27 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import { 
+import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { 
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { 
-  Mail, 
-  MessageCircle, 
-  CheckCircle, 
+import {
+  Mail,
+  MessageCircle,
+  CheckCircle,
   Clock,
   Trash,
   Reply,
-  Archive
+  Archive,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -44,16 +44,18 @@ interface ContactMessage {
 }
 
 export function AdminInbox() {
-  const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
+  const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(
+    null,
+  );
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const { data: messages = [], isLoading } = useQuery({
-    queryKey: ['/api/contact-messages'],
+    queryKey: ["/api/contact-messages"],
     queryFn: async () => {
-      const response = await fetch('/api/contact-messages');
+      const response = await fetch("/api/contact-messages");
       return response.json();
     },
   });
@@ -61,21 +63,21 @@ export function AdminInbox() {
   const updateStatusMutation = useMutation({
     mutationFn: async ({ id, status }: { id: number; status: string }) => {
       const response = await fetch(`/api/contact-messages/${id}`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ status }),
       });
-      
+
       if (!response.ok) {
-        throw new Error('Failed to update message status');
+        throw new Error("Failed to update message status");
       }
-      
+
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/contact-messages'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/contact-messages"] });
       toast({
         title: "Status updated",
         description: "Message status has been updated successfully.",
@@ -86,17 +88,17 @@ export function AdminInbox() {
   const deleteMessageMutation = useMutation({
     mutationFn: async (id: number) => {
       const response = await fetch(`/api/contact-messages/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
-      
+
       if (!response.ok) {
-        throw new Error('Failed to delete message');
+        throw new Error("Failed to delete message");
       }
-      
+
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/contact-messages'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/contact-messages"] });
       setSelectedMessage(null);
       toast({
         title: "Message deleted",
@@ -107,40 +109,58 @@ export function AdminInbox() {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'urgent': return 'bg-red-100 text-red-800';
-      case 'high': return 'bg-orange-100 text-orange-800';
-      case 'normal': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "urgent":
+        return "bg-red-100 text-red-800";
+      case "high":
+        return "bg-orange-100 text-orange-800";
+      case "normal":
+        return "bg-blue-100 text-blue-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'unread': return 'bg-red-100 text-red-800';
-      case 'read': return 'bg-yellow-100 text-yellow-800';
-      case 'replied': return 'bg-green-100 text-green-800';
-      case 'archived': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "unread":
+        return "bg-red-100 text-red-800";
+      case "read":
+        return "bg-yellow-100 text-yellow-800";
+      case "replied":
+        return "bg-green-100 text-green-800";
+      case "archived":
+        return "bg-gray-100 text-gray-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'unread': return <Mail className="h-4 w-4" />;
-      case 'read': return <Clock className="h-4 w-4" />;
-      case 'replied': return <CheckCircle className="h-4 w-4" />;
-      case 'archived': return <Archive className="h-4 w-4" />;
-      default: return <Mail className="h-4 w-4" />;
+      case "unread":
+        return <Mail className="h-4 w-4" />;
+      case "read":
+        return <Clock className="h-4 w-4" />;
+      case "replied":
+        return <CheckCircle className="h-4 w-4" />;
+      case "archived":
+        return <Archive className="h-4 w-4" />;
+      default:
+        return <Mail className="h-4 w-4" />;
     }
   };
 
   const filteredMessages = messages.filter((message: ContactMessage) => {
-    const statusMatch = statusFilter === 'all' || message.status === statusFilter;
-    const priorityMatch = priorityFilter === 'all' || message.priority === priorityFilter;
+    const statusMatch =
+      statusFilter === "all" || message.status === statusFilter;
+    const priorityMatch =
+      priorityFilter === "all" || message.priority === priorityFilter;
     return statusMatch && priorityMatch;
   });
 
-  const unreadCount = messages.filter((m: ContactMessage) => m.status === 'unread').length;
+  const unreadCount = messages.filter(
+    (m: ContactMessage) => m.status === "unread",
+  ).length;
 
   return (
     <div className="space-y-6">
@@ -156,9 +176,7 @@ export function AdminInbox() {
             {messages.length} Total Messages
           </Badge>
           {unreadCount > 0 && (
-            <Badge variant="destructive">
-              {unreadCount} Unread
-            </Badge>
+            <Badge variant="destructive">{unreadCount} Unread</Badge>
           )}
         </div>
       </div>
@@ -217,7 +235,9 @@ export function AdminInbox() {
             <div className="text-center py-8 text-muted-foreground">
               <MessageCircle className="h-12 w-12 mx-auto mb-4 text-gray-400" />
               <p className="text-lg font-medium">No messages found</p>
-              <p className="text-sm">Messages from your contact form will appear here</p>
+              <p className="text-sm">
+                Messages from your contact form will appear here
+              </p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -225,7 +245,9 @@ export function AdminInbox() {
                 <div
                   key={message.id}
                   className={`p-4 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${
-                    message.status === 'unread' ? 'border-blue-200 bg-blue-50' : ''
+                    message.status === "unread"
+                      ? "border-blue-200 bg-blue-50"
+                      : ""
                   }`}
                   onClick={() => setSelectedMessage(message)}
                 >
@@ -242,7 +264,7 @@ export function AdminInbox() {
                         </Badge>
                       </div>
                       <p className="text-sm text-muted-foreground mb-2">
-                        {message.email} • {message.phone || 'No phone'}
+                        {message.email} • {message.phone || "No phone"}
                       </p>
                       <p className="font-medium mb-1">{message.subject}</p>
                       <p className="text-sm text-muted-foreground line-clamp-2">
@@ -250,8 +272,12 @@ export function AdminInbox() {
                       </p>
                     </div>
                     <div className="text-right text-sm text-muted-foreground">
-                      <div>{new Date(message.createdAt).toLocaleDateString()}</div>
-                      <div>{new Date(message.createdAt).toLocaleTimeString()}</div>
+                      <div>
+                        {new Date(message.createdAt).toLocaleDateString()}
+                      </div>
+                      <div>
+                        {new Date(message.createdAt).toLocaleTimeString()}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -263,7 +289,10 @@ export function AdminInbox() {
 
       {/* Message Detail Dialog */}
       {selectedMessage && (
-        <Dialog open={!!selectedMessage} onOpenChange={() => setSelectedMessage(null)}>
+        <Dialog
+          open={!!selectedMessage}
+          onOpenChange={() => setSelectedMessage(null)}
+        >
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle className="flex items-center space-x-3">
@@ -276,7 +305,7 @@ export function AdminInbox() {
                 </Badge>
               </DialogTitle>
             </DialogHeader>
-            
+
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
@@ -285,7 +314,7 @@ export function AdminInbox() {
                 </div>
                 <div>
                   <Label className="font-medium">Phone</Label>
-                  <p>{selectedMessage.phone || 'Not provided'}</p>
+                  <p>{selectedMessage.phone || "Not provided"}</p>
                 </div>
                 <div>
                   <Label className="font-medium">Received</Label>
@@ -296,25 +325,30 @@ export function AdminInbox() {
                   <p className="capitalize">{selectedMessage.source}</p>
                 </div>
               </div>
-              
+
               <div>
                 <Label className="font-medium">Subject</Label>
                 <p className="text-lg">{selectedMessage.subject}</p>
               </div>
-              
+
               <div>
                 <Label className="font-medium">Message</Label>
                 <div className="bg-gray-50 p-4 rounded-lg mt-2">
-                  <p className="whitespace-pre-wrap">{selectedMessage.message}</p>
+                  <p className="whitespace-pre-wrap">
+                    {selectedMessage.message}
+                  </p>
                 </div>
               </div>
-              
+
               <div className="flex justify-between">
                 <div className="flex space-x-2">
                   <Select
                     value={selectedMessage.status}
-                    onValueChange={(value) => 
-                      updateStatusMutation.mutate({ id: selectedMessage.id, status: value })
+                    onValueChange={(value) =>
+                      updateStatusMutation.mutate({
+                        id: selectedMessage.id,
+                        status: value,
+                      })
                     }
                   >
                     <SelectTrigger className="w-[150px]">
@@ -327,19 +361,25 @@ export function AdminInbox() {
                       <SelectItem value="archived">Archived</SelectItem>
                     </SelectContent>
                   </Select>
-                  
+
                   <Button
                     variant="outline"
-                    onClick={() => window.open(`mailto:${selectedMessage.email}?subject=Re: ${selectedMessage.subject}`)}
+                    onClick={() =>
+                      window.open(
+                        `mailto:${selectedMessage.email}?subject=Re: ${selectedMessage.subject}`,
+                      )
+                    }
                   >
                     <Reply className="h-4 w-4 mr-2" />
                     Reply via Email
                   </Button>
                 </div>
-                
+
                 <Button
                   variant="destructive"
-                  onClick={() => deleteMessageMutation.mutate(selectedMessage.id)}
+                  onClick={() =>
+                    deleteMessageMutation.mutate(selectedMessage.id)
+                  }
                   disabled={deleteMessageMutation.isPending}
                 >
                   <Trash className="h-4 w-4 mr-2" />

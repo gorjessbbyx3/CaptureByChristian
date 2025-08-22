@@ -1,11 +1,38 @@
-import { 
-  users, clients, services, bookings, contracts, invoices, galleryImages, aiChats, contactMessages, clientPortalSessions, clientMessages, profiles,
-  type User, type InsertUser, type Client, type InsertClient, 
-  type Service, type InsertService, type Booking, type InsertBooking,
-  type Contract, type InsertContract, type Invoice, type InsertInvoice,
-  type GalleryImage, type InsertGalleryImage, type AiChat, type InsertAiChat,
-  type ContactMessage, type InsertContactMessage, type ClientMessage, type InsertClientMessage,
-  type Profile, type InsertProfile
+import {
+  users,
+  clients,
+  services,
+  bookings,
+  contracts,
+  invoices,
+  galleryImages,
+  aiChats,
+  contactMessages,
+  clientPortalSessions,
+  clientMessages,
+  profiles,
+  type User,
+  type InsertUser,
+  type Client,
+  type InsertClient,
+  type Service,
+  type InsertService,
+  type Booking,
+  type InsertBooking,
+  type Contract,
+  type InsertContract,
+  type Invoice,
+  type InsertInvoice,
+  type GalleryImage,
+  type InsertGalleryImage,
+  type AiChat,
+  type InsertAiChat,
+  type ContactMessage,
+  type InsertContactMessage,
+  type ClientMessage,
+  type InsertClientMessage,
+  type Profile,
+  type InsertProfile,
 } from "../shared/schema.js";
 import { db } from "./db.js";
 import { eq, desc, and, gte, lte, sql } from "drizzle-orm";
@@ -33,8 +60,13 @@ export interface IStorage {
 
   // Bookings
   getBookings(): Promise<(Booking & { client: Client; service: Service })[]>;
-  getBooking(id: number): Promise<(Booking & { client: Client; service: Service }) | undefined>;
-  getBookingsByDateRange(start: Date, end: Date): Promise<(Booking & { client: Client; service: Service })[]>;
+  getBooking(
+    id: number,
+  ): Promise<(Booking & { client: Client; service: Service }) | undefined>;
+  getBookingsByDateRange(
+    start: Date,
+    end: Date,
+  ): Promise<(Booking & { client: Client; service: Service })[]>;
   createBooking(booking: InsertBooking): Promise<Booking>;
   updateBooking(id: number, booking: Partial<InsertBooking>): Promise<Booking>;
 
@@ -43,8 +75,13 @@ export interface IStorage {
   getContract(id: number): Promise<(Contract & { client: Client }) | undefined>;
   getContractByBooking(bookingId: number): Promise<Contract | undefined>;
   createContract(contract: InsertContract): Promise<Contract>;
-  updateContract(id: number, contract: Partial<InsertContract>): Promise<Contract>;
-  sendContractToPortal(contractId: number): Promise<{ success: boolean; portalLink?: string }>;
+  updateContract(
+    id: number,
+    contract: Partial<InsertContract>,
+  ): Promise<Contract>;
+  sendContractToPortal(
+    contractId: number,
+  ): Promise<{ success: boolean; portalLink?: string }>;
 
   // Invoices
   getInvoice(bookingId: number): Promise<Invoice | undefined>;
@@ -56,7 +93,10 @@ export interface IStorage {
   getFeaturedImages(): Promise<GalleryImage[]>;
   getImagesByBooking(bookingId: number): Promise<GalleryImage[]>;
   createGalleryImage(image: InsertGalleryImage): Promise<GalleryImage>;
-  updateGalleryImage(id: number, image: Partial<InsertGalleryImage>): Promise<GalleryImage>;
+  updateGalleryImage(
+    id: number,
+    image: Partial<InsertGalleryImage>,
+  ): Promise<GalleryImage>;
   deleteGalleryImage(id: number): Promise<void>;
 
   // AI Chats
@@ -77,7 +117,10 @@ export interface IStorage {
   getContactMessages(): Promise<ContactMessage[]>;
   getContactMessage(id: number): Promise<ContactMessage | undefined>;
   createContactMessage(message: InsertContactMessage): Promise<ContactMessage>;
-  updateContactMessage(id: number, message: Partial<InsertContactMessage>): Promise<ContactMessage>;
+  updateContactMessage(
+    id: number,
+    message: Partial<InsertContactMessage>,
+  ): Promise<ContactMessage>;
   deleteContactMessage(id: number): Promise<void>;
 
   // Client Messages
@@ -111,7 +154,10 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.username, username));
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.username, username));
     return user || undefined;
   }
 
@@ -131,7 +177,10 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getClientByEmail(email: string): Promise<Client | undefined> {
-    const [client] = await db.select().from(clients).where(eq(clients.email, email));
+    const [client] = await db
+      .select()
+      .from(clients)
+      .where(eq(clients.email, email));
     return client || undefined;
   }
 
@@ -140,32 +189,59 @@ export class DatabaseStorage implements IStorage {
     return client;
   }
 
-  async updateClient(id: number, updateClient: Partial<InsertClient>): Promise<Client> {
-    const [client] = await db.update(clients).set(updateClient).where(eq(clients.id, id)).returning();
+  async updateClient(
+    id: number,
+    updateClient: Partial<InsertClient>,
+  ): Promise<Client> {
+    const [client] = await db
+      .update(clients)
+      .set(updateClient)
+      .where(eq(clients.id, id))
+      .returning();
     return client;
   }
 
   // Services
   async getServices(): Promise<Service[]> {
-    return await db.select().from(services).orderBy(services.category, services.name);
+    return await db
+      .select()
+      .from(services)
+      .orderBy(services.category, services.name);
   }
 
   async getActiveServices(): Promise<Service[]> {
-    return await db.select().from(services).where(eq(services.active, true)).orderBy(services.category, services.name);
+    return await db
+      .select()
+      .from(services)
+      .where(eq(services.active, true))
+      .orderBy(services.category, services.name);
   }
 
   async getService(id: number): Promise<Service | undefined> {
-    const [service] = await db.select().from(services).where(eq(services.id, id));
+    const [service] = await db
+      .select()
+      .from(services)
+      .where(eq(services.id, id));
     return service || undefined;
   }
 
   async createService(insertService: InsertService): Promise<Service> {
-    const [service] = await db.insert(services).values(insertService).returning();
+    const [service] = await db
+      .insert(services)
+      .values(insertService)
+      .returning();
     return service;
   }
 
-  async updateService(id: number, updateService: Partial<InsertService>): Promise<Service> {
-    const [service] = await db.update(services).set(updateService).where(eq(services.id, id)).returning();
+  async updateService(
+    id: number,
+    updateService: Partial<InsertService>,
+  ): Promise<Service> {
+    const [service] = await db
+      .update(services)
+      .set(updateService)
+      .where(eq(services.id, id))
+      .returning();
     return service;
   }
 
@@ -174,32 +250,36 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Bookings
-  async getBookings(): Promise<(Booking & { client: Client; service: Service })[]> {
+  async getBookings(): Promise<
+    (Booking & { client: Client; service: Service })[]
+  > {
     return await db
       .select()
       .from(bookings)
       .leftJoin(clients, eq(bookings.clientId, clients.id))
       .leftJoin(services, eq(bookings.serviceId, services.id))
       .orderBy(desc(bookings.date))
-      .then(rows => 
-        rows.map(row => ({
+      .then((rows) =>
+        rows.map((row) => ({
           ...row.bookings,
           client: row.clients!,
           service: row.services!,
-        }))
+        })),
       );
   }
 
-  async getBooking(id: number): Promise<(Booking & { client: Client; service: Service }) | undefined> {
+  async getBooking(
+    id: number,
+  ): Promise<(Booking & { client: Client; service: Service }) | undefined> {
     const [result] = await db
       .select()
       .from(bookings)
       .leftJoin(clients, eq(bookings.clientId, clients.id))
       .leftJoin(services, eq(bookings.serviceId, services.id))
       .where(eq(bookings.id, id));
-    
+
     if (!result) return undefined;
-    
+
     return {
       ...result.bookings,
       client: result.clients!,
@@ -207,7 +287,10 @@ export class DatabaseStorage implements IStorage {
     };
   }
 
-  async getBookingsByDateRange(start: Date, end: Date): Promise<(Booking & { client: Client; service: Service })[]> {
+  async getBookingsByDateRange(
+    start: Date,
+    end: Date,
+  ): Promise<(Booking & { client: Client; service: Service })[]> {
     return await db
       .select()
       .from(bookings)
@@ -215,25 +298,34 @@ export class DatabaseStorage implements IStorage {
       .leftJoin(services, eq(bookings.serviceId, services.id))
       .where(and(gte(bookings.date, start), lte(bookings.date, end)))
       .orderBy(bookings.date)
-      .then(rows => 
-        rows.map(row => ({
+      .then((rows) =>
+        rows.map((row) => ({
           ...row.bookings,
           client: row.clients!,
           service: row.services!,
-        }))
+        })),
       );
   }
 
   async createBooking(insertBooking: InsertBooking): Promise<Booking> {
-    const [booking] = await db.insert(bookings).values(insertBooking).returning();
+    const [booking] = await db
+      .insert(bookings)
+      .values(insertBooking)
+      .returning();
     return booking;
   }
 
-  async updateBooking(id: number, updateBooking: Partial<InsertBooking>): Promise<Booking> {
-    const [booking] = await db.update(bookings).set(updateBooking).where(eq(bookings.id, id)).returning();
+  async updateBooking(
+    id: number,
+    updateBooking: Partial<InsertBooking>,
+  ): Promise<Booking> {
+    const [booking] = await db
+      .update(bookings)
+      .set(updateBooking)
+      .where(eq(bookings.id, id))
+      .returning();
     return booking;
   }
-
 
   // Contracts
   async getContracts(): Promise<(Contract & { client: Client })[]> {
@@ -243,10 +335,10 @@ export class DatabaseStorage implements IStorage {
         .from(contracts)
         .leftJoin(clients, eq(contracts.client_id, clients.id))
         .orderBy(desc(contracts.created_at));
-      
-      return contractsData.map(row => ({
+
+      return contractsData.map((row) => ({
         ...row.contracts,
-        client: row.clients!
+        client: row.clients!,
       }));
     } catch (error) {
       console.error("Error fetching contracts:", error);
@@ -255,19 +347,21 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async getContract(id: number): Promise<(Contract & { client: Client }) | undefined> {
+  async getContract(
+    id: number,
+  ): Promise<(Contract & { client: Client }) | undefined> {
     try {
       const [contractData] = await db
         .select()
         .from(contracts)
         .leftJoin(clients, eq(contracts.client_id, clients.id))
         .where(eq(contracts.id, id));
-      
+
       if (!contractData) return undefined;
-      
+
       return {
         ...contractData.contracts,
-        client: contractData.clients!
+        client: contractData.clients!,
       };
     } catch (error) {
       console.error("Error fetching contract:", error);
@@ -283,8 +377,6 @@ export class DatabaseStorage implements IStorage {
     return contract || undefined;
   }
 
-
-
   async createContract(insertContract: InsertContract): Promise<Contract> {
     const [contract] = await db
       .insert(contracts)
@@ -293,7 +385,10 @@ export class DatabaseStorage implements IStorage {
     return contract;
   }
 
-  async updateContract(id: number, updateContract: Partial<InsertContract>): Promise<Contract> {
+  async updateContract(
+    id: number,
+    updateContract: Partial<InsertContract>,
+  ): Promise<Contract> {
     const [contract] = await db
       .update(contracts)
       .set({ ...updateContract, updated_at: new Date() })
@@ -302,66 +397,104 @@ export class DatabaseStorage implements IStorage {
     return contract;
   }
 
-  async sendContractToPortal(contractId: number): Promise<{ success: boolean; portalLink?: string }> {
+  async sendContractToPortal(
+    contractId: number,
+  ): Promise<{ success: boolean; portalLink?: string }> {
     // Generate a secure token for client portal access
     const portalToken = `contract_${contractId}_${Date.now()}_${Math.random().toString(36).substring(2)}`;
-    
+
     // Update contract with portal token and sent timestamp
     await db
       .update(contracts)
       .set({
-        status: 'sent',
+        status: "sent",
         portal_access_token: portalToken,
         signature_request_sent: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
       })
       .where(eq(contracts.id, contractId));
-    
+
     // Create portal link
-    const portalLink = `${process.env.REPLIT_DOMAINS || 'localhost:3000'}/client-portal/contract/${portalToken}`;
-    
+    const portalLink = `${process.env.REPLIT_DOMAINS || "localhost:3000"}/client-portal/contract/${portalToken}`;
+
     return {
       success: true,
-      portalLink
+      portalLink,
     };
   }
 
   // Invoices
   async getInvoice(bookingId: number): Promise<Invoice | undefined> {
-    const [invoice] = await db.select().from(invoices).where(eq(invoices.booking_id, bookingId));
+    const [invoice] = await db
+      .select()
+      .from(invoices)
+      .where(eq(invoices.booking_id, bookingId));
     return invoice || undefined;
   }
 
   async createInvoice(insertInvoice: InsertInvoice): Promise<Invoice> {
-    const [invoice] = await db.insert(invoices).values(insertInvoice).returning();
+    const [invoice] = await db
+      .insert(invoices)
+      .values(insertInvoice)
+      .returning();
     return invoice;
   }
 
-  async updateInvoice(id: number, updateInvoice: Partial<InsertInvoice>): Promise<Invoice> {
-    const [invoice] = await db.update(invoices).set(updateInvoice).where(eq(invoices.id, id)).returning();
+  async updateInvoice(
+    id: number,
+    updateInvoice: Partial<InsertInvoice>,
+  ): Promise<Invoice> {
+    const [invoice] = await db
+      .update(invoices)
+      .set(updateInvoice)
+      .where(eq(invoices.id, id))
+      .returning();
     return invoice;
   }
 
   // Gallery
   async getGalleryImages(): Promise<GalleryImage[]> {
-    return await db.select().from(galleryImages).orderBy(desc(galleryImages.uploaded_at));
+    return await db
+      .select()
+      .from(galleryImages)
+      .orderBy(desc(galleryImages.uploaded_at));
   }
 
   async getFeaturedImages(): Promise<GalleryImage[]> {
-    return await db.select().from(galleryImages).where(eq(galleryImages.featured, true)).orderBy(desc(galleryImages.uploaded_at));
+    return await db
+      .select()
+      .from(galleryImages)
+      .where(eq(galleryImages.featured, true))
+      .orderBy(desc(galleryImages.uploaded_at));
   }
 
   async getImagesByBooking(bookingId: number): Promise<GalleryImage[]> {
-    return await db.select().from(galleryImages).where(eq(galleryImages.booking_id, bookingId)).orderBy(desc(galleryImages.uploaded_at));
+    return await db
+      .select()
+      .from(galleryImages)
+      .where(eq(galleryImages.booking_id, bookingId))
+      .orderBy(desc(galleryImages.uploaded_at));
   }
 
-  async createGalleryImage(insertImage: InsertGalleryImage): Promise<GalleryImage> {
-    const [image] = await db.insert(galleryImages).values(insertImage).returning();
+  async createGalleryImage(
+    insertImage: InsertGalleryImage,
+  ): Promise<GalleryImage> {
+    const [image] = await db
+      .insert(galleryImages)
+      .values(insertImage)
+      .returning();
     return image;
   }
 
-  async updateGalleryImage(id: number, updateImage: Partial<InsertGalleryImage>): Promise<GalleryImage> {
-    const [image] = await db.update(galleryImages).set(updateImage).where(eq(galleryImages.id, id)).returning();
+  async updateGalleryImage(
+    id: number,
+    updateImage: Partial<InsertGalleryImage>,
+  ): Promise<GalleryImage> {
+    const [image] = await db
+      .update(galleryImages)
+      .set(updateImage)
+      .where(eq(galleryImages.id, id))
+      .returning();
     return image;
   }
 
@@ -371,7 +504,10 @@ export class DatabaseStorage implements IStorage {
 
   // AI Chats
   async getAiChat(sessionId: string): Promise<AiChat | undefined> {
-    const [chat] = await db.select().from(aiChats).where(eq(aiChats.session_id, sessionId));
+    const [chat] = await db
+      .select()
+      .from(aiChats)
+      .where(eq(aiChats.session_id, sessionId));
     return chat || undefined;
   }
 
@@ -380,11 +516,18 @@ export class DatabaseStorage implements IStorage {
     return chat;
   }
 
-  async updateAiChat(sessionId: string, updateChat: Partial<InsertAiChat>): Promise<AiChat> {
-    const [chat] = await db.update(aiChats).set({
-      ...updateChat,
-      updated_at: new Date(),
-    }).where(eq(aiChats.session_id, sessionId)).returning();
+  async updateAiChat(
+    sessionId: string,
+    updateChat: Partial<InsertAiChat>,
+  ): Promise<AiChat> {
+    const [chat] = await db
+      .update(aiChats)
+      .set({
+        ...updateChat,
+        updated_at: new Date(),
+      })
+      .where(eq(aiChats.session_id, sessionId))
+      .returning();
     return chat;
   }
 
@@ -392,7 +535,7 @@ export class DatabaseStorage implements IStorage {
   async getMonthlyRevenue(year: number, month: number): Promise<number> {
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0);
-    
+
     const [result] = await db
       .select({ total: sql<number>`sum(${bookings.totalPrice})` })
       .from(bookings)
@@ -400,10 +543,10 @@ export class DatabaseStorage implements IStorage {
         and(
           gte(bookings.date, startDate),
           lte(bookings.date, endDate),
-          eq(bookings.status, 'confirmed')
-        )
+          eq(bookings.status, "confirmed"),
+        ),
       );
-    
+
     return Number(result?.total || 0);
   }
 
@@ -424,14 +567,17 @@ export class DatabaseStorage implements IStorage {
     const [pendingBookings] = await db
       .select({ count: sql<number>`count(*)` })
       .from(bookings)
-      .where(eq(bookings.status, 'pending'));
+      .where(eq(bookings.status, "pending"));
 
     const [confirmedBookings] = await db
       .select({ count: sql<number>`count(*)` })
       .from(bookings)
-      .where(eq(bookings.status, 'confirmed'));
+      .where(eq(bookings.status, "confirmed"));
 
-    const monthlyRevenue = await this.getMonthlyRevenue(currentYear, currentMonth);
+    const monthlyRevenue = await this.getMonthlyRevenue(
+      currentYear,
+      currentMonth,
+    );
 
     return {
       totalBookings: Number(totalBookings?.count || 0),
@@ -443,21 +589,36 @@ export class DatabaseStorage implements IStorage {
 
   // Contact Messages
   async getContactMessages(): Promise<ContactMessage[]> {
-    return await db.select().from(contactMessages).orderBy(desc(contactMessages.created_at));
+    return await db
+      .select()
+      .from(contactMessages)
+      .orderBy(desc(contactMessages.created_at));
   }
 
   async getContactMessage(id: number): Promise<ContactMessage | undefined> {
-    const [message] = await db.select().from(contactMessages).where(eq(contactMessages.id, id));
+    const [message] = await db
+      .select()
+      .from(contactMessages)
+      .where(eq(contactMessages.id, id));
     return message || undefined;
   }
 
-  async createContactMessage(insertMessage: InsertContactMessage): Promise<ContactMessage> {
-    const [message] = await db.insert(contactMessages).values(insertMessage).returning();
+  async createContactMessage(
+    insertMessage: InsertContactMessage,
+  ): Promise<ContactMessage> {
+    const [message] = await db
+      .insert(contactMessages)
+      .values(insertMessage)
+      .returning();
     return message;
   }
 
-  async updateContactMessage(id: number, updateMessage: Partial<InsertContactMessage>): Promise<ContactMessage> {
-    const [message] = await db.update(contactMessages)
+  async updateContactMessage(
+    id: number,
+    updateMessage: Partial<InsertContactMessage>,
+  ): Promise<ContactMessage> {
+    const [message] = await db
+      .update(contactMessages)
       .set(updateMessage)
       .where(eq(contactMessages.id, id))
       .returning();
@@ -476,7 +637,7 @@ export class DatabaseStorage implements IStorage {
 
   async getActiveClientPortalSessions(): Promise<any[]> {
     const sessions = await this.getClientPortalSessions();
-    return sessions.filter(session => session.status === 'active');
+    return sessions.filter((session) => session.status === "active");
   }
 
   async createClientPortalSession(session: any): Promise<any> {
@@ -484,7 +645,10 @@ export class DatabaseStorage implements IStorage {
     return session;
   }
 
-  async updateClientPortalSession(sessionToken: string, updates: any): Promise<any> {
+  async updateClientPortalSession(
+    sessionToken: string,
+    updates: any,
+  ): Promise<any> {
     // In a real implementation, this would update session data
     return { sessionToken, ...updates };
   }
@@ -496,27 +660,46 @@ export class DatabaseStorage implements IStorage {
   async getClientPortalStats(): Promise<any> {
     // Get actual portal session data
     const allSessions = await db.select().from(clientPortalSessions);
-    const activeSessions = allSessions.filter((s: any) => s.status === 'active');
-    
+    const activeSessions = allSessions.filter(
+      (s: any) => s.status === "active",
+    );
+
     // Calculate total logins (session starts)
     const totalLogins = allSessions.length;
-    
+
     // Calculate access rate (active vs total clients)
-    const totalClientsResult = await db.select({ count: sql<number>`count(*)` }).from(clients);
+    const totalClientsResult = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(clients);
     const totalClients = totalClientsResult[0]?.count || 0;
-    const accessRate = totalClients > 0 ? Math.round((activeSessions.length / totalClients) * 100) : 0;
-    
+    const accessRate =
+      totalClients > 0
+        ? Math.round((activeSessions.length / totalClients) * 100)
+        : 0;
+
     // Count downloads from activity logs
     const downloadCount = allSessions.reduce((sum: number, session: any) => {
       const activities = session.activityLog || [];
-      return sum + activities.filter((activity: any) => activity.type === 'download').length;
+      return (
+        sum +
+        activities.filter((activity: any) => activity.type === "download")
+          .length
+      );
     }, 0);
-    
+
     // Calculate average rating from sessions with ratings
-    const sessionsWithRatings = allSessions.filter((s: any) => s.rating && s.rating > 0);
-    const avgRating = sessionsWithRatings.length > 0 
-      ? (sessionsWithRatings.reduce((sum: number, s: any) => sum + (s.rating || 0), 0) / sessionsWithRatings.length).toFixed(1)
-      : null;
+    const sessionsWithRatings = allSessions.filter(
+      (s: any) => s.rating && s.rating > 0,
+    );
+    const avgRating =
+      sessionsWithRatings.length > 0
+        ? (
+            sessionsWithRatings.reduce(
+              (sum: number, s: any) => sum + (s.rating || 0),
+              0,
+            ) / sessionsWithRatings.length
+          ).toFixed(1)
+        : null;
 
     return {
       activeUsers: activeSessions.length,
@@ -527,7 +710,7 @@ export class DatabaseStorage implements IStorage {
       topActivity: downloadCount > 0 ? "Photo downloads" : "Gallery viewing",
       downloadCount: downloadCount,
       paymentCount: 0, // Would need payment tracking integration
-      avgRating: avgRating || "No ratings yet"
+      avgRating: avgRating || "No ratings yet",
     };
   }
 
@@ -535,16 +718,21 @@ export class DatabaseStorage implements IStorage {
   async getInvoiceStats(): Promise<any> {
     try {
       const allBookings = await db.select().from(bookings);
-      
+
       // Calculate stats from actual bookings since no separate invoices table exists yet
-      const completedBookings = allBookings.filter(b => b.status === 'completed');
-      const totalRevenue = completedBookings.reduce((sum, booking) => sum + Number(booking.totalPrice || 0), 0);
-      
+      const completedBookings = allBookings.filter(
+        (b) => b.status === "completed",
+      );
+      const totalRevenue = completedBookings.reduce(
+        (sum, booking) => sum + Number(booking.totalPrice || 0),
+        0,
+      );
+
       return {
         totalRevenue,
         pendingAmount: 0, // No separate invoice tracking yet
         overdueAmount: 0, // No separate invoice tracking yet
-        paymentRate: completedBookings.length > 0 ? 100 : 0 // All completed bookings are considered paid
+        paymentRate: completedBookings.length > 0 ? 100 : 0, // All completed bookings are considered paid
       };
     } catch (error) {
       console.error("Invoice stats error:", error);
@@ -552,7 +740,7 @@ export class DatabaseStorage implements IStorage {
         totalRevenue: 0,
         pendingAmount: 0,
         overdueAmount: 0,
-        paymentRate: 0
+        paymentRate: 0,
       };
     }
   }
@@ -560,19 +748,32 @@ export class DatabaseStorage implements IStorage {
   async getBusinessKPIs(): Promise<any> {
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth() + 1;
-    
-    const totalClients = await db.select({ count: sql<number>`count(*)` }).from(clients);
-    const monthlyRevenue = await this.getMonthlyRevenue(currentYear, currentMonth);
-    const totalBookings = await db.select({ count: sql<number>`count(*)` }).from(bookings);
-    const completedBookings = await db.select({ count: sql<number>`count(*)` })
-      .from(bookings).where(eq(bookings.status, 'completed'));
+
+    const totalClients = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(clients);
+    const monthlyRevenue = await this.getMonthlyRevenue(
+      currentYear,
+      currentMonth,
+    );
+    const totalBookings = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(bookings);
+    const completedBookings = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(bookings)
+      .where(eq(bookings.status, "completed"));
 
     return {
       monthlyRecurringRevenue: monthlyRevenue,
       totalClients: Number(totalClients[0]?.count || 0),
       totalBookings: Number(totalBookings[0]?.count || 0),
-      completionRate: totalBookings[0]?.count > 0 ? 
-        (Number(completedBookings[0]?.count || 0) / Number(totalBookings[0]?.count)) * 100 : 0
+      completionRate:
+        totalBookings[0]?.count > 0
+          ? (Number(completedBookings[0]?.count || 0) /
+              Number(totalBookings[0]?.count)) *
+            100
+          : 0,
     };
   }
 
@@ -580,48 +781,64 @@ export class DatabaseStorage implements IStorage {
     const allClients = await db.select().from(clients);
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    
-    const newClientsThisMonth = allClients.filter(client => 
-      new Date(client.createdAt) >= thirtyDaysAgo
+
+    const newClientsThisMonth = allClients.filter(
+      (client) => new Date(client.createdAt) >= thirtyDaysAgo,
     );
-    
+
     const clientsWithMultipleBookings = await db
       .select({ clientId: bookings.clientId, count: sql<number>`count(*)` })
       .from(bookings)
       .groupBy(bookings.clientId)
       .having(sql`count(*) > 1`);
-    
-    const avgLifetimeValue = await this.getMonthlyRevenue(new Date().getFullYear(), new Date().getMonth() + 1) / allClients.length || 0;
+
+    const avgLifetimeValue =
+      (await this.getMonthlyRevenue(
+        new Date().getFullYear(),
+        new Date().getMonth() + 1,
+      )) / allClients.length || 0;
 
     return {
       totalClients: allClients.length,
       newThisMonth: newClientsThisMonth.length,
       repeatClients: clientsWithMultipleBookings.length,
-      avgLifetimeValue: Math.round(avgLifetimeValue)
+      avgLifetimeValue: Math.round(avgLifetimeValue),
     };
   }
 
   async getClientMessages(clientId: number): Promise<ClientMessage[]> {
-    const messages = await db.select().from(clientMessages)
+    const messages = await db
+      .select()
+      .from(clientMessages)
       .where(eq(clientMessages.client_id, clientId))
       .orderBy(desc(clientMessages.created_at));
     return messages;
   }
 
-  async createClientMessage(insertMessage: InsertClientMessage): Promise<ClientMessage> {
-    const [message] = await db.insert(clientMessages).values(insertMessage).returning();
+  async createClientMessage(
+    insertMessage: InsertClientMessage,
+  ): Promise<ClientMessage> {
+    const [message] = await db
+      .insert(clientMessages)
+      .values(insertMessage)
+      .returning();
     return message;
   }
 
   async getProfile(): Promise<Profile | undefined> {
-    const profileList = await db.select().from(profiles).where(eq(profiles.is_active, true)).limit(1);
+    const profileList = await db
+      .select()
+      .from(profiles)
+      .where(eq(profiles.is_active, true))
+      .limit(1);
     return profileList[0];
   }
 
   async updateProfile(updateProfile: Partial<InsertProfile>): Promise<Profile> {
     const existingProfile = await this.getProfile();
     if (existingProfile) {
-      const [profile] = await db.update(profiles)
+      const [profile] = await db
+        .update(profiles)
         .set({ ...updateProfile, updated_at: new Date() })
         .where(eq(profiles.id, existingProfile.id))
         .returning();
@@ -633,7 +850,10 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createProfile(insertProfile: InsertProfile): Promise<Profile> {
-    const [profile] = await db.insert(profiles).values(insertProfile).returning();
+    const [profile] = await db
+      .insert(profiles)
+      .values(insertProfile)
+      .returning();
     return profile;
   }
 }

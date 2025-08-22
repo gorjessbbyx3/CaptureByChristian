@@ -5,33 +5,46 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
-import { 
+import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { 
-  Users, 
-  Search, 
-  Plus, 
-  Mail, 
-  Phone, 
+import {
+  Users,
+  Search,
+  Plus,
+  Mail,
+  Phone,
   Calendar,
   DollarSign,
-  Eye
+  Eye,
 } from "lucide-react";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -73,7 +86,7 @@ interface Booking {
   depositPaid: boolean;
   status: string;
   notes: string;
-  addOns: Array<{id: string, name: string, price: number}>;
+  addOns: Array<{ id: string; name: string; price: number }>;
   createdAt: Date;
 }
 
@@ -160,7 +173,11 @@ function AddClientForm({ onSuccess }: { onSuccess?: () => void }) {
               <FormItem>
                 <FormLabel>Email *</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="client@example.com" {...field} />
+                  <Input
+                    type="email"
+                    placeholder="client@example.com"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -188,7 +205,10 @@ function AddClientForm({ onSuccess }: { onSuccess?: () => void }) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Lead Source</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select source" />
@@ -216,7 +236,10 @@ function AddClientForm({ onSuccess }: { onSuccess?: () => void }) {
             <FormItem>
               <FormLabel>Notes</FormLabel>
               <FormControl>
-                <Textarea placeholder="Additional notes about the client..." {...field} />
+                <Textarea
+                  placeholder="Additional notes about the client..."
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -252,36 +275,49 @@ export function ClientManagement() {
   const [addClientDialogOpen, setAddClientDialogOpen] = useState(false);
 
   const { data: clients, isLoading: clientsLoading } = useQuery({
-    queryKey: ['/api/clients'],
+    queryKey: ["/api/clients"],
     queryFn: fetchClients,
   });
 
   const { data: bookings } = useQuery({
-    queryKey: ['/api/bookings'],
+    queryKey: ["/api/bookings"],
     queryFn: fetchBookings,
   });
 
-  const filteredClients = clients?.filter((client: Client) =>
-    client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.email.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
+  const filteredClients =
+    clients?.filter(
+      (client: Client) =>
+        client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        client.email.toLowerCase().includes(searchTerm.toLowerCase()),
+    ) || [];
 
   const getClientBookings = (clientId: number) => {
-    return bookings?.filter((booking: Booking) => booking.clientId === clientId) || [];
+    return (
+      bookings?.filter((booking: Booking) => booking.clientId === clientId) ||
+      []
+    );
   };
 
   const getClientStats = (clientId: number) => {
     const clientBookings = getClientBookings(clientId);
-    const totalSpent = clientBookings.reduce((sum: number, booking: Booking) => 
-      sum + parseFloat(booking.totalPrice), 0
+    const totalSpent = clientBookings.reduce(
+      (sum: number, booking: Booking) => sum + parseFloat(booking.totalPrice),
+      0,
     );
-    
+
     return {
       totalBookings: clientBookings.length,
       totalSpent,
-      lastBooking: clientBookings.length > 0 
-        ? new Date(Math.max(...clientBookings.map((b: Booking) => new Date(b.date).getTime())))
-        : null,
+      lastBooking:
+        clientBookings.length > 0
+          ? new Date(
+              Math.max(
+                ...clientBookings.map((b: Booking) =>
+                  new Date(b.date).getTime(),
+                ),
+              ),
+            )
+          : null,
     };
   };
 
@@ -313,7 +349,10 @@ export function ClientManagement() {
             <Users className="h-5 w-5 mr-2" />
             Client Management
           </CardTitle>
-          <Dialog open={addClientDialogOpen} onOpenChange={setAddClientDialogOpen}>
+          <Dialog
+            open={addClientDialogOpen}
+            onOpenChange={setAddClientDialogOpen}
+          >
             <DialogTrigger asChild>
               <Button className="btn-bronze">
                 <Plus className="h-4 w-4 mr-1" />
@@ -358,7 +397,7 @@ export function ClientManagement() {
               {filteredClients.length > 0 ? (
                 filteredClients.map((client: Client) => {
                   const stats = getClientStats(client.id);
-                  
+
                   return (
                     <TableRow key={client.id}>
                       <TableCell>
@@ -367,7 +406,11 @@ export function ClientManagement() {
                           {client.tags && client.tags.length > 0 && (
                             <div className="flex gap-1 mt-1">
                               {client.tags.slice(0, 2).map((tag: string) => (
-                                <Badge key={tag} variant="outline" className="text-xs">
+                                <Badge
+                                  key={tag}
+                                  variant="outline"
+                                  className="text-xs"
+                                >
                                   {tag}
                                 </Badge>
                               ))}
@@ -375,7 +418,7 @@ export function ClientManagement() {
                           )}
                         </div>
                       </TableCell>
-                      
+
                       <TableCell>
                         <div className="space-y-1">
                           <div className="flex items-center text-sm">
@@ -390,38 +433,37 @@ export function ClientManagement() {
                           )}
                         </div>
                       </TableCell>
-                      
+
                       <TableCell>
                         <div className="flex items-center">
                           <Calendar className="h-4 w-4 mr-1 text-muted-foreground" />
                           {stats.totalBookings}
                         </div>
                       </TableCell>
-                      
+
                       <TableCell>
                         <div className="flex items-center font-medium">
-                          <DollarSign className="h-4 w-4 mr-1 text-bronze" />
-                          ${stats.totalSpent.toLocaleString()}
+                          <DollarSign className="h-4 w-4 mr-1 text-bronze" />$
+                          {stats.totalSpent.toLocaleString()}
                         </div>
                       </TableCell>
-                      
+
                       <TableCell>
                         {stats.lastBooking ? (
                           <span className="text-sm">
                             {stats.lastBooking.toLocaleDateString()}
                           </span>
                         ) : (
-                          <span className="text-sm text-muted-foreground">Never</span>
+                          <span className="text-sm text-muted-foreground">
+                            Never
+                          </span>
                         )}
                       </TableCell>
-                      
+
                       <TableCell>
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                            >
+                            <Button variant="outline" size="sm">
                               <Eye className="h-4 w-4 mr-1" />
                               View
                             </Button>
@@ -430,7 +472,10 @@ export function ClientManagement() {
                             <DialogHeader>
                               <DialogTitle>{client.name}</DialogTitle>
                             </DialogHeader>
-                            <ClientDetails client={client} bookings={getClientBookings(client.id)} />
+                            <ClientDetails
+                              client={client}
+                              bookings={getClientBookings(client.id)}
+                            />
                           </DialogContent>
                         </Dialog>
                       </TableCell>
@@ -439,8 +484,13 @@ export function ClientManagement() {
                 })
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                    {searchTerm ? 'No clients found matching your search.' : 'No clients found.'}
+                  <TableCell
+                    colSpan={6}
+                    className="text-center py-8 text-muted-foreground"
+                  >
+                    {searchTerm
+                      ? "No clients found matching your search."
+                      : "No clients found."}
                   </TableCell>
                 </TableRow>
               )}
@@ -452,8 +502,17 @@ export function ClientManagement() {
   );
 }
 
-function ClientDetails({ client, bookings }: { client: Client; bookings: Booking[] }) {
-  const totalSpent = bookings.reduce((sum, booking) => sum + parseFloat(booking.totalPrice), 0);
+function ClientDetails({
+  client,
+  bookings,
+}: {
+  client: Client;
+  bookings: Booking[];
+}) {
+  const totalSpent = bookings.reduce(
+    (sum, booking) => sum + parseFloat(booking.totalPrice),
+    0,
+  );
 
   return (
     <div className="space-y-6">
@@ -474,13 +533,20 @@ function ClientDetails({ client, bookings }: { client: Client; bookings: Booking
             )}
           </div>
         </div>
-        
+
         <div>
           <h4 className="font-semibold mb-2">Statistics</h4>
           <div className="space-y-2 text-sm">
-            <div>Total Bookings: <strong>{bookings.length}</strong></div>
-            <div>Total Spent: <strong>${totalSpent.toLocaleString()}</strong></div>
-            <div>Client Since: <strong>{new Date(client.createdAt).toLocaleDateString()}</strong></div>
+            <div>
+              Total Bookings: <strong>{bookings.length}</strong>
+            </div>
+            <div>
+              Total Spent: <strong>${totalSpent.toLocaleString()}</strong>
+            </div>
+            <div>
+              Client Since:{" "}
+              <strong>{new Date(client.createdAt).toLocaleDateString()}</strong>
+            </div>
           </div>
         </div>
       </div>
@@ -499,16 +565,26 @@ function ClientDetails({ client, bookings }: { client: Client; bookings: Booking
         {bookings.length > 0 ? (
           <div className="space-y-3">
             {bookings.slice(0, 5).map((booking: Booking) => (
-              <div key={booking.id} className="flex items-center justify-between p-3 bg-muted/50 rounded">
+              <div
+                key={booking.id}
+                className="flex items-center justify-between p-3 bg-muted/50 rounded"
+              >
                 <div>
                   <p className="font-medium">Photography Service</p>
                   <p className="text-sm text-muted-foreground">
-                    {new Date(booking.date).toLocaleDateString()} at {booking.location}
+                    {new Date(booking.date).toLocaleDateString()} at{" "}
+                    {booking.location}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium">${parseFloat(booking.totalPrice).toLocaleString()}</p>
-                  <Badge variant={booking.status === 'confirmed' ? 'default' : 'secondary'}>
+                  <p className="font-medium">
+                    ${parseFloat(booking.totalPrice).toLocaleString()}
+                  </p>
+                  <Badge
+                    variant={
+                      booking.status === "confirmed" ? "default" : "secondary"
+                    }
+                  >
                     {booking.status}
                   </Badge>
                 </div>

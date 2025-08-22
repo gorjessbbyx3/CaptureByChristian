@@ -37,7 +37,7 @@ export function PortfolioGate({ onAccessGranted }: PortfolioGateProps) {
 
   const submitLead = useMutation({
     mutationFn: async (data: LeadFormData) => {
-      const response = await apiRequest('POST', '/api/contact', {
+      const response = await apiRequest("POST", "/api/contact", {
         name: data.name,
         email: data.email,
         subject: "Portfolio Access Request",
@@ -49,10 +49,11 @@ export function PortfolioGate({ onAccessGranted }: PortfolioGateProps) {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/contact-messages'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/contact-messages"] });
       toast({
         title: "Access Granted",
-        description: "Thank you! You now have access to our complete portfolio.",
+        description:
+          "Thank you! You now have access to our complete portfolio.",
       });
       onAccessGranted();
     },
@@ -80,10 +81,12 @@ export function PortfolioGate({ onAccessGranted }: PortfolioGateProps) {
             Access Our Complete Portfolio
           </CardTitle>
           <p className="text-muted-foreground">
-            To view our full collection of work, please share your contact information. This helps us provide you with personalized recommendations and exclusive updates.
+            To view our full collection of work, please share your contact
+            information. This helps us provide you with personalized
+            recommendations and exclusive updates.
           </p>
         </CardHeader>
-        
+
         <CardContent className="space-y-6">
           {/* Preview Benefits */}
           <div className="space-y-3">
@@ -108,7 +111,9 @@ export function PortfolioGate({ onAccessGranted }: PortfolioGateProps) {
                 id="name"
                 placeholder="Enter your full name"
                 {...form.register("name")}
-                className={form.formState.errors.name ? "border-destructive" : ""}
+                className={
+                  form.formState.errors.name ? "border-destructive" : ""
+                }
               />
               {form.formState.errors.name && (
                 <p className="text-sm text-destructive">
@@ -124,7 +129,9 @@ export function PortfolioGate({ onAccessGranted }: PortfolioGateProps) {
                 type="email"
                 placeholder="Enter your email address"
                 {...form.register("email")}
-                className={form.formState.errors.email ? "border-destructive" : ""}
+                className={
+                  form.formState.errors.email ? "border-destructive" : ""
+                }
               />
               {form.formState.errors.email && (
                 <p className="text-sm text-destructive">
@@ -134,7 +141,9 @@ export function PortfolioGate({ onAccessGranted }: PortfolioGateProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="message">What type of photography interests you? (Optional)</Label>
+              <Label htmlFor="message">
+                What type of photography interests you? (Optional)
+              </Label>
               <Input
                 id="message"
                 placeholder="e.g., Wedding, Portrait, Aerial photography"
@@ -152,7 +161,9 @@ export function PortfolioGate({ onAccessGranted }: PortfolioGateProps) {
           </form>
 
           <p className="text-xs text-muted-foreground text-center">
-            We respect your privacy. Your information will only be used to provide you with photography services and updates. You can unsubscribe at any time.
+            We respect your privacy. Your information will only be used to
+            provide you with photography services and updates. You can
+            unsubscribe at any time.
           </p>
         </CardContent>
       </Card>

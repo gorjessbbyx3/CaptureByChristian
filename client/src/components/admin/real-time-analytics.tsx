@@ -3,18 +3,18 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { 
-  Activity, 
-  Eye, 
-  MapPin, 
-  Smartphone, 
-  Monitor, 
+import {
+  Activity,
+  Eye,
+  MapPin,
+  Smartphone,
+  Monitor,
   Globe,
   Users,
   Timer,
   Calendar,
   UserPlus,
-  Camera
+  Camera,
 } from "lucide-react";
 
 interface RealTimeData {
@@ -58,7 +58,11 @@ export function RealTimeAnalytics() {
   const [isLive, setIsLive] = useState(true);
   const [lastUpdate, setLastUpdate] = useState(new Date());
 
-  const { data: realTimeData, isLoading, error } = useQuery<RealTimeData>({
+  const {
+    data: realTimeData,
+    isLoading,
+    error,
+  } = useQuery<RealTimeData>({
     queryKey: ["/api/analytics/realtime"],
     refetchInterval: 30000, // Update every 30 seconds
     refetchIntervalInBackground: true,
@@ -117,20 +121,25 @@ export function RealTimeAnalytics() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Real-Time Analytics</h2>
-          <p className="text-muted-foreground">Live data from your photography business</p>
+          <p className="text-muted-foreground">
+            Live data from your photography business
+          </p>
         </div>
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
-            <div className={`w-2 h-2 rounded-full ${isLive ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`}></div>
+            <div
+              className={`w-2 h-2 rounded-full ${isLive ? "bg-green-500 animate-pulse" : "bg-gray-400"}`}
+            ></div>
             <span className="text-sm text-muted-foreground">
-              {isLive ? 'Live' : 'Paused'} • Updated {lastUpdate.toLocaleTimeString()}
+              {isLive ? "Live" : "Paused"} • Updated{" "}
+              {lastUpdate.toLocaleTimeString()}
             </span>
           </div>
           <button
             onClick={() => setIsLive(!isLive)}
             className="text-sm text-blue-600 hover:text-blue-800"
           >
-            {isLive ? 'Pause' : 'Resume'}
+            {isLive ? "Pause" : "Resume"}
           </button>
         </div>
       </div>
@@ -142,7 +151,9 @@ export function RealTimeAnalytics() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Active Visitors</p>
-                <p className="text-2xl font-bold text-green-600">{realTimeData.activeVisitors}</p>
+                <p className="text-2xl font-bold text-green-600">
+                  {realTimeData.activeVisitors}
+                </p>
               </div>
               <Users className="h-8 w-8 text-green-600" />
             </div>
@@ -153,8 +164,12 @@ export function RealTimeAnalytics() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Page Views (Hour)</p>
-                <p className="text-2xl font-bold text-blue-600">{realTimeData.pageViews}</p>
+                <p className="text-sm text-muted-foreground">
+                  Page Views (Hour)
+                </p>
+                <p className="text-2xl font-bold text-blue-600">
+                  {realTimeData.pageViews}
+                </p>
               </div>
               <Eye className="h-8 w-8 text-blue-600" />
             </div>
@@ -166,7 +181,9 @@ export function RealTimeAnalytics() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">New Bookings</p>
-                <p className="text-2xl font-bold text-purple-600">{realTimeData.newBookings}</p>
+                <p className="text-2xl font-bold text-purple-600">
+                  {realTimeData.newBookings}
+                </p>
               </div>
               <Calendar className="h-8 w-8 text-purple-600" />
             </div>
@@ -178,7 +195,9 @@ export function RealTimeAnalytics() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Portfolio Views</p>
-                <p className="text-2xl font-bold text-orange-600">{realTimeData.portfolioViews}</p>
+                <p className="text-2xl font-bold text-orange-600">
+                  {realTimeData.portfolioViews}
+                </p>
               </div>
               <Camera className="h-8 w-8 text-orange-600" />
             </div>
@@ -192,8 +211,12 @@ export function RealTimeAnalytics() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Session Duration</p>
-                <p className="text-xl font-bold">{realTimeData.avgSessionDuration}</p>
+                <p className="text-sm text-muted-foreground">
+                  Session Duration
+                </p>
+                <p className="text-xl font-bold">
+                  {realTimeData.avgSessionDuration}
+                </p>
               </div>
               <Timer className="h-6 w-6 text-muted-foreground" />
             </div>
@@ -254,7 +277,9 @@ export function RealTimeAnalytics() {
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-sm font-medium">{page.page}</span>
-                      <span className="text-sm text-muted-foreground">{page.views} views</span>
+                      <span className="text-sm text-muted-foreground">
+                        {page.views} views
+                      </span>
                     </div>
                     <Progress value={page.percentage} className="h-2" />
                   </div>
@@ -279,7 +304,9 @@ export function RealTimeAnalytics() {
                   <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
                   <div className="flex-1">
                     <p className="text-sm font-medium">{activity.action}</p>
-                    <p className="text-xs text-muted-foreground">{activity.client} • {activity.time}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {activity.client} • {activity.time}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -300,17 +327,24 @@ export function RealTimeAnalytics() {
               {realTimeData.trafficSources.map((source, index) => (
                 <div key={index} className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    <div className={`w-3 h-3 rounded-full ${
-                      source.source === 'Direct' ? 'bg-blue-500' :
-                      source.source === 'Google' ? 'bg-green-500' :
-                      source.source === 'Social Media' ? 'bg-purple-500' :
-                      'bg-orange-500'
-                    }`}></div>
+                    <div
+                      className={`w-3 h-3 rounded-full ${
+                        source.source === "Direct"
+                          ? "bg-blue-500"
+                          : source.source === "Google"
+                            ? "bg-green-500"
+                            : source.source === "Social Media"
+                              ? "bg-purple-500"
+                              : "bg-orange-500"
+                      }`}
+                    ></div>
                     <span className="text-sm font-medium">{source.source}</span>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-medium">{source.visitors}</p>
-                    <p className="text-xs text-muted-foreground">{source.percentage}%</p>
+                    <p className="text-xs text-muted-foreground">
+                      {source.percentage}%
+                    </p>
                   </div>
                 </div>
               ))}
@@ -331,14 +365,22 @@ export function RealTimeAnalytics() {
               {realTimeData.deviceTypes.map((device, index) => (
                 <div key={index} className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
-                    {device.type === 'Mobile' && <Smartphone className="h-4 w-4 text-muted-foreground" />}
-                    {device.type === 'Desktop' && <Monitor className="h-4 w-4 text-muted-foreground" />}
-                    {device.type === 'Tablet' && <Monitor className="h-4 w-4 text-muted-foreground" />}
+                    {device.type === "Mobile" && (
+                      <Smartphone className="h-4 w-4 text-muted-foreground" />
+                    )}
+                    {device.type === "Desktop" && (
+                      <Monitor className="h-4 w-4 text-muted-foreground" />
+                    )}
+                    {device.type === "Tablet" && (
+                      <Monitor className="h-4 w-4 text-muted-foreground" />
+                    )}
                     <span className="text-sm font-medium">{device.type}</span>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-medium">{device.count}</p>
-                    <p className="text-xs text-muted-foreground">{device.percentage}%</p>
+                    <p className="text-xs text-muted-foreground">
+                      {device.percentage}%
+                    </p>
                   </div>
                 </div>
               ))}
@@ -358,10 +400,15 @@ export function RealTimeAnalytics() {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {realTimeData.locations.map((location, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+              <div
+                key={index}
+                className="flex items-center justify-between p-3 bg-muted rounded-lg"
+              >
                 <div className="flex items-center space-x-2">
                   <MapPin className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm font-medium">{location.city}, {location.state}</span>
+                  <span className="text-sm font-medium">
+                    {location.city}, {location.state}
+                  </span>
                 </div>
                 <Badge variant="secondary">{location.visitors}</Badge>
               </div>

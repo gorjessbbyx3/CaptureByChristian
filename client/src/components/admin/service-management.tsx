@@ -1,27 +1,33 @@
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { useToast } from '@/hooks/use-toast';
-import { 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Eye, 
-  EyeOff, 
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+  EyeOff,
   Upload,
   Save,
   X,
   DollarSign,
   Clock,
-  Camera
-} from 'lucide-react';
-import { apiRequest } from '@/lib/queryClient';
+  Camera,
+} from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
 
 interface Service {
   id: number;
@@ -31,7 +37,7 @@ interface Service {
   duration: number;
   category: string;
   active: boolean;
-  addOns?: Array<{id: string, name: string, price: number}>;
+  addOns?: Array<{ id: string; name: string; price: number }>;
   images?: string[];
 }
 
@@ -42,7 +48,7 @@ interface ServiceFormData {
   duration: number;
   category: string;
   active: boolean;
-  addOns: Array<{id: string, name: string, price: number}>;
+  addOns: Array<{ id: string; name: string; price: number }>;
 }
 
 export function ServiceManagement() {
@@ -55,22 +61,22 @@ export function ServiceManagement() {
 
   // Fetch services (admin endpoint to get all services including inactive)
   const { data: services = [], isLoading } = useQuery({
-    queryKey: ['/api/services/admin'],
+    queryKey: ["/api/services/admin"],
     queryFn: async () => {
-      const response = await fetch('/api/services/admin');
-      if (!response.ok) throw new Error('Failed to fetch services');
+      const response = await fetch("/api/services/admin");
+      if (!response.ok) throw new Error("Failed to fetch services");
       return response.json();
-    }
+    },
   });
 
   // Create service mutation
   const createServiceMutation = useMutation({
     mutationFn: async (serviceData: ServiceFormData) => {
-      return await apiRequest('POST', '/api/services', serviceData);
+      return await apiRequest("POST", "/api/services", serviceData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/services/admin'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/services'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/services/admin"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/services"] });
       setIsCreateDialogOpen(false);
       toast({
         title: "Success",
@@ -83,17 +89,23 @@ export function ServiceManagement() {
         description: "Failed to create service.",
         variant: "destructive",
       });
-    }
+    },
   });
 
   // Update service mutation
   const updateServiceMutation = useMutation({
-    mutationFn: async ({ id, serviceData }: { id: number; serviceData: Partial<ServiceFormData> }) => {
-      return await apiRequest('PATCH', `/api/services/${id}`, serviceData);
+    mutationFn: async ({
+      id,
+      serviceData,
+    }: {
+      id: number;
+      serviceData: Partial<ServiceFormData>;
+    }) => {
+      return await apiRequest("PATCH", `/api/services/${id}`, serviceData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/services/admin'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/services'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/services/admin"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/services"] });
       setEditingService(null);
       toast({
         title: "Success",
@@ -106,17 +118,17 @@ export function ServiceManagement() {
         description: "Failed to update service.",
         variant: "destructive",
       });
-    }
+    },
   });
 
   // Delete service mutation
   const deleteServiceMutation = useMutation({
     mutationFn: async (id: number) => {
-      return await apiRequest('DELETE', `/api/services/${id}`);
+      return await apiRequest("DELETE", `/api/services/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/services/admin'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/services'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/services/admin"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/services"] });
       toast({
         title: "Success",
         description: "Service deleted successfully.",
@@ -128,40 +140,40 @@ export function ServiceManagement() {
         description: "Failed to delete service.",
         variant: "destructive",
       });
-    }
+    },
   });
 
   // Toggle service visibility
   const toggleVisibilityMutation = useMutation({
     mutationFn: async ({ id, active }: { id: number; active: boolean }) => {
-      return await apiRequest('PATCH', `/api/services/${id}`, { active });
+      return await apiRequest("PATCH", `/api/services/${id}`, { active });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/services/admin'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/services'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/services/admin"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/services"] });
       toast({
         title: "Success",
         description: "Service visibility updated.",
       });
-    }
+    },
   });
 
   // Handle image selection
   const handleImageSelection = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     setSelectedImages(files);
-    
+
     // Create preview URLs
-    const previewUrls = files.map(file => URL.createObjectURL(file));
+    const previewUrls = files.map((file) => URL.createObjectURL(file));
     setImagePreviewUrls(previewUrls);
   };
 
   // Service form component
-  const ServiceForm = ({ 
-    service, 
-    onSubmit, 
+  const ServiceForm = ({
+    service,
+    onSubmit,
     onCancel,
-    isLoading: formLoading 
+    isLoading: formLoading,
   }: {
     service?: Service;
     onSubmit: (data: ServiceFormData) => void;
@@ -169,13 +181,13 @@ export function ServiceManagement() {
     isLoading: boolean;
   }) => {
     const [formData, setFormData] = useState<ServiceFormData>({
-      name: service?.name || '',
-      description: service?.description || '',
-      price: service?.price || '',
+      name: service?.name || "",
+      description: service?.description || "",
+      price: service?.price || "",
       duration: service?.duration || 60,
-      category: service?.category || 'photography',
+      category: service?.category || "photography",
       active: service?.active ?? true,
-      addOns: service?.addOns || []
+      addOns: service?.addOns || [],
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -191,18 +203,22 @@ export function ServiceManagement() {
             <Input
               id="name"
               value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, name: e.target.value }))
+              }
               placeholder="e.g., Wedding Photography"
               required
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
             <Input
               id="category"
               value={formData.category}
-              onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, category: e.target.value }))
+              }
               placeholder="e.g., wedding, portrait, commercial"
               required
             />
@@ -217,19 +233,26 @@ export function ServiceManagement() {
               type="number"
               step="0.01"
               value={formData.price}
-              onChange={(e) => setFormData(prev => ({ ...prev, price: e.target.value }))}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, price: e.target.value }))
+              }
               placeholder="0.00"
               required
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="duration">Duration (minutes)</Label>
             <Input
               id="duration"
               type="number"
               value={formData.duration}
-              onChange={(e) => setFormData(prev => ({ ...prev, duration: parseInt(e.target.value) }))}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  duration: parseInt(e.target.value),
+                }))
+              }
               placeholder="60"
               required
             />
@@ -241,7 +264,9 @@ export function ServiceManagement() {
           <Textarea
             id="description"
             value={formData.description}
-            onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, description: e.target.value }))
+            }
             placeholder="Detailed description of the service..."
             rows={4}
           />
@@ -265,7 +290,7 @@ export function ServiceManagement() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => document.getElementById('images')?.click()}
+                  onClick={() => document.getElementById("images")?.click()}
                 >
                   <Upload className="mr-2 h-4 w-4" />
                   Upload Images
@@ -276,7 +301,7 @@ export function ServiceManagement() {
               </p>
             </div>
           </div>
-          
+
           {/* Image Previews */}
           {imagePreviewUrls.length > 0 && (
             <div className="grid grid-cols-3 gap-2 mt-4">
@@ -293,8 +318,12 @@ export function ServiceManagement() {
                     size="sm"
                     className="absolute top-1 right-1 h-6 w-6 p-0"
                     onClick={() => {
-                      const newFiles = selectedImages.filter((_, i) => i !== index);
-                      const newUrls = imagePreviewUrls.filter((_, i) => i !== index);
+                      const newFiles = selectedImages.filter(
+                        (_, i) => i !== index,
+                      );
+                      const newUrls = imagePreviewUrls.filter(
+                        (_, i) => i !== index,
+                      );
                       setSelectedImages(newFiles);
                       setImagePreviewUrls(newUrls);
                       URL.revokeObjectURL(url);
@@ -314,7 +343,11 @@ export function ServiceManagement() {
           </Button>
           <Button type="submit" disabled={formLoading}>
             <Save className="mr-2 h-4 w-4" />
-            {formLoading ? 'Saving...' : service ? 'Update Service' : 'Create Service'}
+            {formLoading
+              ? "Saving..."
+              : service
+                ? "Update Service"
+                : "Create Service"}
           </Button>
         </div>
       </form>
@@ -342,7 +375,7 @@ export function ServiceManagement() {
             Manage your photography services, pricing, and images
           </p>
         </div>
-        
+
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button>
@@ -377,10 +410,12 @@ export function ServiceManagement() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => toggleVisibilityMutation.mutate({
-                      id: service.id,
-                      active: !service.active
-                    })}
+                    onClick={() =>
+                      toggleVisibilityMutation.mutate({
+                        id: service.id,
+                        active: !service.active,
+                      })
+                    }
                   >
                     {service.active ? (
                       <EyeOff className="h-4 w-4" />
@@ -394,16 +429,15 @@ export function ServiceManagement() {
                 {service.category}
               </Badge>
             </CardHeader>
-            
+
             <CardContent className="space-y-3">
               <p className="text-sm text-muted-foreground line-clamp-2">
                 {service.description}
               </p>
-              
+
               <div className="flex items-center space-x-4 text-sm">
                 <div className="flex items-center">
-                  <DollarSign className="h-4 w-4 mr-1" />
-                  ${service.price}
+                  <DollarSign className="h-4 w-4 mr-1" />${service.price}
                 </div>
                 <div className="flex items-center">
                   <Clock className="h-4 w-4 mr-1" />
@@ -431,12 +465,12 @@ export function ServiceManagement() {
                   )}
                 </div>
               )}
-              
+
               <div className="flex space-x-2 pt-2">
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       size="sm"
                       onClick={() => setEditingService(service)}
                       className="flex-1"
@@ -452,22 +486,26 @@ export function ServiceManagement() {
                     {editingService && (
                       <ServiceForm
                         service={editingService}
-                        onSubmit={(data) => updateServiceMutation.mutate({
-                          id: editingService.id,
-                          serviceData: data
-                        })}
+                        onSubmit={(data) =>
+                          updateServiceMutation.mutate({
+                            id: editingService.id,
+                            serviceData: data,
+                          })
+                        }
                         onCancel={() => setEditingService(null)}
                         isLoading={updateServiceMutation.isPending}
                       />
                     )}
                   </DialogContent>
                 </Dialog>
-                
+
                 <Button
                   variant="destructive"
                   size="sm"
                   onClick={() => {
-                    if (confirm('Are you sure you want to delete this service?')) {
+                    if (
+                      confirm("Are you sure you want to delete this service?")
+                    ) {
                       deleteServiceMutation.mutate(service.id);
                     }
                   }}
@@ -488,7 +526,10 @@ export function ServiceManagement() {
           <p className="text-muted-foreground mb-4">
             Create your first photography service to get started
           </p>
-          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+          <Dialog
+            open={isCreateDialogOpen}
+            onOpenChange={setIsCreateDialogOpen}
+          >
             <DialogTrigger asChild>
               <Button>
                 <Plus className="mr-2 h-4 w-4" />

@@ -4,23 +4,23 @@ import { BookingForm } from "@/components/booking-form";
 import { AIChat } from "@/components/ai-chat";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Calendar, 
-  MessageSquare, 
-  Award, 
-  CheckCircle, 
-  Clock, 
+import {
+  Calendar,
+  MessageSquare,
+  Award,
+  CheckCircle,
+  Clock,
   MapPin,
   Camera,
   Plane,
-  Users
+  Users,
 } from "lucide-react";
 
 export default function Booking() {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      
+
       {/* Hero Section */}
       <section className="pt-20 pb-12 bg-gradient-to-b from-cream to-background dark:from-background dark:to-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -29,10 +29,11 @@ export default function Booking() {
               Book Your Photography Session
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-              Schedule your photography session with our intelligent booking system. Get instant availability, 
-              AI-powered recommendations, and seamless contract management.
+              Schedule your photography session with our intelligent booking
+              system. Get instant availability, AI-powered recommendations, and
+              seamless contract management.
             </p>
-            
+
             {/* Key Features */}
             <div className="flex flex-wrap justify-center gap-4 mb-8">
               <Badge variant="outline" className="text-sm px-3 py-1">
@@ -64,11 +65,12 @@ export default function Booking() {
                   Quick Booking
                 </h2>
                 <p className="text-muted-foreground">
-                  Fill out the form below to book your photography session. Our system will check availability 
-                  and provide instant confirmation.
+                  Fill out the form below to book your photography session. Our
+                  system will check availability and provide instant
+                  confirmation.
                 </p>
               </div>
-              
+
               <BookingForm />
             </div>
 
@@ -80,11 +82,12 @@ export default function Booking() {
                   AI Booking Assistant
                 </h2>
                 <p className="text-muted-foreground">
-                  Have questions? Chat with our AI assistant for instant help with packages, 
-                  availability, pricing, and location recommendations.
+                  Have questions? Chat with our AI assistant for instant help
+                  with packages, availability, pricing, and location
+                  recommendations.
                 </p>
               </div>
-              
+
               <AIChat />
             </div>
           </div>
@@ -95,9 +98,12 @@ export default function Booking() {
       <section className="py-16 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="font-playfair text-3xl font-bold mb-4">Why Choose CapturedCCollective?</h2>
+            <h2 className="font-playfair text-3xl font-bold mb-4">
+              Why Choose CapturedCCollective?
+            </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Professional photography services with cutting-edge AI technology and FAA-certified drone operations.
+              Professional photography services with cutting-edge AI technology
+              and FAA-certified drone operations.
             </p>
           </div>
 
@@ -112,10 +118,15 @@ export default function Booking() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground mb-4">
-                  Capture your special day with romantic, cinematic photography across Hawaii's most beautiful locations.
+                  Capture your special day with romantic, cinematic photography
+                  across Hawaii's most beautiful locations.
                 </p>
-                <div className="text-2xl font-bold text-bronze mb-2">$2,500</div>
-                <div className="text-sm text-muted-foreground">Starting price</div>
+                <div className="text-2xl font-bold text-bronze mb-2">
+                  $2,500
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  Starting price
+                </div>
               </CardContent>
             </Card>
 
@@ -129,10 +140,13 @@ export default function Booking() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground mb-4">
-                  Professional portraits for personal branding, families, and special occasions with Hawaiian backdrops.
+                  Professional portraits for personal branding, families, and
+                  special occasions with Hawaiian backdrops.
                 </p>
                 <div className="text-2xl font-bold text-bronze mb-2">$450</div>
-                <div className="text-sm text-muted-foreground">Starting price</div>
+                <div className="text-sm text-muted-foreground">
+                  Starting price
+                </div>
               </CardContent>
             </Card>
 
@@ -150,10 +164,13 @@ export default function Booking() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground mb-4">
-                  Licensed drone operations for stunning aerial perspectives of Hawaii's landscapes and events.
+                  Licensed drone operations for stunning aerial perspectives of
+                  Hawaii's landscapes and events.
                 </p>
                 <div className="text-2xl font-bold text-bronze mb-2">$350</div>
-                <div className="text-sm text-muted-foreground">Starting price</div>
+                <div className="text-sm text-muted-foreground">
+                  Starting price
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -164,9 +181,12 @@ export default function Booking() {
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="font-playfair text-3xl font-bold mb-4">Simple Booking Process</h2>
+            <h2 className="font-playfair text-3xl font-bold mb-4">
+              Simple Booking Process
+            </h2>
             <p className="text-muted-foreground">
-              From initial consultation to final delivery, we've streamlined every step.
+              From initial consultation to final delivery, we've streamlined
+              every step.
             </p>
           </div>
 
@@ -177,7 +197,8 @@ export default function Booking() {
               </div>
               <h3 className="font-bold mb-2">Book Online</h3>
               <p className="text-sm text-muted-foreground">
-                Use our booking form or chat with our AI assistant to schedule your session.
+                Use our booking form or chat with our AI assistant to schedule
+                your session.
               </p>
             </div>
 
@@ -187,7 +208,8 @@ export default function Booking() {
               </div>
               <h3 className="font-bold mb-2">Consultation</h3>
               <p className="text-sm text-muted-foreground">
-                We'll discuss your vision, location preferences, and any special requirements.
+                We'll discuss your vision, location preferences, and any special
+                requirements.
               </p>
             </div>
 
@@ -197,7 +219,8 @@ export default function Booking() {
               </div>
               <h3 className="font-bold mb-2">Photo Session</h3>
               <p className="text-sm text-muted-foreground">
-                Professional photography session with AI-assisted shot selection and drone coverage if selected.
+                Professional photography session with AI-assisted shot selection
+                and drone coverage if selected.
               </p>
             </div>
 
@@ -207,7 +230,8 @@ export default function Booking() {
               </div>
               <h3 className="font-bold mb-2">Delivery</h3>
               <p className="text-sm text-muted-foreground">
-                Receive your professionally edited photos through our secure online gallery.
+                Receive your professionally edited photos through our secure
+                online gallery.
               </p>
             </div>
           </div>
@@ -218,11 +242,14 @@ export default function Booking() {
       <section className="py-16 bg-charcoal text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="font-playfair text-3xl font-bold mb-6">Need Help Booking?</h2>
+            <h2 className="font-playfair text-3xl font-bold mb-6">
+              Need Help Booking?
+            </h2>
             <p className="text-xl text-white/70 mb-8 max-w-2xl mx-auto">
-              Our team is here to help. Contact us directly for custom packages, special requirements, or any questions.
+              Our team is here to help. Contact us directly for custom packages,
+              special requirements, or any questions.
             </p>
-            
+
             <div className="grid md:grid-cols-3 gap-8 max-w-3xl mx-auto">
               <div className="text-center">
                 <div className="bg-bronze rounded-full p-3 w-12 h-12 mx-auto mb-3 flex items-center justify-center">
@@ -231,7 +258,7 @@ export default function Booking() {
                 <h3 className="font-bold mb-1">Book Online</h3>
                 <p className="text-sm text-white/70">24/7 booking system</p>
               </div>
-              
+
               <div className="text-center">
                 <div className="bg-bronze rounded-full p-3 w-12 h-12 mx-auto mb-3 flex items-center justify-center">
                   <MessageSquare className="h-6 w-6" />
@@ -239,7 +266,7 @@ export default function Booking() {
                 <h3 className="font-bold mb-1">AI Assistant</h3>
                 <p className="text-sm text-white/70">Instant chat support</p>
               </div>
-              
+
               <div className="text-center">
                 <div className="bg-bronze rounded-full p-3 w-12 h-12 mx-auto mb-3 flex items-center justify-center">
                   <MapPin className="h-6 w-6" />

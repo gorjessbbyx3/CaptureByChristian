@@ -5,7 +5,7 @@ import { TrendingUp, DollarSign } from "lucide-react";
 
 export function RevenueChart() {
   const { data: bookings, isLoading } = useQuery({
-    queryKey: ['/api/bookings'],
+    queryKey: ["/api/bookings"],
     queryFn: fetchBookings,
   });
 
@@ -32,16 +32,16 @@ export function RevenueChart() {
     if (!bookings) return [];
 
     const monthlyData: Record<string, number> = {};
-    
+
     bookings.forEach((booking: any) => {
       const date = new Date(booking.date);
-      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+
       if (!monthlyData[monthKey]) {
         monthlyData[monthKey] = 0;
       }
-      
-      if (booking.status === 'confirmed' || booking.status === 'completed') {
+
+      if (booking.status === "confirmed" || booking.status === "completed") {
         monthlyData[monthKey] += parseFloat(booking.totalPrice);
       }
     });
@@ -49,8 +49,11 @@ export function RevenueChart() {
     return Object.entries(monthlyData)
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([month, revenue]) => ({
-        month: new Date(month + '-01').toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-        revenue
+        month: new Date(month + "-01").toLocaleDateString("en-US", {
+          month: "short",
+          year: "numeric",
+        }),
+        revenue,
       }));
   };
 
@@ -58,10 +61,10 @@ export function RevenueChart() {
     if (!bookings) return [];
 
     const serviceData: Record<string, { revenue: number; count: number }> = {};
-    
+
     bookings.forEach((booking: any) => {
-      if (booking.status === 'confirmed' || booking.status === 'completed') {
-        const serviceName = booking.service?.name || 'Unknown';
+      if (booking.status === "confirmed" || booking.status === "completed") {
+        const serviceName = booking.service?.name || "Unknown";
         if (!serviceData[serviceName]) {
           serviceData[serviceName] = { revenue: 0, count: 0 };
         }
@@ -74,13 +77,16 @@ export function RevenueChart() {
       .sort(([, a], [, b]) => b.revenue - a.revenue)
       .map(([service, data]) => ({
         service,
-        ...data
+        ...data,
       }));
   };
 
   const monthlyRevenue = getMonthlyRevenue();
   const serviceBreakdown = getServiceBreakdown();
-  const totalRevenue = serviceBreakdown.reduce((sum, item) => sum + item.revenue, 0);
+  const totalRevenue = serviceBreakdown.reduce(
+    (sum, item) => sum + item.revenue,
+    0,
+  );
 
   return (
     <div className="grid lg:grid-cols-2 gap-6">
@@ -94,22 +100,28 @@ export function RevenueChart() {
         <CardContent>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Total Revenue</span>
-              <span className="text-2xl font-bold text-bronze">${totalRevenue.toLocaleString()}</span>
+              <span className="text-sm text-muted-foreground">
+                Total Revenue
+              </span>
+              <span className="text-2xl font-bold text-bronze">
+                ${totalRevenue.toLocaleString()}
+              </span>
             </div>
-            
+
             <div className="space-y-3">
               {monthlyRevenue.map((item, index) => (
                 <div key={index} className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>{item.month}</span>
-                    <span className="font-medium">${item.revenue.toLocaleString()}</span>
+                    <span className="font-medium">
+                      ${item.revenue.toLocaleString()}
+                    </span>
                   </div>
                   <div className="w-full bg-muted rounded-full h-2">
-                    <div 
+                    <div
                       className="bg-bronze h-2 rounded-full transition-all duration-300"
-                      style={{ 
-                        width: `${totalRevenue > 0 ? (item.revenue / totalRevenue) * 100 : 0}%` 
+                      style={{
+                        width: `${totalRevenue > 0 ? (item.revenue / totalRevenue) * 100 : 0}%`,
                       }}
                     ></div>
                   </div>
@@ -134,15 +146,19 @@ export function RevenueChart() {
                 <div className="flex justify-between items-center">
                   <div>
                     <p className="font-medium">{item.service}</p>
-                    <p className="text-sm text-muted-foreground">{item.count} bookings</p>
+                    <p className="text-sm text-muted-foreground">
+                      {item.count} bookings
+                    </p>
                   </div>
-                  <span className="font-bold">${item.revenue.toLocaleString()}</span>
+                  <span className="font-bold">
+                    ${item.revenue.toLocaleString()}
+                  </span>
                 </div>
                 <div className="w-full bg-muted rounded-full h-2">
-                  <div 
+                  <div
                     className="bg-gradient-to-r from-bronze to-yellow-600 h-2 rounded-full transition-all duration-300"
-                    style={{ 
-                      width: `${totalRevenue > 0 ? (item.revenue / totalRevenue) * 100 : 0}%` 
+                    style={{
+                      width: `${totalRevenue > 0 ? (item.revenue / totalRevenue) * 100 : 0}%`,
                     }}
                   ></div>
                 </div>

@@ -5,25 +5,31 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { 
+import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
-  Camera, 
-  Search, 
-  Plus, 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Camera,
+  Search,
+  Plus,
   Filter,
   Eye,
   Star,
   Tag,
   Trash2,
   Download,
-  Share
+  Share,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -40,28 +46,35 @@ export function PortfolioManagement() {
   const { toast } = useToast();
 
   const { data: images, isLoading } = useQuery({
-    queryKey: ['/api/gallery'],
+    queryKey: ["/api/gallery"],
     queryFn: () => fetchGalleryImages(),
   });
 
-  const categories = ["all", "wedding", "portrait", "aerial", "real_estate", "event"];
+  const categories = [
+    "all",
+    "wedding",
+    "portrait",
+    "aerial",
+    "real_estate",
+    "event",
+  ];
 
   // Upload mutation
   const uploadMutation = useMutation({
     mutationFn: async (formData: FormData) => {
       // For file uploads, we need to use fetch directly as apiRequest expects JSON
-      const response = await fetch('/api/gallery/upload', {
-        method: 'POST',
+      const response = await fetch("/api/gallery/upload", {
+        method: "POST",
         body: formData,
       });
-      
+
       const data = await response.json();
-      
+
       if (!response.ok) {
         // Throw error with the server's error message
-        throw new Error(data.message || data.error || 'Upload failed');
+        throw new Error(data.message || data.error || "Upload failed");
       }
-      
+
       return data;
     },
     onSuccess: (data) => {
@@ -69,7 +82,7 @@ export function PortfolioManagement() {
         title: "Upload Successful",
         description: data.message || "Images uploaded successfully",
       });
-      queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/gallery"] });
       setUploadDialogOpen(false);
       setSelectedFiles([]);
       setUploadDescription("");
@@ -86,14 +99,15 @@ export function PortfolioManagement() {
   // Delete image mutation
   const deleteMutation = useMutation({
     mutationFn: async (imageId: number) => {
-      const response = await apiRequest('DELETE', `/api/gallery/${imageId}`);
+      const response = await apiRequest("DELETE", `/api/gallery/${imageId}`);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/gallery"] });
       toast({
         title: "Image Deleted",
-        description: "The image has been successfully removed from your portfolio.",
+        description:
+          "The image has been successfully removed from your portfolio.",
       });
     },
     onError: (error: Error) => {
@@ -107,15 +121,25 @@ export function PortfolioManagement() {
 
   // Toggle featured mutation
   const toggleFeaturedMutation = useMutation({
-    mutationFn: async ({ imageId, featured }: { imageId: number; featured: boolean }) => {
-      const response = await apiRequest('PATCH', `/api/gallery/${imageId}/featured`, { featured });
+    mutationFn: async ({
+      imageId,
+      featured,
+    }: {
+      imageId: number;
+      featured: boolean;
+    }) => {
+      const response = await apiRequest(
+        "PATCH",
+        `/api/gallery/${imageId}/featured`,
+        { featured },
+      );
       return response.json();
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/gallery'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/gallery"] });
       toast({
-        title: `Image ${data.featured ? 'Added to' : 'Removed from'} Featured`,
-        description: `The image has been ${data.featured ? 'featured' : 'unfeatured'} successfully.`,
+        title: `Image ${data.featured ? "Added to" : "Removed from"} Featured`,
+        description: `The image has been ${data.featured ? "featured" : "unfeatured"} successfully.`,
       });
     },
     onError: (error: Error) => {
@@ -136,37 +160,41 @@ export function PortfolioManagement() {
     if (selectedFiles.length === 0) return;
 
     const formData = new FormData();
-    selectedFiles.forEach(file => {
-      formData.append('images', file);
+    selectedFiles.forEach((file) => {
+      formData.append("images", file);
     });
-    formData.append('category', uploadCategory);
-    formData.append('description', uploadDescription);
+    formData.append("category", uploadCategory);
+    formData.append("description", uploadDescription);
 
     uploadMutation.mutate(formData);
   };
 
-  const filteredImages = images?.filter((image: any) => {
-    const matchesSearch = image.originalName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         image.tags?.some((tag: string) => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesCategory = selectedCategory === "all" || image.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  }) || [];
+  const filteredImages =
+    images?.filter((image: any) => {
+      const matchesSearch =
+        image.originalName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        image.tags?.some((tag: string) =>
+          tag.toLowerCase().includes(searchTerm.toLowerCase()),
+        );
+      const matchesCategory =
+        selectedCategory === "all" || image.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    }) || [];
 
   const getImageStats = () => {
     if (!images) return { total: 0, featured: 0, categories: {} };
-    
+
     const stats = {
       total: images.length,
       featured: images.filter((img: any) => img.featured).length,
       categories: images.reduce((acc: any, img: any) => {
         acc[img.category] = (acc[img.category] || 0) + 1;
         return acc;
-      }, {})
+      }, {}),
     };
-    
+
     return stats;
   };
-
 
   const stats = getImageStats();
 
@@ -219,7 +247,9 @@ export function PortfolioManagement() {
                 </DialogHeader>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium mb-2">Select Images</label>
+                    <label className="block text-sm font-medium mb-2">
+                      Select Images
+                    </label>
                     <Input
                       type="file"
                       multiple
@@ -233,10 +263,15 @@ export function PortfolioManagement() {
                       </p>
                     )}
                   </div>
-                  
+
                   <div>
-                    <label className="block text-sm font-medium mb-2">Category</label>
-                    <Select value={uploadCategory} onValueChange={setUploadCategory}>
+                    <label className="block text-sm font-medium mb-2">
+                      Category
+                    </label>
+                    <Select
+                      value={uploadCategory}
+                      onValueChange={setUploadCategory}
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -250,22 +285,28 @@ export function PortfolioManagement() {
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div>
-                    <label className="block text-sm font-medium mb-2">Description (Optional)</label>
+                    <label className="block text-sm font-medium mb-2">
+                      Description (Optional)
+                    </label>
                     <Input
                       placeholder="Image description..."
                       value={uploadDescription}
                       onChange={(e) => setUploadDescription(e.target.value)}
                     />
                   </div>
-                  
-                  <Button 
+
+                  <Button
                     onClick={handleUpload}
-                    disabled={selectedFiles.length === 0 || uploadMutation.isPending}
+                    disabled={
+                      selectedFiles.length === 0 || uploadMutation.isPending
+                    }
                     className="w-full"
                   >
-                    {uploadMutation.isPending ? 'Uploading...' : 'Upload Images'}
+                    {uploadMutation.isPending
+                      ? "Uploading..."
+                      : "Upload Images"}
                   </Button>
                 </div>
               </DialogContent>
@@ -279,37 +320,45 @@ export function PortfolioManagement() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-blue-600">Total Images</p>
-                  <p className="text-2xl font-bold text-blue-800">{stats.total}</p>
+                  <p className="text-2xl font-bold text-blue-800">
+                    {stats.total}
+                  </p>
                 </div>
                 <Camera className="h-8 w-8 text-blue-600" />
               </div>
             </div>
-            
+
             <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-yellow-600">Featured</p>
-                  <p className="text-2xl font-bold text-yellow-800">{stats.featured}</p>
+                  <p className="text-2xl font-bold text-yellow-800">
+                    {stats.featured}
+                  </p>
                 </div>
                 <Star className="h-8 w-8 text-yellow-600" />
               </div>
             </div>
-            
+
             <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-green-600">Categories</p>
-                  <p className="text-2xl font-bold text-green-800">{Object.keys(stats.categories).length}</p>
+                  <p className="text-2xl font-bold text-green-800">
+                    {Object.keys(stats.categories).length}
+                  </p>
                 </div>
                 <Tag className="h-8 w-8 text-green-600" />
               </div>
             </div>
-            
+
             <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-purple-600">AI Analysis</p>
-                  <p className="text-2xl font-bold text-purple-800">{stats.total}</p>
+                  <p className="text-2xl font-bold text-purple-800">
+                    {stats.total}
+                  </p>
                 </div>
                 <Eye className="h-8 w-8 text-purple-600" />
               </div>
@@ -327,7 +376,10 @@ export function PortfolioManagement() {
                 className="pl-10"
               />
             </div>
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <Select
+              value={selectedCategory}
+              onValueChange={setSelectedCategory}
+            >
               <SelectTrigger className="w-[180px]">
                 <Filter className="h-4 w-4 mr-2" />
                 <SelectValue placeholder="Category" />
@@ -335,7 +387,11 @@ export function PortfolioManagement() {
               <SelectContent>
                 {categories.map((category) => (
                   <SelectItem key={category} value={category}>
-                    {category === "all" ? "All Categories" : category.replace("_", " ").replace(/\b\w/g, l => l.toUpperCase())}
+                    {category === "all"
+                      ? "All Categories"
+                      : category
+                          .replace("_", " ")
+                          .replace(/\b\w/g, (l) => l.toUpperCase())}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -356,22 +412,25 @@ export function PortfolioManagement() {
                       alt={image.originalName}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                     />
-                    
+
                     {/* Overlay */}
                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
                       <Eye className="h-6 w-6 text-white" />
                     </div>
-                    
+
                     {/* Featured Badge */}
                     {image.featured && (
                       <div className="absolute top-2 right-2">
                         <Star className="h-4 w-4 text-yellow-400 fill-current" />
                       </div>
                     )}
-                    
+
                     {/* Category Badge */}
                     <div className="absolute bottom-2 left-2">
-                      <Badge variant="secondary" className="text-xs bg-white/90 text-black">
+                      <Badge
+                        variant="secondary"
+                        className="text-xs bg-white/90 text-black"
+                      >
                         {image.category}
                       </Badge>
                     </div>
@@ -382,9 +441,11 @@ export function PortfolioManagement() {
                     <DialogTitle>Image Details</DialogTitle>
                   </DialogHeader>
                   {selectedImage && (
-                    <ImageDetailView 
-                      image={selectedImage} 
-                      onToggleFeatured={(id, featured) => toggleFeaturedMutation.mutate({ imageId: id, featured })}
+                    <ImageDetailView
+                      image={selectedImage}
+                      onToggleFeatured={(id, featured) =>
+                        toggleFeaturedMutation.mutate({ imageId: id, featured })
+                      }
                       onDelete={(id) => deleteMutation.mutate(id)}
                       toggleFeaturedMutation={toggleFeaturedMutation}
                       deleteMutation={deleteMutation}
@@ -399,8 +460,8 @@ export function PortfolioManagement() {
             <div className="text-center py-12">
               <Camera className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
               <p className="text-muted-foreground">
-                {searchTerm || selectedCategory !== "all" 
-                  ? "No images match your search criteria" 
+                {searchTerm || selectedCategory !== "all"
+                  ? "No images match your search criteria"
                   : "No images in portfolio yet"}
               </p>
             </div>
@@ -411,14 +472,14 @@ export function PortfolioManagement() {
   );
 }
 
-function ImageDetailView({ 
-  image, 
-  onToggleFeatured, 
+function ImageDetailView({
+  image,
+  onToggleFeatured,
   onDelete,
   toggleFeaturedMutation,
-  deleteMutation
-}: { 
-  image: any; 
+  deleteMutation,
+}: {
+  image: any;
   onToggleFeatured: (id: number, featured: boolean) => void;
   onDelete: (id: number) => void;
   toggleFeaturedMutation: any;
@@ -436,7 +497,7 @@ function ImageDetailView({
             className="w-full h-full object-cover"
           />
         </div>
-        
+
         {/* Action Buttons */}
         <div className="grid grid-cols-2 gap-2">
           <Button
@@ -446,15 +507,17 @@ function ImageDetailView({
             disabled={toggleFeaturedMutation.isPending}
             className="w-full"
           >
-            <Star className={`h-4 w-4 mr-1 ${image.featured ? 'fill-current text-yellow-500' : ''}`} />
-            {image.featured ? 'Unfeatured' : 'Featured'}
+            <Star
+              className={`h-4 w-4 mr-1 ${image.featured ? "fill-current text-yellow-500" : ""}`}
+            />
+            {image.featured ? "Unfeatured" : "Featured"}
           </Button>
-          
-          <Button 
-            variant="outline" 
+
+          <Button
+            variant="outline"
             size="sm"
             onClick={() => {
-              const link = document.createElement('a');
+              const link = document.createElement("a");
               link.href = image.url;
               link.download = image.filename;
               link.click();
@@ -464,9 +527,9 @@ function ImageDetailView({
             <Download className="h-4 w-4 mr-1" />
             Download
           </Button>
-          
-          <Button 
-            variant="outline" 
+
+          <Button
+            variant="outline"
             size="sm"
             onClick={() => {
               navigator.clipboard.writeText(image.url);
@@ -480,16 +543,16 @@ function ImageDetailView({
             <Share className="h-4 w-4 mr-1" />
             Copy Link
           </Button>
-          
-          <Button 
-            variant="destructive" 
-            size="sm" 
+
+          <Button
+            variant="destructive"
+            size="sm"
             onClick={() => onDelete(image.id)}
             disabled={deleteMutation.isPending}
             className="w-full"
           >
             <Trash2 className="h-4 w-4 mr-1" />
-            {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+            {deleteMutation.isPending ? "Deleting..." : "Delete"}
           </Button>
         </div>
       </div>
@@ -505,12 +568,12 @@ function ImageDetailView({
               <p className="text-sm text-muted-foreground">Title</p>
               <p className="font-medium">{image.originalName}</p>
             </div>
-            
+
             <div>
               <p className="text-sm text-muted-foreground">Category</p>
               <Badge variant="outline">{image.category}</Badge>
             </div>
-            
+
             <div>
               <p className="text-sm text-muted-foreground">Tags</p>
               <div className="flex flex-wrap gap-1 mt-1">
@@ -521,10 +584,12 @@ function ImageDetailView({
                 ))}
               </div>
             </div>
-            
+
             <div>
               <p className="text-sm text-muted-foreground">Upload Date</p>
-              <p className="text-sm">{new Date(image.uploadedAt).toLocaleDateString()}</p>
+              <p className="text-sm">
+                {new Date(image.uploadedAt).toLocaleDateString()}
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -540,30 +605,40 @@ function ImageDetailView({
                 <p className="text-sm text-muted-foreground">Quality Score</p>
                 <div className="flex items-center space-x-2">
                   <div className="flex-1 bg-muted rounded-full h-2">
-                    <div 
+                    <div
                       className="bg-bronze h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${(image.aiAnalysis.quality / 10) * 100}%` }}
+                      style={{
+                        width: `${(image.aiAnalysis.quality / 10) * 100}%`,
+                      }}
                     ></div>
                   </div>
-                  <span className="text-sm font-medium">{image.aiAnalysis.quality}/10</span>
+                  <span className="text-sm font-medium">
+                    {image.aiAnalysis.quality}/10
+                  </span>
                 </div>
               </div>
-              
+
               <div>
                 <p className="text-sm text-muted-foreground">Style</p>
                 <Badge variant="outline">{image.aiAnalysis.style}</Badge>
               </div>
-              
+
               <div>
                 <p className="text-sm text-muted-foreground">Composition</p>
                 <p className="text-sm">{image.aiAnalysis.composition}</p>
               </div>
-              
+
               <div>
-                <p className="text-sm text-muted-foreground">Detected Emotions</p>
+                <p className="text-sm text-muted-foreground">
+                  Detected Emotions
+                </p>
                 <div className="flex flex-wrap gap-1 mt-1">
                   {image.aiAnalysis.emotions?.map((emotion: string) => (
-                    <Badge key={emotion} variant="secondary" className="text-xs">
+                    <Badge
+                      key={emotion}
+                      variant="secondary"
+                      className="text-xs"
+                    >
                       {emotion}
                     </Badge>
                   ))}

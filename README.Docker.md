@@ -209,10 +209,10 @@ docker-compose restart nginx
    ```bash
    # Check database status
    docker-compose ps database
-   
+
    # View database logs
    docker-compose logs database
-   
+
    # Restart database
    docker-compose restart database
    ```
@@ -222,10 +222,10 @@ docker-compose restart nginx
    ```bash
    # Check app logs
    docker-compose logs app
-   
+
    # Verify environment variables
    docker-compose exec app env | grep -E "(DATABASE_URL|OPENAI_API_KEY)"
-   
+
    # Rebuild app
    docker-compose build app && docker-compose up -d app
    ```
@@ -235,7 +235,7 @@ docker-compose restart nginx
    ```bash
    # Find process using port
    sudo lsof -i :7000
-   
+
    # Change port in docker-compose.yml
    ports:
      - "5001:7000"  # Change external port
@@ -265,7 +265,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1.0'
+          cpus: "1.0"
           memory: 1G
         reservations:
           memory: 512M

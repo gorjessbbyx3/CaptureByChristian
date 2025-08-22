@@ -1,5 +1,5 @@
-import { writeFileSync /*, readFileSync */ } from 'fs';
-import { join } from 'path';
+import { writeFileSync /*, readFileSync */ } from "fs";
+import { join } from "path";
 
 // Simple HTML to PDF conversion using Puppeteer-like approach
 // In production, you'd use puppeteer, playwright, or a service like PDFShift
@@ -31,8 +31,7 @@ export interface InvoiceData {
   };
 }
 
-const INVOICE_HTML_TEMPLATE = 
-`<!DOCTYPE html>
+const INVOICE_HTML_TEMPLATE = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
@@ -244,58 +243,70 @@ export function generateInvoiceHTML(data: InvoiceData): string {
   html = html.replace(/\{\{dueDate\}\}/g, data.dueDate);
   html = html.replace(/\{\{clientName\}\}/g, data.clientName);
   html = html.replace(/\{\{clientEmail\}\}/g, data.clientEmail);
-  html = html.replace(/\{\{clientPhone\}\}/g, data.clientPhone || '');
-  html = html.replace(/\{\{clientAddress\}\}/g, data.clientAddress || '');
+  html = html.replace(/\{\{clientPhone\}\}/g, data.clientPhone || "");
+  html = html.replace(/\{\{clientAddress\}\}/g, data.clientAddress || "");
   html = html.replace(/\{\{subtotal\}\}/g, data.subtotal.toFixed(2));
   html = html.replace(/\{\{total\}\}/g, data.total.toFixed(2));
 
   // Generate items HTML
-  const itemsHTML = data.items.map(item => `
+  const itemsHTML = data.items
+    .map(
+      (item) => `
     <tr class="item-row">
       <td>${item.description}</td>
       <td class="right">${item.quantity}</td>
       <td class="right">$${item.rate.toFixed(2)}</td>
       <td class="right">$${item.amount.toFixed(2)}</td>
     </tr>
-  `).join('');
+  `,
+    )
+    .join("");
   html = html.replace(/\{\{items\}\}/g, itemsHTML);
 
   // Handle tax row
-  const taxRow = data.tax ? `
+  const taxRow = data.tax
+    ? `
     <tr>
       <td colspan="3">Tax (${data.taxRate || 0}%)</td>
       <td class="right">$${data.tax.toFixed(2)}</td>
     </tr>
-  ` : '';
+  `
+    : "";
   html = html.replace(/\{\{taxRow\}\}/g, taxRow);
 
   // Handle discount row
-  const discountRow = data.discount ? `
+  const discountRow = data.discount
+    ? `
     <tr>
       <td colspan="3">Discount</td>
       <td class="right">-$${data.discount.toFixed(2)}</td>
     </tr>
-  ` : '';
+  `
+    : "";
   html = html.replace(/\{\{discountRow\}\}/g, discountRow);
 
   // Handle booking details
-  const bookingDetailsSection = data.bookingDetails ? `
+  const bookingDetailsSection = data.bookingDetails
+    ? `
     <div class="payment-info">
       <strong>Booking Details:</strong><br>
       Service: ${data.bookingDetails.serviceName}<br>
       Date: ${data.bookingDetails.bookingDate}<br>
       Location: ${data.bookingDetails.location}
     </div>
-  ` : '';
+  `
+    : "";
   html = html.replace(/\{\{bookingDetailsSection\}\}/g, bookingDetailsSection);
 
   // Handle notes
-  const notesSection = data.notes ? `
+  const notesSection = data.notes
+    ? `
     <div class="notes-section">
       <div class="notes-title">Notes:</div>
       ${data.notes}
     </div>
-  ` : '';
+  `
+    : "";
   html = html.replace(/\{\{notesSection\}\}/g, notesSection);
 
   return html;
@@ -303,43 +314,50 @@ export function generateInvoiceHTML(data: InvoiceData): string {
 
 export async function generateInvoicePDF(data: InvoiceData): Promise<string> {
   const html = generateInvoiceHTML(data);
-  
+
   // In a real implementation, you would use:
   // - puppeteer for server-side PDF generation
   // - PDFKit for programmatic PDF creation
   // - A service like PDFShift, DocRaptor, or Bannerbear
-  
+
   // For this demo, we'll save the HTML and return a mock PDF path
   const filename = `invoice-${data.invoiceNumber}.html`;
-  const filepath = join(process.cwd(), 'temp', filename);
-  
+  const filepath = join(process.cwd(), "temp", filename);
+
   try {
     writeFileSync(filepath, html);
     console.log(`Invoice HTML generated: ${filepath}`);
     return filepath;
   } catch (error) {
-    console.error('Error generating invoice:', error);
-    throw new Error('Failed to generate invoice PDF');
+    console.error("Error generating invoice:", error);
+    throw new Error("Failed to generate invoice PDF");
   }
 }
 
-export async function emailInvoice(invoiceData: InvoiceData, pdfPath: string): Promise<boolean> {
+export async function emailInvoice(
+  invoiceData: InvoiceData,
+  pdfPath: string,
+): Promise<boolean> {
   // Validate email address first
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!invoiceData.clientEmail || !emailRegex.test(invoiceData.clientEmail)) {
     console.log(`Invalid email address: ${invoiceData.clientEmail}`);
     return false;
   }
-  
+
   // In a real implementation, you would integrate with:
   // - SendGrid, Mailgun, or AWS SES for email delivery
   // - Include the PDF as an attachment
   // - Add payment links (Stripe Checkout URLs)
-  
-  console.log(`Email would be sent to: ${invoiceData.clientName} (${invoiceData.clientEmail})`);
-  console.log(`Subject: Invoice ${invoiceData.invoiceNumber} from Christian Picaso Photography`);
+
+  console.log(
+    `Email would be sent to: ${invoiceData.clientName} (${invoiceData.clientEmail})`,
+  );
+  console.log(
+    `Subject: Invoice ${invoiceData.invoiceNumber} from Christian Picaso Photography`,
+  );
   console.log(`PDF attachment: ${pdfPath}`);
-  
+
   const emailContent = `
 Dear ${invoiceData.clientName},
 
@@ -357,9 +375,9 @@ Christian Picaso
 Christian Picaso Photography
 Hawaii
   `;
-  
-  console.log('Email content:', emailContent);
-  
+
+  console.log("Email content:", emailContent);
+
   // Mock successful email send
   return true;
 }

@@ -5,30 +5,35 @@ A comprehensive photography business management platform built with modern web t
 ## 🚀 Features
 
 ### Client Management System
+
 - Complete CRM with lead scoring and pipeline management
 - Contact form integration with AI-powered lead analysis
 - Client portal for booking management and gallery access
 - Communication tracking and follow-up scheduling
 
 ### Booking & Scheduling
+
 - Interactive calendar with availability management
 - AI-powered booking assistant for customer inquiries
 - Service package management with pricing
 - Automated booking confirmations and reminders
 
 ### Portfolio & Gallery Management
+
 - Password-protected portfolio showcase
 - Client gallery delivery system
 - High-resolution image upload and management
 - Featured work curation
 
 ### Business Operations
+
 - Invoice generation with PDF export
 - Digital contract signing
 - Revenue tracking and analytics
 - Service management and pricing
 
 ### Admin Dashboard
+
 - Real-time analytics and reporting
 - Client relationship insights
 - Booking calendar management

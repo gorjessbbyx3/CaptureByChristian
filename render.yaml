@@ -4,7 +4,7 @@ services:
     name: capturedbychristian-app
     runtime: node
     buildCommand: npm ci && npm run build
-    startCommand: npm start
+    startCommand: npm run start:production
     nodeVersion: "20"
     envVars:
       - key: NODE_ENV

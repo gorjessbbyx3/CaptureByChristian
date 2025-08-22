@@ -12,8 +12,9 @@ UI Design preference: Clean, minimal interface without decorative bubble element
 ## System Architecture
 
 ### Technology Stack
+
 - **Frontend**: React 18 with TypeScript, Vite build system
-- **Backend**: Express.js with TypeScript 
+- **Backend**: Express.js with TypeScript
 - **Database**: PostgreSQL with Drizzle ORM
 - **AI Integration**: OpenAI GPT-4o for intelligent booking assistance and image analysis
 - **UI Framework**: Radix UI primitives with shadcn/ui components
@@ -21,7 +22,9 @@ UI Design preference: Clean, minimal interface without decorative bubble element
 - **State Management**: TanStack Query for server state management
 
 ### Architecture Pattern
+
 The application follows a modern full-stack architecture with clear separation between:
+
 - **Client**: React SPA with TypeScript for type safety
 - **Server**: RESTful API with Express.js
 - **Database**: PostgreSQL with Drizzle ORM for type-safe database operations
@@ -30,6 +33,7 @@ The application follows a modern full-stack architecture with clear separation b
 ## Key Components
 
 ### Frontend Architecture
+
 - **Component Structure**: Organized into reusable UI components following atomic design principles
 - **Routing**: File-based routing with Wouter for lightweight client-side navigation
 - **State Management**: TanStack Query for API state, React Context for theme management
@@ -37,13 +41,16 @@ The application follows a modern full-stack architecture with clear separation b
 - **Responsive Design**: Mobile-first approach with Tailwind CSS breakpoints
 
 ### Backend Architecture
+
 - **API Routes**: RESTful endpoints for clients, bookings, services, gallery, and AI chat
 - **Database Layer**: Drizzle ORM with connection pooling using Neon serverless PostgreSQL
 - **AI Integration**: OpenAI integration for booking assistance and image analysis
 - **Storage Pattern**: Repository pattern with interface-based storage abstraction
 
 ### Database Schema
+
 The database includes comprehensive tables for:
+
 - **Users**: Admin and client user management
 - **Clients**: Customer information and contact details
 - **Services**: Photography packages and pricing
@@ -55,6 +62,7 @@ The database includes comprehensive tables for:
 ## Data Flow
 
 ### Booking Flow
+
 1. Client interacts with AI booking assistant
 2. AI analyzes requirements and suggests appropriate services
 3. Availability checking through calendar integration
@@ -62,12 +70,14 @@ The database includes comprehensive tables for:
 5. Database storage and confirmation
 
 ### Portfolio Management
+
 1. Image upload to gallery system
 2. AI-powered automatic tagging and categorization
 3. Dynamic portfolio filtering and display
 4. Lightbox viewing with smooth animations
 
 ### Admin Operations
+
 1. Dashboard analytics and metrics
 2. Client relationship management
 3. Calendar and booking management
@@ -76,12 +86,14 @@ The database includes comprehensive tables for:
 ## External Dependencies
 
 ### Core Dependencies
+
 - **Database**: Neon PostgreSQL serverless database
 - **AI Services**: OpenAI GPT-4o API for chat and image analysis
 - **UI Components**: Radix UI primitives for accessible components
 - **Build Tools**: Vite for fast development and optimized production builds
 
 ### Development Tools
+
 - **TypeScript**: Full type safety across the application
 - **ESLint/Prettier**: Code quality and formatting
 - **Drizzle Kit**: Database migrations and schema management
@@ -89,18 +101,21 @@ The database includes comprehensive tables for:
 ## Deployment Strategy
 
 ### Build Process
+
 1. **Client Build**: Vite builds React application to static assets
 2. **Server Build**: esbuild bundles Express server for Node.js deployment
 3. **Database**: Drizzle migrations ensure schema consistency
 
 ### Environment Configuration
+
 - Development: Local Vite dev server with HMR
 - Production: Bundled Express server serving static assets
 - Database: Environment-based connection string configuration
 
 ### Key Features
+
 - **AI-Powered Booking**: Intelligent chat assistant for customer acquisition
-- **FAA Drone Certification**: Specialized aerial photography services  
+- **FAA Drone Certification**: Specialized aerial photography services
 - **Responsive Design**: Optimized for all device sizes
 - **Dark/Light Mode**: Theme switching with persistent preferences
 - **Real-time Analytics**: Business insights and performance metrics
@@ -112,7 +127,8 @@ The database includes comprehensive tables for:
 ## Recent Changes (July 13, 2025)
 
 ### Gallery Organization & Lead Capture Implementation Completed
-- **HOMEPAGE GALLERY OPTIMIZATION**: Successfully replaced full portfolio section with curated featured gallery showing only starred/featured images  
+
+- **HOMEPAGE GALLERY OPTIMIZATION**: Successfully replaced full portfolio section with curated featured gallery showing only starred/featured images
 - **Dedicated Portfolio Page**: Created comprehensive `/portfolio` route with complete gallery functionality and filtering options
 - **Portfolio Access Gating**: Implemented lead capture form that visitors must complete before accessing full portfolio
 - **Lead Generation System**: Portfolio access requests automatically create qualified leads in admin dashboard through contact messages
@@ -125,6 +141,7 @@ The database includes comprehensive tables for:
 - **Authentic Lead Management**: All portfolio access requests feed directly into existing contact message system with "portfolio_access" source tracking
 
 ### Comprehensive Documentation Completed
+
 - **PROJECT README CREATED**: Professional README.md file with complete project overview, features, and technical documentation
 - **Installation Guide**: Step-by-step setup instructions for development and deployment
 - **Technology Stack Documentation**: Detailed breakdown of frontend, backend, and infrastructure components
@@ -134,6 +151,7 @@ The database includes comprehensive tables for:
 - **Security and Analytics**: Documentation of security features and business intelligence capabilities
 
 ### Project Configuration Files Completed
+
 - **ENVIRONMENT TEMPLATE CREATED**: Comprehensive .env.example file with all required and optional environment variables
 - **Dependencies Reference**: Created dependencies.md with complete Node.js dependency documentation and installation instructions
 - **Security Configuration**: Updated .gitignore to protect sensitive files including environment variables and API keys
@@ -141,6 +159,7 @@ The database includes comprehensive tables for:
 - **Configuration Documentation**: Complete reference for database, AI services, SMS integration, and application settings
 
 ### Service Management System Completed
+
 - **COMPREHENSIVE SERVICE CRUD OPERATIONS**: Fully implemented create, read, update, delete functionality for photography services with database integration
 - **Admin API Endpoints Enhanced**: Added `/api/services/admin` endpoint to fetch all services including inactive ones for administrative management
 - **Service Management UI Integration**: Successfully integrated ServiceManagement component into admin dashboard navigation under Business Operations section
@@ -150,6 +169,7 @@ The database includes comprehensive tables for:
 - **API Testing Verified**: All CRUD operations tested and confirmed working (GET, POST, PATCH, DELETE) with proper validation and error handling
 
 ## Recent Changes (July 13, 2025)
+
 - **COMPLETE MOCK DATA ELIMINATION**: Successfully replaced ALL cosmetic/mock functionality with authentic database-driven features across entire application
 - **Invoice Analytics Implementation**: Real payment tracking, overdue calculations, and payment rate statistics from actual invoice data
 - **Advanced Analytics Overhaul**: Authentic client metrics, business KPIs, and revenue calculations using real database queries
@@ -173,6 +193,7 @@ The database includes comprehensive tables for:
 ## Recent Changes (July 15, 2025)
 
 ### Database Setup Documentation Completed
+
 - **COMPREHENSIVE DATABASE GUIDE**: Created complete DATABASE_SETUP.md with step-by-step PostgreSQL configuration
 - **Multiple Database Providers**: Documented setup for local PostgreSQL, Neon, Supabase, and Railway
 - **Schema Management**: Complete guide for Drizzle ORM, migrations, and schema deployment
@@ -182,6 +203,7 @@ The database includes comprehensive tables for:
 - **Production Ready**: Backup/recovery procedures and performance monitoring setup
 
 ### Docker Containerization Completed
+
 - **FULL DOCKER IMPLEMENTATION**: Successfully containerized the entire CapturedCCollective application and database
 - **Multi-Container Setup**: Created comprehensive Docker Compose configuration with app, database, Redis, and Nginx containers
 - **Production-Ready Dockerfile**: Implemented multi-stage build with security best practices and health checks
@@ -193,6 +215,7 @@ The database includes comprehensive tables for:
 - **Production Deployment**: Ready for cloud deployment with AWS ECS, Google Cloud Run, or Azure Container Instances
 
 ### Vercel Deployment Configuration Completed
+
 - **VERCEL INTEGRATION**: Configured complete deployment pipeline for Vercel serverless platform
 - **Serverless Architecture**: Converted Express server to run as Vercel serverless functions
 - **API Function Setup**: Created dedicated API entry point for Vercel function handling
@@ -205,6 +228,7 @@ The database includes comprehensive tables for:
 ## Recent Changes (July 15, 2025)
 
 ### Complete Rebranding to CapturedCCollective Completed
+
 - **BRAND IDENTITY TRANSFORMATION**: Successfully migrated entire platform from "Captured by Christian" to "CapturedCCollective" across all components
 - **Mission Statement Integration**: Implemented refined mission emphasizing the double "C" meaning (Content and Cinematic) with Creative storytelling focus
 - **Service Portfolio Expansion**: Updated messaging to reflect comprehensive services including real estate, events, and branded visuals
@@ -215,6 +239,7 @@ The database includes comprehensive tables for:
 - **User Experience Enhancement**: Every customer touchpoint now authentically represents CapturedCCollective's professional creative approach
 
 ### Production-Ready Enhancements Completed
+
 - ✅ Complete mock data elimination across all admin dashboard components
 - ✅ Invoice generator with authentic payment tracking and analytics
 - ✅ Advanced analytics using real business KPIs and client metrics
@@ -228,6 +253,7 @@ The database includes comprehensive tables for:
 - ✅ Advanced AI chat enhanced with comprehensive business intelligence
 
 ### Major Features (Active)
+
 - **COMPREHENSIVE CLIENT PORTAL SYSTEM**: Professional client-facing portal with complete workflow management
 - **ENHANCED INVOICE GENERATOR**: Professional PDF generation with Hawaii GET tax integration and email delivery
 - **Advanced Admin Dashboard**: Live booking management with calendar integration and business analytics
@@ -237,6 +263,7 @@ The database includes comprehensive tables for:
 This transformation completely eliminates ALL mock data throughout the entire application in favor of 100% authentic business intelligence calculated from real database records, ensuring every metric, statistic, and insight reflects actual business performance.
 
 ### Final Mock Data Elimination Completed (July 12, 2025)
+
 - **Dashboard Statistics**: Removed ALL hardcoded percentage changes ("+12%", "+3%", "+18%", "+7%") and replaced with real booking performance calculations
 - **Lead Management Complete Overhaul**: Eliminated entire mock lead database and now transforms actual contact messages into leads with authentic scoring algorithms
 - **Advanced Analytics Fallback Removal**: Completely removed 12 months of mock revenue data fallbacks and hardcoded business KPIs
@@ -247,7 +274,9 @@ This transformation completely eliminates ALL mock data throughout the entire ap
 The application now operates with absolute data integrity, displaying only genuine business metrics calculated from real bookings, clients, services, and revenue data.
 
 ### Status: PRODUCTION-READY
+
 The photography business platform is now fully operational with 100% authentic database-driven functionality:
+
 - **Zero Mock Data**: Complete elimination of all hardcoded values, fallback data, and simulated business metrics
 - **Real-Time Business Intelligence**: All analytics calculated from actual database records
 - **Authentic Client Portal**: Gallery selections, progress tracking, and session management use real data

@@ -8,26 +8,26 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { 
+import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { 
-  Key, 
-  Mail, 
-  Eye, 
-  EyeOff, 
-  Copy, 
+import {
+  Key,
+  Mail,
+  Eye,
+  EyeOff,
+  Copy,
   Send,
   Shield,
   Lock,
   User,
   RefreshCw,
   Settings,
-  Bell
+  Bell,
 } from "lucide-react";
 
 interface ClientCredential {
@@ -44,29 +44,43 @@ interface ClientCredential {
 }
 
 export function ClientCredentials() {
-  const [selectedClient, setSelectedClient] = useState<ClientCredential | null>(null);
+  const [selectedClient, setSelectedClient] = useState<ClientCredential | null>(
+    null,
+  );
   const [newPassword, setNewPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [magicLinkEmail, setMagicLinkEmail] = useState("");
-  const [loadingStates, setLoadingStates] = useState<{[key: number]: boolean}>({});
+  const [loadingStates, setLoadingStates] = useState<{
+    [key: number]: boolean;
+  }>({});
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   // Fetch all clients with credential info
   const { data: clientCredentials = [], isLoading } = useQuery({
-    queryKey: ['/api/client-credentials'],
+    queryKey: ["/api/client-credentials"],
     queryFn: async () => {
-      const response = await fetch('/api/client-credentials');
-      if (!response.ok) throw new Error('Failed to fetch client credentials');
+      const response = await fetch("/api/client-credentials");
+      if (!response.ok) throw new Error("Failed to fetch client credentials");
       return response.json();
-    }
+    },
   });
 
   // Generate password mutation
   const generatePasswordMutation = useMutation({
-    mutationFn: async ({ clientId, password }: { clientId: number; password: string }) => {
-      const response = await apiRequest('POST', '/api/admin/client-credentials/set-password', { clientId, password });
+    mutationFn: async ({
+      clientId,
+      password,
+    }: {
+      clientId: number;
+      password: string;
+    }) => {
+      const response = await apiRequest(
+        "POST",
+        "/api/admin/client-credentials/set-password",
+        { clientId, password },
+      );
       return response.json();
     },
     onSuccess: () => {
@@ -74,7 +88,7 @@ export function ClientCredentials() {
         title: "Password Set",
         description: "Client portal password has been successfully set.",
       });
-      queryClient.invalidateQueries({ queryKey: ['/api/client-credentials'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/client-credentials"] });
       setNewPassword("");
       setSelectedClient(null);
       setPasswordDialogOpen(false);
@@ -85,21 +99,27 @@ export function ClientCredentials() {
         description: "Failed to set client password.",
         variant: "destructive",
       });
-    }
+    },
   });
 
   // Send magic link function with individual loading states
   const sendMagicLink = async (clientId: number) => {
-    setLoadingStates(prev => ({ ...prev, [clientId]: true }));
+    setLoadingStates((prev) => ({ ...prev, [clientId]: true }));
     try {
-      const response = await apiRequest('POST', '/api/admin/client-credentials/magic-link', { clientId });
+      const response = await apiRequest(
+        "POST",
+        "/api/admin/client-credentials/magic-link",
+        { clientId },
+      );
       const result = await response.json();
 
       toast({
         title: "Magic Link Sent",
-        description: result?.message || "Secure login link has been sent to the client's email.",
+        description:
+          result?.message ||
+          "Secure login link has been sent to the client's email.",
       });
-      queryClient.invalidateQueries({ queryKey: ['/api/client-credentials'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/client-credentials"] });
     } catch (error) {
       toast({
         title: "Error",
@@ -107,19 +127,28 @@ export function ClientCredentials() {
         variant: "destructive",
       });
     } finally {
-      setLoadingStates(prev => ({ ...prev, [clientId]: false }));
+      setLoadingStates((prev) => ({ ...prev, [clientId]: false }));
     }
   };
 
   // Toggle portal access mutation
   const togglePortalAccessMutation = useMutation({
-    mutationFn: async ({ clientId, enabled }: { clientId: number; enabled: boolean }) => {
-      const response = await fetch('/api/admin/client-credentials/toggle-access', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ clientId, enabled }),
-      });
-      if (!response.ok) throw new Error('Failed to toggle portal access');
+    mutationFn: async ({
+      clientId,
+      enabled,
+    }: {
+      clientId: number;
+      enabled: boolean;
+    }) => {
+      const response = await fetch(
+        "/api/admin/client-credentials/toggle-access",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ clientId, enabled }),
+        },
+      );
+      if (!response.ok) throw new Error("Failed to toggle portal access");
       return response.json();
     },
     onSuccess: () => {
@@ -127,13 +156,13 @@ export function ClientCredentials() {
         title: "Portal Access Updated",
         description: "Client portal access has been updated.",
       });
-      queryClient.invalidateQueries({ queryKey: ['/api/client-credentials'] });
-    }
+      queryClient.invalidateQueries({ queryKey: ["/api/client-credentials"] });
+    },
   });
 
   const generateRandomPassword = () => {
-    const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
-    let password = '';
+    const chars = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+    let password = "";
     for (let i = 0; i < 12; i++) {
       password += chars.charAt(Math.floor(Math.random() * chars.length));
     }
@@ -149,9 +178,12 @@ export function ClientCredentials() {
   };
 
   const getAccessStatus = (credential: ClientCredential) => {
-    if (!credential.portalAccess) return { label: "Disabled", color: "bg-red-100 text-red-800" };
-    if (credential.hasPassword) return { label: "Password Set", color: "bg-green-100 text-green-800" };
-    if (credential.magicLinkSent) return { label: "Magic Link", color: "bg-blue-100 text-blue-800" };
+    if (!credential.portalAccess)
+      return { label: "Disabled", color: "bg-red-100 text-red-800" };
+    if (credential.hasPassword)
+      return { label: "Password Set", color: "bg-green-100 text-green-800" };
+    if (credential.magicLinkSent)
+      return { label: "Magic Link", color: "bg-blue-100 text-blue-800" };
     return { label: "Setup Required", color: "bg-yellow-100 text-yellow-800" };
   };
 
@@ -159,7 +191,9 @@ export function ClientCredentials() {
     return (
       <Card>
         <CardContent className="p-6">
-          <div className="text-center text-muted-foreground">Loading client credentials...</div>
+          <div className="text-center text-muted-foreground">
+            Loading client credentials...
+          </div>
         </CardContent>
       </Card>
     );
@@ -177,7 +211,8 @@ export function ClientCredentials() {
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">
-            Manage client portal access credentials, passwords, and authentication methods.
+            Manage client portal access credentials, passwords, and
+            authentication methods.
           </p>
         </CardContent>
       </Card>
@@ -199,27 +234,35 @@ export function ClientCredentials() {
                         <User className="h-4 w-4" />
                       </div>
                       <div>
-                        <h3 className="font-semibold">{credential.clientName}</h3>
-                        <p className="text-sm text-muted-foreground">{credential.clientEmail}</p>
+                        <h3 className="font-semibold">
+                          {credential.clientName}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {credential.clientEmail}
+                        </p>
                         {credential.lastLogin && (
                           <p className="text-xs text-muted-foreground">
-                            Last login: {new Date(credential.lastLogin).toLocaleDateString()}
+                            Last login:{" "}
+                            {new Date(
+                              credential.lastLogin,
+                            ).toLocaleDateString()}
                           </p>
                         )}
                       </div>
                     </div>
 
                     <div className="flex items-center space-x-3">
-                      <Badge className={status.color}>
-                        {status.label}
-                      </Badge>
+                      <Badge className={status.color}>{status.label}</Badge>
 
                       <div className="flex space-x-2">
                         {/* Set Password */}
-                        <Dialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen}>
+                        <Dialog
+                          open={passwordDialogOpen}
+                          onOpenChange={setPasswordDialogOpen}
+                        >
                           <DialogTrigger asChild>
-                            <Button 
-                              variant="outline" 
+                            <Button
+                              variant="outline"
                               size="sm"
                               onClick={() => {
                                 setSelectedClient(credential);
@@ -227,18 +270,22 @@ export function ClientCredentials() {
                               }}
                             >
                               <Lock className="h-3 w-3 mr-1" />
-                              {credential.hasPassword ? 'Reset' : 'Set'} Password
+                              {credential.hasPassword ? "Reset" : "Set"}{" "}
+                              Password
                             </Button>
                           </DialogTrigger>
                           <DialogContent>
                             <DialogHeader>
-                              <DialogTitle>Set Client Portal Password</DialogTitle>
+                              <DialogTitle>
+                                Set Client Portal Password
+                              </DialogTitle>
                             </DialogHeader>
                             <div className="space-y-4">
                               <div>
                                 <Label htmlFor="client-info">Client</Label>
                                 <div className="text-sm text-muted-foreground">
-                                  {credential.clientName} ({credential.clientEmail})
+                                  {credential.clientName} (
+                                  {credential.clientEmail})
                                 </div>
                               </div>
 
@@ -250,7 +297,9 @@ export function ClientCredentials() {
                                       id="password"
                                       type={showPassword ? "text" : "password"}
                                       value={newPassword}
-                                      onChange={(e) => setNewPassword(e.target.value)}
+                                      onChange={(e) =>
+                                        setNewPassword(e.target.value)
+                                      }
                                       placeholder="Enter new password"
                                     />
                                     <Button
@@ -258,9 +307,15 @@ export function ClientCredentials() {
                                       variant="ghost"
                                       size="sm"
                                       className="absolute right-0 top-0 h-full px-3"
-                                      onClick={() => setShowPassword(!showPassword)}
+                                      onClick={() =>
+                                        setShowPassword(!showPassword)
+                                      }
                                     >
-                                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                      {showPassword ? (
+                                        <EyeOff className="h-4 w-4" />
+                                      ) : (
+                                        <Eye className="h-4 w-4" />
+                                      )}
                                     </Button>
                                   </div>
                                   <Button
@@ -274,7 +329,9 @@ export function ClientCredentials() {
                                     <Button
                                       type="button"
                                       variant="outline"
-                                      onClick={() => copyToClipboard(newPassword)}
+                                      onClick={() =>
+                                        copyToClipboard(newPassword)
+                                      }
                                     >
                                       <Copy className="h-4 w-4" />
                                     </Button>
@@ -297,14 +354,21 @@ export function ClientCredentials() {
                                   Cancel
                                 </Button>
                                 <Button
-                                  onClick={() => generatePasswordMutation.mutate({
-                                    clientId: credential.clientId,
-                                    password: newPassword
-                                  })}
-                                  disabled={!newPassword || generatePasswordMutation.isPending}
+                                  onClick={() =>
+                                    generatePasswordMutation.mutate({
+                                      clientId: credential.clientId,
+                                      password: newPassword,
+                                    })
+                                  }
+                                  disabled={
+                                    !newPassword ||
+                                    generatePasswordMutation.isPending
+                                  }
                                   className="flex-1"
                                 >
-                                  {generatePasswordMutation.isPending ? 'Setting...' : 'Set Password'}
+                                  {generatePasswordMutation.isPending
+                                    ? "Setting..."
+                                    : "Set Password"}
                                 </Button>
                               </div>
                             </div>
@@ -319,21 +383,27 @@ export function ClientCredentials() {
                           disabled={loadingStates[credential.clientId] || false}
                         >
                           <Send className="h-3 w-3 mr-1" />
-                          {loadingStates[credential.clientId] ? 'Sending...' : 'Magic Link'}
+                          {loadingStates[credential.clientId]
+                            ? "Sending..."
+                            : "Magic Link"}
                         </Button>
 
                         {/* Toggle Access */}
                         <Button
-                          variant={credential.portalAccess ? "destructive" : "default"}
+                          variant={
+                            credential.portalAccess ? "destructive" : "default"
+                          }
                           size="sm"
-                          onClick={() => togglePortalAccessMutation.mutate({
-                            clientId: credential.clientId,
-                            enabled: !credential.portalAccess
-                          })}
+                          onClick={() =>
+                            togglePortalAccessMutation.mutate({
+                              clientId: credential.clientId,
+                              enabled: !credential.portalAccess,
+                            })
+                          }
                           disabled={togglePortalAccessMutation.isPending}
                         >
                           <Shield className="h-3 w-3 mr-1" />
-                          {credential.portalAccess ? 'Disable' : 'Enable'}
+                          {credential.portalAccess ? "Disable" : "Enable"}
                         </Button>
                       </div>
                     </div>
@@ -352,7 +422,7 @@ export function ClientCredentials() {
         </CardHeader>
         <CardContent>
           <div className="flex space-x-4">
-            <Button 
+            <Button
               variant="outline"
               onClick={() => {
                 // Send welcome emails to all clients with portal access
@@ -362,7 +432,7 @@ export function ClientCredentials() {
               <Mail className="h-4 w-4 mr-2" />
               Send Welcome Emails
             </Button>
-            <Button 
+            <Button
               variant="outline"
               onClick={() => {
                 // Reset all active client portal sessions
@@ -404,20 +474,28 @@ export function ClientCredentials() {
 
                     <Card>
                       <CardHeader>
-                        <CardTitle className="text-sm">Access Settings</CardTitle>
+                        <CardTitle className="text-sm">
+                          Access Settings
+                        </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-3">
                         <div className="flex items-center justify-between">
                           <Label>Auto-expire sessions</Label>
-                          <Button variant="outline" size="sm">30 days</Button>
+                          <Button variant="outline" size="sm">
+                            30 days
+                          </Button>
                         </div>
                         <div className="flex items-center justify-between">
                           <Label>Download limits</Label>
-                          <Button variant="outline" size="sm">Unlimited</Button>
+                          <Button variant="outline" size="sm">
+                            Unlimited
+                          </Button>
                         </div>
                         <div className="flex items-center justify-between">
                           <Label>Gallery protection</Label>
-                          <Button variant="outline" size="sm">Password</Button>
+                          <Button variant="outline" size="sm">
+                            Password
+                          </Button>
                         </div>
                       </CardContent>
                     </Card>
@@ -459,31 +537,46 @@ export function ClientCredentials() {
 
       {/* Client Details Dialog */}
       {selectedClient && (
-        <Dialog open={!!selectedClient} onOpenChange={() => setSelectedClient(null)}>
+        <Dialog
+          open={!!selectedClient}
+          onOpenChange={() => setSelectedClient(null)}
+        >
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Client Details: {selectedClient.clientName}</DialogTitle>
+              <DialogTitle>
+                Client Details: {selectedClient.clientName}
+              </DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
                 <Label>Email</Label>
-                <p className="text-sm text-muted-foreground">{selectedClient.clientEmail}</p>
+                <p className="text-sm text-muted-foreground">
+                  {selectedClient.clientEmail}
+                </p>
               </div>
               <div>
                 <Label>Portal Access</Label>
-                <Badge variant={selectedClient.portalAccess ? "default" : "secondary"}>
+                <Badge
+                  variant={
+                    selectedClient.portalAccess ? "default" : "secondary"
+                  }
+                >
                   {selectedClient.portalAccess ? "Enabled" : "Disabled"}
                 </Badge>
               </div>
               <div>
                 <Label>Last Login</Label>
                 <p className="text-sm text-muted-foreground">
-                  {selectedClient.lastLogin ? new Date(selectedClient.lastLogin).toLocaleDateString() : "Never"}
+                  {selectedClient.lastLogin
+                    ? new Date(selectedClient.lastLogin).toLocaleDateString()
+                    : "Never"}
                 </p>
               </div>
-              
+
               <div className="space-y-2">
-                <Label htmlFor="customEmail">Send Magic Link to Custom Email</Label>
+                <Label htmlFor="customEmail">
+                  Send Magic Link to Custom Email
+                </Label>
                 <div className="flex space-x-2">
                   <Input
                     id="customEmail"
@@ -492,7 +585,7 @@ export function ClientCredentials() {
                     value={magicLinkEmail}
                     onChange={(e) => setMagicLinkEmail(e.target.value)}
                   />
-                  <Button 
+                  <Button
                     onClick={() => {
                       if (magicLinkEmail) {
                         // Send magic link to custom email

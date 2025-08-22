@@ -15,10 +15,7 @@
     "noUnusedParameters": false,
     "strict": false
   },
-  "include": [
-    "server/**/*",
-    "shared/**/*"
-  ],
+  "include": ["server/**/*", "shared/**/*"],
   "exclude": [
     "node_modules",
     "dist",

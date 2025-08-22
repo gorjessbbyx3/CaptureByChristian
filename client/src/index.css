@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -26,7 +26,8 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
   }
   50% {
@@ -53,7 +54,9 @@
 
 .admin-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 /* Gradient text effects */
@@ -104,7 +107,7 @@
   --destructive-foreground: hsl(0, 0%, 98%);
   --ring: hsl(25, 65%, 45%);
   --radius: 0.5rem;
-  
+
   /* Custom photographer theme colors */
   --cream: hsl(60, 9%, 98%);
   --charcoal: hsl(0, 0%, 18%);
@@ -142,20 +145,31 @@
   }
 
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: "Inter", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', serif;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Playfair Display", serif;
   }
 
   /* Ensure all text elements have proper contrast */
-  p, span, div, a, label {
+  p,
+  span,
+  div,
+  a,
+  label {
     color: var(--foreground);
   }
 
@@ -200,7 +214,9 @@
   }
 
   /* Input and form text */
-  input, textarea, select {
+  input,
+  textarea,
+  select {
     color: var(--foreground);
   }
 }
@@ -212,7 +228,7 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: hsl(0, 0%, 8%);
   }
-  
+
   .dark .glass-morphism {
     background: rgba(10, 10, 10, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -334,18 +350,18 @@
     .section-spacing {
       padding: 3rem 0;
     }
-    
+
     .container {
       padding-left: 1rem;
       padding-right: 1rem;
     }
-    
+
     /* Touch-friendly buttons */
     .mobile-touch {
       min-height: 44px;
       min-width: 44px;
     }
-    
+
     /* Improved text readability on mobile */
     body {
       -webkit-text-size-adjust: 100%;
@@ -358,7 +374,7 @@
     color: white;
     background-color: var(--bronze);
   }
-  
+
   .btn-bronze:hover {
     background-color: color-mix(in srgb, var(--bronze) 90%, transparent);
   }
@@ -441,21 +457,29 @@
     animation: gradientShift 8s ease-in-out infinite;
   }
 
-  
-
   .card-hover-effect {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   /* Enhanced keyframe animations */
   @keyframes gradientShift {
-    0%, 100% { opacity: 0.6; }
-    50% { opacity: 0.8; }
+    0%,
+    100% {
+      opacity: 0.6;
+    }
+    50% {
+      opacity: 0.8;
+    }
   }
 
   @keyframes float {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-20px) rotate(5deg); }
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-20px) rotate(5deg);
+    }
   }
 
   .card-hover-effect:hover {
@@ -482,7 +506,9 @@
   }
 
   .hover-lift {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
   }
 
   .hover-lift:hover {
@@ -492,70 +518,91 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-  from { 
-    opacity: 0; 
-    transform: translateY(30px); 
+  from {
+    opacity: 0;
+    transform: translateY(30px);
   }
-  to { 
-    opacity: 1; 
-    transform: translateY(0); 
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 @keyframes parallax {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-100px); }
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-100px);
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
 }
 
 @keyframes glow {
-  from { box-shadow: 0 0 20px rgba(200, 120, 80, 0.4); }
-  to { box-shadow: 0 0 30px rgba(200, 120, 80, 0.8); }
+  from {
+    box-shadow: 0 0 20px rgba(200, 120, 80, 0.4);
+  }
+  to {
+    box-shadow: 0 0 30px rgba(200, 120, 80, 0.8);
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
 }
 
 @keyframes scaleIn {
-  from { 
-    opacity: 0; 
-    transform: scale(0.9); 
+  from {
+    opacity: 0;
+    transform: scale(0.9);
   }
-  to { 
-    opacity: 1; 
-    transform: scale(1); 
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
 @keyframes slideInLeft {
-  from { 
-    opacity: 0; 
-    transform: translateX(-50px); 
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
   }
-  to { 
-    opacity: 1; 
-    transform: translateX(0); 
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
 @keyframes slideInRight {
-  from { 
-    opacity: 0; 
-    transform: translateX(50px); 
+  from {
+    opacity: 0;
+    transform: translateX(50px);
   }
-  to { 
-    opacity: 1; 
-    transform: translateX(0); 
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }

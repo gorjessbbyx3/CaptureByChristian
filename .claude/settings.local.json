@@ -74,7 +74,8 @@
       "Bash(NODE_ENV=production DATABASE_URL=\"postgresql://test:test@localhost:5432/test\" SESSION_SECRET=\"1293ce4bb50139dd795684e89b114f02fa70e19a77be17ef782b176160fa5e05\" timeout 5 npm start)",
       "Bash(env)",
       "Bash(NODE_ENV=production node dist/server/index.js)",
-      "Bash(NODE_ENV=production DATABASE_URL=postgresql://test:test@localhost:5432/test SESSION_SECRET=test-secret node dist/server/index.js)"
+      "Bash(NODE_ENV=production DATABASE_URL=postgresql://test:test@localhost:5432/test SESSION_SECRET=test-secret node dist/server/index.js)",
+      "Bash(git reset:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

@@ -65,7 +65,10 @@ app.get(['/health', '/api/health'], (req, res) => {
 });
 
 // Serve static files for uploads (both dev and production)
-app.use('/attached_assets', express.static(path.join(__dirname, '../attached_assets')));
+const assetsPath = process.env.NODE_ENV === 'production' 
+  ? path.join(__dirname, '../attached_assets')  // In production: dist/attached_assets
+  : path.join(__dirname, '../attached_assets'); // In development: attached_assets
+app.use('/attached_assets', express.static(assetsPath));
 
 // API routes
 registerRoutes(app)

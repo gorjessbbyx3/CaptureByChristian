@@ -10,7 +10,7 @@
     "build:client": "cd client && npm run build",
     "build:copy": "npm run copy:client && npm run copy:assets",
     "copy:client": "cp -r client/dist dist/public",
-    "copy:assets": "mkdir -p dist && cp -r uploads dist/ 2>/dev/null || true",
+    "copy:assets": "mkdir -p dist && cp -r attached_assets dist/ 2>/dev/null || true",
     "comment_production": "Production runtime scripts",
     "start": "node dist/server/index.js",
     "start:production": "NODE_ENV=production node dist/server/index.js",

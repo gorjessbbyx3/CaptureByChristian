@@ -18,7 +18,7 @@ services:
         generateValue: true
       - key: JWT_SECRET
         generateValue: true
-    healthCheckPath: /api/health
+    healthCheckPath: /health
     buildFilter:
       paths:
         - package*.json

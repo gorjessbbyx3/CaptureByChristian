@@ -63,8 +63,13 @@
       "Bash(cd:*)",
       "Bash(docker build:*)",
       "Bash(npm ci:*)",
-      "Bash(rsync:*)"
+      "Bash(rsync:*)",
+      "Bash(claude mcp add:*)",
+      "Bash(claude mcp:*)",
+      "Bash(npm audit:*)",
+      "WebFetch(domain:render.com)"
     ],
-    "deny": []
+    "deny": [],
+    "defaultMode": "acceptEdits"
   }
 }

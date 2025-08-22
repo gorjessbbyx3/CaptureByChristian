@@ -55,8 +55,8 @@ app.use(session({
   }
 }));
 
-// Health check endpoint for Render
-app.get('/health', (req, res) => {
+// Health check endpoint(s) for Render and Docker
+app.get(['/health', '/api/health'], (req, res) => {
   res.status(200).json({ 
     status: 'healthy', 
     timestamp: new Date().toISOString(),
@@ -74,7 +74,8 @@ registerRoutes(app)
       
       // Serve static files in production (after API routes are registered)
       if (process.env.NODE_ENV === 'production') {
-        const clientDistPath = path.join(__dirname, '../../client/dist');
+        // Serve built client from dist/public (aligned with build pipeline)
+        const clientDistPath = path.join(__dirname, '../public');
         app.set('trust proxy', 1); // trust first proxy
         app.use(express.static(clientDistPath));
 

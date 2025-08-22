@@ -308,13 +308,13 @@ Base your recommendations on current photography industry standards and the spec
     lines.forEach((line: string) => {
       const lower = line.toLowerCase();
       if (lower.includes('service type') && lower.includes(':')) {
-        const value = line.split(':')[1]?.trim().replace(/["\[\]]/g, '');
+        const value = line.split(':')[1]?.trim().replace(/["[\]]/g, '');
         if (value) setContractForm(prev => ({ ...prev, serviceType: value }));
       } else if (lower.includes('package type') && lower.includes(':')) {
-        const value = line.split(':')[1]?.trim().replace(/["\[\]]/g, '');
+        const value = line.split(':')[1]?.trim().replace(/["[\]]/g, '');
         if (value) setContractForm(prev => ({ ...prev, packageType: value }));
       } else if (lower.includes('total amount') && lower.includes(':')) {
-        const value = line.split(':')[1]?.trim().replace(/[\$"[\]]/g, '');
+        const value = line.split(':')[1]?.trim().replace(/[$"[\]]/g, '');
         if (value && !isNaN(Number(value))) {
           setContractForm(prev => ({ ...prev, totalAmount: value }));
           // Auto-calculate balance if retainer is set
@@ -325,7 +325,7 @@ Base your recommendations on current photography industry standards and the spec
           }
         }
       } else if (lower.includes('retainer amount') && lower.includes(':')) {
-        const value = line.split(':')[1]?.trim().replace(/[\$"[\]]/g, '');
+        const value = line.split(':')[1]?.trim().replace(/[$"[\]]/g, '');
         if (value && !isNaN(Number(value))) {
           setContractForm(prev => ({ ...prev, retainerAmount: value }));
           // Auto-calculate balance if total is set
@@ -336,19 +336,19 @@ Base your recommendations on current photography industry standards and the spec
           }
         }
       } else if (lower.includes('timeline') && lower.includes(':')) {
-        const value = line.split(':')[1]?.trim().replace(/["\[\]]/g, '');
+        const value = line.split(':')[1]?.trim().replace(/["[\]]/g, '');
         if (value) setContractForm(prev => ({ ...prev, timeline: value }));
       } else if (lower.includes('deliverables') && lower.includes(':')) {
-        const value = line.split(':')[1]?.trim().replace(/["\[\]]/g, '');
+        const value = line.split(':')[1]?.trim().replace(/["[\]]/g, '');
         if (value) setContractForm(prev => ({ ...prev, deliverables: value }));
       } else if (lower.includes('usage rights') && lower.includes(':')) {
-        const value = line.split(':')[1]?.trim().replace(/["\[\]]/g, '');
+        const value = line.split(':')[1]?.trim().replace(/["[\]]/g, '');
         if (value) setContractForm(prev => ({ ...prev, usageRights: value }));
       } else if (lower.includes('cancellation policy') && lower.includes(':')) {
-        const value = line.split(':')[1]?.trim().replace(/["\[\]]/g, '');
+        const value = line.split(':')[1]?.trim().replace(/["[\]]/g, '');
         if (value) setContractForm(prev => ({ ...prev, cancellationPolicy: value }));
       } else if (lower.includes('additional terms') && lower.includes(':')) {
-        const value = line.split(':')[1]?.trim().replace(/["\[\]]/g, '');
+        const value = line.split(':')[1]?.trim().replace(/["[\]]/g, '');
         if (value) setContractForm(prev => ({ ...prev, additionalTerms: value }));
       }
     });

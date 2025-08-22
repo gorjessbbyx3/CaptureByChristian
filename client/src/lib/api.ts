@@ -1,6 +1,26 @@
 import { apiRequest } from './queryClient';
 
-export async function createBooking(bookingData: any) {
+interface BookingData {
+  serviceId: number;
+  date: Date | string;
+  location: string;
+  totalPrice: string | number;
+  clientName: string;
+  clientEmail: string;
+  clientPhone?: string | null;
+  notes?: string | null;
+  status?: string;
+  addOns?: unknown;
+  duration?: number | unknown;
+}
+
+interface UpdateBookingData {
+  status?: string;
+  notes?: string;
+  totalPrice?: string;
+}
+
+export async function createBooking(bookingData: BookingData) {
   const response = await apiRequest('POST', '/api/bookings', bookingData);
   return response.json();
 }
@@ -20,7 +40,7 @@ export async function fetchClients() {
   return response.json();
 }
 
-export async function updateBooking(id: number, data: any) {
+export async function updateBooking(id: number, data: UpdateBookingData) {
   const response = await apiRequest('PATCH', `/api/bookings/${id}`, data);
   return response.json();
 }

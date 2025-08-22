@@ -23,6 +23,11 @@ export function createApp() {
     PORT: process.env.PORT,
     FRONTEND_URL: process.env.FRONTEND_URL,
   });
+  if (process.env.DEBUG_STARTUP === 'true') {
+    console.log('🧪 DEBUG_STARTUP enabled');
+    console.log('🔐 Session secure cookie:', isProd);
+    console.log('🌐 CORS allowed origins:', allowedOrigins);
+  }
 
   app.use(
     cors({

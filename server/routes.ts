@@ -12,7 +12,7 @@ import { z } from "zod";
 import { generateBookingResponse, analyzeImage } from "./openai.js";
 import { getDatabaseInitializer } from "./database-init.js";
 
-export async function registerRoutes(app: Express): Promise<Server> {
+export async function registerRoutes(app: Express): Promise<void> {
   // Health check endpoint for Docker
   app.get("/api/health", (_req, res) => {
     const dbInitializer = getDatabaseInitializer();

@@ -92,7 +92,9 @@
     "typescript": "^5.3.2",
     "vitest": "^3.2.4",
     "@types/supertest": "^2.0.16",
-    "supertest": "^7.0.0"
+    "supertest": "^7.0.0",
+    "node-mocks-http": "^1.14.0",
+    "@types/node-mocks-http": "^1.11.1"
   },
   "engines": {
     "node": ">=18.0.0",

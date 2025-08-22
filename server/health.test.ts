@@ -21,14 +21,50 @@ describe('Health endpoints', () => {
       expect(res.body).toHaveProperty('timestamp');
     });
   } else {
-    it('registers /health and /api/health routes (local sandbox)', () => {
-      const stack: any[] = app._router?.stack ?? [];
-      const paths = stack
-        .filter((l: any) => l.route && l.route.path)
-        .map((l: any) => l.route.path);
+    let httpMocks: any;
+    try {
+      httpMocks = require('node-mocks-http');
+    } catch {
+      it.skip('skipped: node-mocks-http not installed in sandbox', () => {});
+      return;
+    }
 
-      expect(paths).toContain('/health');
-      expect(paths).toContain('/api/health');
+    it('handles /health without sockets (local sandbox)', async () => {
+      const req = httpMocks.createRequest({ method: 'GET', url: '/health' });
+      const res = httpMocks.createResponse({ eventEmitter: require('events').EventEmitter });
+
+      await new Promise<void>((resolve, reject) => {
+        res.on('end', () => resolve());
+        try {
+          app.handle(req, res as any);
+        } catch (e) {
+          reject(e);
+        }
+      });
+
+      expect(res.statusCode).toBe(200);
+      const data = res._getData();
+      const parsed = typeof data === 'string' ? JSON.parse(data) : data;
+      expect(parsed).toHaveProperty('status', 'healthy');
+    });
+
+    it('handles /api/health without sockets (local sandbox)', async () => {
+      const req = httpMocks.createRequest({ method: 'GET', url: '/api/health' });
+      const res = httpMocks.createResponse({ eventEmitter: require('events').EventEmitter });
+
+      await new Promise<void>((resolve, reject) => {
+        res.on('end', () => resolve());
+        try {
+          app.handle(req, res as any);
+        } catch (e) {
+          reject(e);
+        }
+      });
+
+      expect(res.statusCode).toBe(200);
+      const data = res._getData();
+      const parsed = typeof data === 'string' ? JSON.parse(data) : data;
+      expect(parsed).toHaveProperty('status', 'healthy');
     });
   }
 });

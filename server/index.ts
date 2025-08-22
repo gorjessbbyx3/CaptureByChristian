@@ -71,27 +71,27 @@ app.use('/attached_assets', express.static(path.join(__dirname, '../attached_ass
 registerRoutes(app)
     .then(() => {
       console.log("✅ Routes registered");
+      
+      // Serve static files in production (after API routes are registered)
+      if (process.env.NODE_ENV === 'production') {
+        const clientDistPath = path.join(__dirname, '../../client/dist');
+        app.set('trust proxy', 1); // trust first proxy
+        app.use(express.static(clientDistPath));
+
+        // Handle client-side routing (this must come last)
+        app.get('*', (req, res) => {
+          // Skip API routes
+          if (req.path.startsWith('/api/')) {
+            return res.status(404).json({ error: 'API endpoint not found' });
+          }
+          res.sendFile(path.join(clientDistPath, 'index.html'));
+        });
+      }
     })
     .catch((err) => {
       console.error("❌ Failed to register routes:", err);
       process.exit(1);
     });
-
-// Serve static files in production
-if (process.env.NODE_ENV === 'production') {
-  const clientDistPath = path.join(__dirname, '../../client/dist');
-  app.set('trust proxy', 1); // trust first proxy
-  app.use(express.static(clientDistPath));
-
-  // Handle client-side routing
-  app.get('*', (req, res) => {
-    // Skip API routes
-    if (req.path.startsWith('/api/')) {
-      return res.status(404).json({ error: 'API endpoint not found' });
-    }
-    res.sendFile(path.join(clientDistPath, 'index.html'));
-  });
-}
 
 // Error handling middleware
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

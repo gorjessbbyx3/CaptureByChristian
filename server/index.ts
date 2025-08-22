@@ -3,13 +3,61 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
 import path from "path";
 import { fileURLToPath } from "url";
 import { registerRoutes } from "./routes.js";
-import { createApp } from "./app.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Create Express app with middleware
+function createApp() {
+  const app = express();
+
+  app.use(
+    cors({
+      origin:
+        process.env.NODE_ENV === 'production'
+          ? process.env.FRONTEND_URL
+            ? process.env.FRONTEND_URL.split(',')
+            : true
+          : ['http://localhost:5173', 'http://127.0.0.1:5173'],
+      credentials: true,
+      optionsSuccessStatus: 200,
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    })
+  );
+
+  app.use(express.json({ limit: '50mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+  app.use(cookieParser());
+
+  app.use(
+    session({
+      secret: process.env.SESSION_SECRET || 'your-secret-key-change-in-production',
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000,
+      },
+    })
+  );
+
+  app.get(['/health', '/api/health'], (req, res) => {
+    res.status(200).json({ status: 'healthy', timestamp: new Date().toISOString(), environment: process.env.NODE_ENV });
+  });
+
+  const assetsPath = path.join(__dirname, '../attached_assets');
+  app.use('/attached_assets', express.static(assetsPath));
+
+  return app;
+}
 
 // Validate required environment variables in production
 if (process.env.NODE_ENV === "production") {

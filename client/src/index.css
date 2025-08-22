@@ -143,7 +143,10 @@
 
   body {
     font-family: 'Inter', sans-serif;
-    @apply antialiased bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
@@ -158,19 +161,19 @@
 
   /* Override specific text color classes for proper contrast */
   .text-white {
-    color: hsl(0, 0%, 8%) !important;
+    color: white !important;
   }
 
   .dark .text-white {
-    color: hsl(0, 0%, 95%) !important;
+    color: white !important;
   }
 
   .text-black {
-    color: hsl(0, 0%, 8%) !important;
+    color: black !important;
   }
 
   .dark .text-black {
-    color: hsl(0, 0%, 95%) !important;
+    color: black !important;
   }
 
   /* Muted text should still be readable */
@@ -352,7 +355,7 @@
   }
 
   .btn-bronze {
-    @apply text-white;
+    color: white;
     background-color: var(--bronze);
   }
   

@@ -67,7 +67,8 @@
       "Bash(claude mcp add:*)",
       "Bash(claude mcp:*)",
       "Bash(npm audit:*)",
-      "WebFetch(domain:render.com)"
+      "WebFetch(domain:render.com)",
+      "Bash(npm:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

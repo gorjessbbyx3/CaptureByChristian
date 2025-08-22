@@ -1,5 +1,4 @@
 import type { Express } from "express";
-import { createServer, type Server } from "http";
 import { storage } from "./storage.js";
 import type { InsertClient, InsertService, InsertBooking, InsertGalleryImage, InsertInvoice, InsertContract } from "../shared/schema.js";
 import { validateParams, validateBody, idParamSchema } from "./middleware/validation.js";
@@ -1906,8 +1905,8 @@ Please respond with a JSON object containing:
     }
   });
 
-  const httpServer = createServer(app);
-  return httpServer;
+  // Just return void - routes are registered on the app
+  return;
 }
 
 function log(message: string, context: string) {

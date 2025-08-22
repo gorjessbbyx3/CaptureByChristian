@@ -5,6 +5,7 @@ services:
     runtime: node
     buildCommand: npm run build
     startCommand: npm start
+    nodeVersion: "18"
     envVars:
       - key: NODE_ENV
         value: production

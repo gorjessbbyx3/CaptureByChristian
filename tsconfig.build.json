@@ -8,17 +8,14 @@
     "sourceMap": false,
     "removeComments": true,
     "allowImportingTsExtensions": false,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "strict": false
   },
-  "include": [
-    "server/**/*",
-    "shared/**/*"
-  ],
+  "include": ["server/**/*", "shared/**/*"],
   "exclude": [
     "node_modules",
     "dist",

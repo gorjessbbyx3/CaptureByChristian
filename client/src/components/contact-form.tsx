@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { 
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -16,7 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { 
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -64,13 +64,17 @@ export function ContactForm({ trigger }: ContactFormProps) {
       // First, get AI categorization for the contact
       let aiCategory = "general_inquiry";
       let suggestedResponse = "";
-      
+
       try {
-        const aiResponse = await apiRequest("POST", "/api/ai/categorize-contact", {
-          subject: data.subject,
-          message: data.message,
-        });
-        
+        const aiResponse = await apiRequest(
+          "POST",
+          "/api/ai/categorize-contact",
+          {
+            subject: data.subject,
+            message: data.message,
+          },
+        );
+
         const aiData = await aiResponse.json();
         aiCategory = aiData.category || "general_inquiry";
         suggestedResponse = aiData.suggestedResponse || "";
@@ -123,17 +127,16 @@ export function ContactForm({ trigger }: ContactFormProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        {trigger || defaultTrigger}
-      </DialogTrigger>
+      <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle className="text-2xl">Get In Touch</DialogTitle>
           <DialogDescription>
-            Ready to capture your special moments? Send us a message and we'll respond within 24 hours.
+            Ready to capture your special moments? Send us a message and we'll
+            respond within 24 hours.
           </DialogDescription>
         </DialogHeader>
-        
+
         {isSubmitted ? (
           <div className="text-center py-8">
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
@@ -153,10 +156,12 @@ export function ContactForm({ trigger }: ContactFormProps) {
                   placeholder="Your full name"
                 />
                 {form.formState.errors.name && (
-                  <p className="text-sm text-red-500">{form.formState.errors.name.message}</p>
+                  <p className="text-sm text-red-500">
+                    {form.formState.errors.name.message}
+                  </p>
                 )}
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="email">Email Address *</Label>
                 <Input
@@ -166,11 +171,13 @@ export function ContactForm({ trigger }: ContactFormProps) {
                   placeholder="your@email.com"
                 />
                 {form.formState.errors.email && (
-                  <p className="text-sm text-red-500">{form.formState.errors.email.message}</p>
+                  <p className="text-sm text-red-500">
+                    {form.formState.errors.email.message}
+                  </p>
                 )}
               </div>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone Number</Label>
@@ -180,12 +187,17 @@ export function ContactForm({ trigger }: ContactFormProps) {
                   placeholder="(808) 555-0123"
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="priority">Priority</Label>
-                <Select 
-                  value={form.watch("priority")} 
-                  onValueChange={(value) => form.setValue("priority", value as "normal" | "high" | "urgent")}
+                <Select
+                  value={form.watch("priority")}
+                  onValueChange={(value) =>
+                    form.setValue(
+                      "priority",
+                      value as "normal" | "high" | "urgent",
+                    )
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select priority" />
@@ -198,7 +210,7 @@ export function ContactForm({ trigger }: ContactFormProps) {
                 </Select>
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="subject">Subject *</Label>
               <Input
@@ -207,10 +219,12 @@ export function ContactForm({ trigger }: ContactFormProps) {
                 placeholder="Wedding photography inquiry"
               />
               {form.formState.errors.subject && (
-                <p className="text-sm text-red-500">{form.formState.errors.subject.message}</p>
+                <p className="text-sm text-red-500">
+                  {form.formState.errors.subject.message}
+                </p>
               )}
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="message">Message *</Label>
               <Textarea
@@ -220,20 +234,22 @@ export function ContactForm({ trigger }: ContactFormProps) {
                 rows={4}
               />
               {form.formState.errors.message && (
-                <p className="text-sm text-red-500">{form.formState.errors.message.message}</p>
+                <p className="text-sm text-red-500">
+                  {form.formState.errors.message.message}
+                </p>
               )}
             </div>
-            
+
             <div className="flex justify-end space-x-3">
-              <Button 
-                type="button" 
-                variant="outline" 
+              <Button
+                type="button"
+                variant="outline"
                 onClick={() => setIsOpen(false)}
               >
                 Cancel
               </Button>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={submitContactMutation.isPending}
                 className="bg-blue-600 hover:bg-blue-700"
               >

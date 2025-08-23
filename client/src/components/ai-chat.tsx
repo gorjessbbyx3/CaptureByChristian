@@ -9,16 +9,18 @@ import { Badge } from "@/components/ui/badge";
 import { Bot, User, Send, CheckCircle } from "lucide-react";
 import type { ChatMessage, AIResponse } from "@/lib/types";
 
-const generateSessionId = () => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+const generateSessionId = () =>
+  `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
 export function AIChat() {
   const [sessionId] = useState(generateSessionId);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
-      role: 'assistant', 
-      content: "Aloha! I'm the AI booking assistant for CapturedCCollective, where we blend professionalism with creativity to deliver cinematic, high-impact content. The double 'C' in our name stands for Content and Cinematic, with a strong emphasis on Creative storytelling. Whether you need real estate visuals, event coverage, branded content, or traditional photography, I can help you find the perfect package and check availability. What brings you here today?",
+      role: "assistant",
+      content:
+        "Aloha! I'm the AI booking assistant for CapturedCCollective, where we blend professionalism with creativity to deliver cinematic, high-impact content. The double 'C' in our name stands for Content and Cinematic, with a strong emphasis on Creative storytelling. Whether you need real estate visuals, event coverage, branded content, or traditional photography, I can help you find the perfect package and check availability. What brings you here today?",
       timestamp: Date.now(),
-    }
+    },
   ]);
   const [inputMessage, setInputMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -32,26 +34,32 @@ export function AIChat() {
   }, [messages]);
 
   const sendMessageMutation = useMutation({
-    mutationFn: ({ message, clientEmail }: { message: string; clientEmail?: string }) => 
-      sendAIMessage(sessionId, message, clientEmail),
+    mutationFn: ({
+      message,
+      clientEmail,
+    }: {
+      message: string;
+      clientEmail?: string;
+    }) => sendAIMessage(sessionId, message, clientEmail),
     onSuccess: (response: AIResponse) => {
-      setMessages(prev => [
+      setMessages((prev) => [
         ...prev,
         {
-          role: 'assistant',
+          role: "assistant",
           content: response.message,
           timestamp: Date.now(),
-        }
+        },
       ]);
     },
     onError: () => {
-      setMessages(prev => [
+      setMessages((prev) => [
         ...prev,
         {
-          role: 'assistant',
-          content: "I'm sorry, I'm having trouble responding right now. Please try again or contact us directly.",
+          role: "assistant",
+          content:
+            "I'm sorry, I'm having trouble responding right now. Please try again or contact us directly.",
           timestamp: Date.now(),
-        }
+        },
       ]);
     },
   });
@@ -60,18 +68,18 @@ export function AIChat() {
     if (!inputMessage.trim()) return;
 
     const userMessage: ChatMessage = {
-      role: 'user',
+      role: "user",
       content: inputMessage,
       timestamp: Date.now(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     sendMessageMutation.mutate({ message: inputMessage });
     setInputMessage("");
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
@@ -79,7 +87,7 @@ export function AIChat() {
 
   const aiFeatures = [
     "Real-time availability checking",
-    "Automatic quote generation", 
+    "Automatic quote generation",
     "Location recommendations",
     "Weather and timing optimization",
   ];
@@ -101,20 +109,20 @@ export function AIChat() {
               <div
                 key={index}
                 className={`flex items-start ${
-                  message.role === 'user' ? 'justify-end' : 'justify-start'
+                  message.role === "user" ? "justify-end" : "justify-start"
                 }`}
               >
-                {message.role === 'assistant' && (
+                {message.role === "assistant" && (
                   <div className="bg-bronze text-white rounded-full p-2 mr-3 flex-shrink-0">
                     <Bot className="h-4 w-4" />
                   </div>
                 )}
-                
+
                 <div
                   className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                    message.role === 'user'
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-background shadow-sm border'
+                    message.role === "user"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-background shadow-sm border"
                   }`}
                 >
                   <p className="text-sm">{message.content}</p>
@@ -123,7 +131,7 @@ export function AIChat() {
                   </p>
                 </div>
 
-                {message.role === 'user' && (
+                {message.role === "user" && (
                   <div className="bg-primary text-primary-foreground rounded-full p-2 ml-3 flex-shrink-0">
                     <User className="h-4 w-4" />
                   </div>
@@ -171,7 +179,11 @@ export function AIChat() {
           </h4>
           <div className="grid grid-cols-2 gap-2">
             {aiFeatures.map((feature, index) => (
-              <Badge key={index} variant="outline" className="text-xs justify-start">
+              <Badge
+                key={index}
+                variant="outline"
+                className="text-xs justify-start"
+              >
                 <CheckCircle className="h-3 w-3 mr-1 text-bronze" />
                 {feature}
               </Badge>

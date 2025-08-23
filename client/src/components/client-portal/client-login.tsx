@@ -21,7 +21,11 @@ export function ClientLogin({ onLoginSuccess }: ClientLoginProps) {
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: { email: string; password: string }) => {
-      const response = await apiRequest('POST', '/api/client-portal/login', credentials);
+      const response = await apiRequest(
+        "POST",
+        "/api/client-portal/login",
+        credentials,
+      );
       return response.json();
     },
     onSuccess: (data) => {
@@ -65,7 +69,7 @@ export function ClientLogin({ onLoginSuccess }: ClientLoginProps) {
 
     setIsLoading(true);
     try {
-      await apiRequest('POST', '/api/client-portal/magic-link', { email });
+      await apiRequest("POST", "/api/client-portal/magic-link", { email });
 
       toast({
         title: "Magic Link Sent",
@@ -89,12 +93,15 @@ export function ClientLogin({ onLoginSuccess }: ClientLoginProps) {
           <div className="mx-auto w-16 h-16 bg-bronze/10 rounded-full flex items-center justify-center">
             <Camera className="h-8 w-8 text-bronze" />
           </div>
-          <CardTitle className="text-2xl font-playfair">CapturedCCollective</CardTitle>
+          <CardTitle className="text-2xl font-playfair">
+            CapturedCCollective
+          </CardTitle>
           <p className="text-muted-foreground">
-            Client Portal - Access your photo galleries, contracts, and session details
+            Client Portal - Access your photo galleries, contracts, and session
+            details
           </p>
         </CardHeader>
-        
+
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
@@ -174,7 +181,8 @@ export function ClientLogin({ onLoginSuccess }: ClientLoginProps) {
             </Button>
 
             <p className="text-xs text-center text-muted-foreground">
-              Don't have access? Contact your photographer for login credentials.
+              Don't have access? Contact your photographer for login
+              credentials.
             </p>
           </div>
         </CardContent>

@@ -38,30 +38,39 @@ export function AdminLogin() {
       // Check credentials (case-sensitive)
       const isValidUsername = username.trim() === "CapturedbyChristian";
       const isValidPassword = password.trim() === "Wordpass3211";
-      
+
       console.log("✅ Username valid:", isValidUsername);
       console.log("✅ Password valid:", isValidPassword);
-      
+
       if (isValidUsername && isValidPassword) {
         console.log("🎉 Credentials valid, storing auth data...");
-        
+
         // Clear any existing auth data first
         localStorage.removeItem("admin_authenticated");
         localStorage.removeItem("admin_username");
         localStorage.removeItem("admin_login_time");
-        
+
         console.log("🧹 Cleared old auth data");
-        
+
         // Store authentication in localStorage
         localStorage.setItem("admin_authenticated", "true");
         localStorage.setItem("admin_username", username.trim());
         localStorage.setItem("admin_login_time", new Date().toISOString());
-        
+
         console.log("💾 Auth data stored");
-        console.log("📄 localStorage admin_authenticated:", localStorage.getItem("admin_authenticated"));
-        console.log("👤 localStorage admin_username:", localStorage.getItem("admin_username"));
-        console.log("⏰ localStorage admin_login_time:", localStorage.getItem("admin_login_time"));
-        
+        console.log(
+          "📄 localStorage admin_authenticated:",
+          localStorage.getItem("admin_authenticated"),
+        );
+        console.log(
+          "👤 localStorage admin_username:",
+          localStorage.getItem("admin_username"),
+        );
+        console.log(
+          "⏰ localStorage admin_login_time:",
+          localStorage.getItem("admin_login_time"),
+        );
+
         // Immediate redirect - no delay
         console.log("🚀 Redirecting to /admin");
         setLocation("/admin");
@@ -69,7 +78,9 @@ export function AdminLogin() {
         console.log("❌ Invalid credentials provided");
         console.log("Expected username: 'CapturedbyChristian'");
         console.log("Expected password: 'Wordpass3211'");
-        setError("Invalid username or password. Please check your credentials and try again.");
+        setError(
+          "Invalid username or password. Please check your credentials and try again.",
+        );
       }
     } catch (err) {
       console.error("💥 Login error:", err);
@@ -94,7 +105,7 @@ export function AdminLogin() {
               CapturedCollective Dashboard Access
             </p>
           </CardHeader>
-          
+
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
@@ -135,7 +146,11 @@ export function AdminLogin() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-3 text-slate-400 hover:text-white transition-colors"
                   >
-                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -157,7 +172,8 @@ export function AdminLogin() {
 
             <div className="mt-8 text-center">
               <p className="text-slate-400 text-sm">
-                Secure access to CapturedCollective<br />
+                Secure access to CapturedCollective
+                <br />
                 photography business management
               </p>
             </div>

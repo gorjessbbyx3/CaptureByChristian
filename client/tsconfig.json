@@ -25,10 +25,7 @@
       "@shared/*": ["../shared/*"]
     }
   },
-  "include": [
-    "src",
-    "../shared"
-  ],
+  "include": ["src", "../shared"],
   "types": ["vite/client"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

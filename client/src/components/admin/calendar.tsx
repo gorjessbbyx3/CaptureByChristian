@@ -4,32 +4,38 @@ import { fetchBookings, updateBooking } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
+import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { 
-  Calendar as CalendarIcon, 
-  ChevronLeft, 
-  ChevronRight, 
-  Plus, 
-  Clock, 
-  MapPin, 
-  User, 
-  Phone, 
+import {
+  Calendar as CalendarIcon,
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  Clock,
+  MapPin,
+  User,
+  Phone,
   Mail,
   Grid3X3,
   Calendar,
-  CalendarDays
+  CalendarDays,
 } from "lucide-react";
 
-type ViewMode = 'month' | 'week' | 'day';
+type ViewMode = "month" | "week" | "day";
 
 // Type definitions
 interface Booking {
@@ -43,7 +49,7 @@ interface Booking {
   depositPaid: boolean;
   status: string;
   notes: string;
-  addOns: Array<{id: string, name: string, price: number}>;
+  addOns: Array<{ id: string; name: string; price: number }>;
   createdAt: string;
   client: {
     id: number;
@@ -102,85 +108,86 @@ interface UpdateBookingData {
 
 export function AdminCalendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [viewMode, setViewMode] = useState<ViewMode>('month');
+  const [viewMode, setViewMode] = useState<ViewMode>("month");
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [newAppointment, setNewAppointment] = useState({
-    clientName: '',
-    clientEmail: '',
-    clientPhone: '',
-    serviceId: '',
-    date: '',
-    time: '',
-    location: '',
-    notes: '',
-    totalPrice: '',
-    duration: 120
+    clientName: "",
+    clientEmail: "",
+    clientPhone: "",
+    serviceId: "",
+    date: "",
+    time: "",
+    location: "",
+    notes: "",
+    totalPrice: "",
+    duration: 120,
   });
   const queryClient = useQueryClient();
 
   const { data: bookings = [], isLoading } = useQuery({
-    queryKey: ['/api/bookings'],
+    queryKey: ["/api/bookings"],
     queryFn: fetchBookings,
   });
 
   const { data: services = [] } = useQuery({
-    queryKey: ['/api/services'],
-    queryFn: () => fetch('/api/services').then(res => res.json()),
+    queryKey: ["/api/services"],
+    queryFn: () => fetch("/api/services").then((res) => res.json()),
   });
 
   const { data: clients = [] } = useQuery({
-    queryKey: ['/api/clients'],
-    queryFn: () => fetch('/api/clients').then(res => res.json()),
+    queryKey: ["/api/clients"],
+    queryFn: () => fetch("/api/clients").then((res) => res.json()),
   });
 
   const updateBookingMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: UpdateBookingData }) => updateBooking(id, data),
+    mutationFn: ({ id, data }: { id: number; data: UpdateBookingData }) =>
+      updateBooking(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/bookings'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/analytics/stats'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/bookings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/analytics/stats"] });
       setSelectedBooking(null);
     },
   });
 
   const createBookingMutation = useMutation({
     mutationFn: async (bookingData: BookingData) => {
-      const response = await fetch('/api/bookings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(bookingData)
+      const response = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bookingData),
       });
-      
+
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Failed to create appointment');
+        throw new Error(error.error || "Failed to create appointment");
       }
-      
+
       return response.json();
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/bookings'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/analytics/stats'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/bookings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/analytics/stats"] });
       setShowCreateDialog(false);
       resetNewAppointment();
-      console.log('✅ Appointment created successfully:', data);
+      console.log("✅ Appointment created successfully:", data);
     },
     onError: (error: Error) => {
-      console.error('❌ Failed to create appointment:', error);
+      console.error("❌ Failed to create appointment:", error);
       alert(`Failed to create appointment: ${error.message}`);
-    }
+    },
   });
 
-  const navigate = (direction: 'prev' | 'next') => {
-    setCurrentDate(prev => {
+  const navigate = (direction: "prev" | "next") => {
+    setCurrentDate((prev) => {
       const newDate = new Date(prev);
-      if (viewMode === 'month') {
-        newDate.setMonth(prev.getMonth() + (direction === 'next' ? 1 : -1));
-      } else if (viewMode === 'week') {
-        newDate.setDate(prev.getDate() + (direction === 'next' ? 7 : -7));
+      if (viewMode === "month") {
+        newDate.setMonth(prev.getMonth() + (direction === "next" ? 1 : -1));
+      } else if (viewMode === "week") {
+        newDate.setDate(prev.getDate() + (direction === "next" ? 7 : -7));
       } else {
-        newDate.setDate(prev.getDate() + (direction === 'next' ? 1 : -1));
+        newDate.setDate(prev.getDate() + (direction === "next" ? 1 : -1));
       }
       return newDate;
     });
@@ -229,7 +236,7 @@ export function AdminCalendar() {
         if (isNaN(bookingDate.getTime()) || isNaN(date.getTime())) return false;
         return bookingDate.toDateString() === date.toDateString();
       } catch (error) {
-        console.error('Error parsing booking date:', booking.date, error);
+        console.error("Error parsing booking date:", booking.date, error);
         return false;
       }
     });
@@ -238,49 +245,56 @@ export function AdminCalendar() {
   const handleStatusChange = (bookingId: number, newStatus: string) => {
     updateBookingMutation.mutate({
       id: bookingId,
-      data: { status: newStatus }
+      data: { status: newStatus },
     });
   };
 
   const resetNewAppointment = () => {
     setNewAppointment({
-      clientName: '',
-      clientEmail: '',
-      clientPhone: '',
-      serviceId: '',
-      date: '',
-      time: '',
-      location: '',
-      notes: '',
-      totalPrice: '',
-      duration: 120
+      clientName: "",
+      clientEmail: "",
+      clientPhone: "",
+      serviceId: "",
+      date: "",
+      time: "",
+      location: "",
+      notes: "",
+      totalPrice: "",
+      duration: 120,
     });
   };
 
   const handleCreateAppointment = () => {
-    if (!newAppointment.clientName || !newAppointment.clientEmail || !newAppointment.serviceId || 
-        !newAppointment.date || !newAppointment.time) {
-      alert('Please fill in all required fields');
+    if (
+      !newAppointment.clientName ||
+      !newAppointment.clientEmail ||
+      !newAppointment.serviceId ||
+      !newAppointment.date ||
+      !newAppointment.time
+    ) {
+      alert("Please fill in all required fields");
       return;
     }
 
-    const selectedService = services.find((s: Service) => s.id === parseInt(newAppointment.serviceId));
+    const selectedService = services.find(
+      (s: Service) => s.id === parseInt(newAppointment.serviceId),
+    );
     if (!selectedService) {
-      alert('Please select a valid service');
+      alert("Please select a valid service");
       return;
     }
 
     const bookingData = {
       clientName: newAppointment.clientName,
       clientEmail: newAppointment.clientEmail,
-      clientPhone: newAppointment.clientPhone || '',
+      clientPhone: newAppointment.clientPhone || "",
       serviceId: newAppointment.serviceId,
       date: newAppointment.date,
       time: newAppointment.time,
-      location: newAppointment.location || 'TBD',
+      location: newAppointment.location || "TBD",
       totalPrice: newAppointment.totalPrice || selectedService.price,
-      notes: newAppointment.notes || '',
-      duration: newAppointment.duration
+      notes: newAppointment.notes || "",
+      duration: newAppointment.duration,
     };
 
     createBookingMutation.mutate(bookingData);
@@ -289,54 +303,62 @@ export function AdminCalendar() {
   const handleDateClick = (date: Date) => {
     setSelectedDate(date);
     // Pre-fill the date in new appointment form
-    const dateStr = date.toISOString().split('T')[0];
-    setNewAppointment(prev => ({ ...prev, date: dateStr }));
+    const dateStr = date.toISOString().split("T")[0];
+    setNewAppointment((prev) => ({ ...prev, date: dateStr }));
   };
 
   const handleQuickCreate = (date: Date) => {
-    const dateStr = date.toISOString().split('T')[0];
-    setNewAppointment(prev => ({ ...prev, date: dateStr, time: '10:00' }));
+    const dateStr = date.toISOString().split("T")[0];
+    setNewAppointment((prev) => ({ ...prev, date: dateStr, time: "10:00" }));
     setShowCreateDialog(true);
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'confirmed': return 'bg-green-100 text-green-800 border-green-200';
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'cancelled': return 'bg-red-100 text-red-800 border-red-200';
-      case 'completed': return 'bg-blue-100 text-blue-800 border-blue-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case "confirmed":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "pending":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "cancelled":
+        return "bg-red-100 text-red-800 border-red-200";
+      case "completed":
+        return "bg-blue-100 text-blue-800 border-blue-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
     }
   };
 
   const formatTime = (date: string) => {
-    return new Date(date).toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
+    return new Date(date).toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
     });
   };
 
   const formatDateHeader = () => {
-    if (viewMode === 'month') {
-      return currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-    } else if (viewMode === 'week') {
+    if (viewMode === "month") {
+      return currentDate.toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+      });
+    } else if (viewMode === "week") {
       const startOfWeek = new Date(currentDate);
       startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
       const endOfWeek = new Date(startOfWeek);
       endOfWeek.setDate(startOfWeek.getDate() + 6);
 
       if (startOfWeek.getMonth() === endOfWeek.getMonth()) {
-        return `${startOfWeek.toLocaleDateString('en-US', { month: 'long' })} ${startOfWeek.getDate()}-${endOfWeek.getDate()}, ${startOfWeek.getFullYear()}`;
+        return `${startOfWeek.toLocaleDateString("en-US", { month: "long" })} ${startOfWeek.getDate()}-${endOfWeek.getDate()}, ${startOfWeek.getFullYear()}`;
       } else {
-        return `${startOfWeek.toLocaleDateString('en-US', { month: 'short' })} ${startOfWeek.getDate()} - ${endOfWeek.toLocaleDateString('en-US', { month: 'short' })} ${endOfWeek.getDate()}, ${startOfWeek.getFullYear()}`;
+        return `${startOfWeek.toLocaleDateString("en-US", { month: "short" })} ${startOfWeek.getDate()} - ${endOfWeek.toLocaleDateString("en-US", { month: "short" })} ${endOfWeek.getDate()}, ${startOfWeek.getFullYear()}`;
       }
     } else {
-      return currentDate.toLocaleDateString('en-US', { 
-        weekday: 'long', 
-        month: 'long', 
-        day: 'numeric', 
-        year: 'numeric' 
+      return currentDate.toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric",
       });
     }
   };
@@ -370,8 +392,11 @@ export function AdminCalendar() {
     return (
       <div className="grid grid-cols-7 gap-1">
         {/* Day headers */}
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-          <div key={day} className="p-2 text-center font-semibold text-sm text-muted-foreground">
+        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+          <div
+            key={day}
+            className="p-2 text-center font-semibold text-sm text-muted-foreground"
+          >
             {day}
           </div>
         ))}
@@ -386,11 +411,15 @@ export function AdminCalendar() {
             <div
               key={index}
               className={`min-h-[100px] p-1 border border-border cursor-pointer hover:bg-muted/50 transition-colors ${
-                !isCurrentMonth ? 'text-muted-foreground bg-muted/20' : 'bg-background'
-              } ${isToday ? 'bg-blue-50 dark:bg-blue-950' : ''}`}
+                !isCurrentMonth
+                  ? "text-muted-foreground bg-muted/20"
+                  : "bg-background"
+              } ${isToday ? "bg-blue-50 dark:bg-blue-950" : ""}`}
               onClick={() => handleDateClick(day)}
             >
-              <div className={`text-sm mb-1 ${isToday ? 'font-bold text-blue-600' : ''}`}>
+              <div
+                className={`text-sm mb-1 ${isToday ? "font-bold text-blue-600" : ""}`}
+              >
                 {day.getDate()}
               </div>
               <div className="space-y-1">
@@ -402,18 +431,18 @@ export function AdminCalendar() {
                       e.stopPropagation();
                       setSelectedBooking(booking);
                     }}
-                    title={`${booking.client?.name || 'Unknown Client'} - ${booking.service?.name || 'Service'}`}
+                    title={`${booking.client?.name || "Unknown Client"} - ${booking.service?.name || "Service"}`}
                   >
                     <div className="font-medium truncate">
                       {formatTime(booking.date)}
                     </div>
                     <div className="truncate">
-                      {booking.client?.name || 'Unknown Client'}
+                      {booking.client?.name || "Unknown Client"}
                     </div>
                   </div>
                 ))}
                 {dayBookings.length > 2 && (
-                  <div 
+                  <div
                     className="text-xs text-muted-foreground cursor-pointer hover:text-foreground"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -424,7 +453,7 @@ export function AdminCalendar() {
                   </div>
                 )}
                 {dayBookings.length === 0 && isCurrentMonth && (
-                  <div 
+                  <div
                     className="text-xs text-blue-600 hover:text-blue-800 cursor-pointer flex items-center mt-1"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -458,16 +487,22 @@ export function AdminCalendar() {
             const isToday = day.toDateString() === new Date().toDateString();
 
             return (
-              <div key={index} className={`p-2 text-center border-l ${isToday ? 'bg-blue-50 dark:bg-blue-950' : ''}`}>
+              <div
+                key={index}
+                className={`p-2 text-center border-l ${isToday ? "bg-blue-50 dark:bg-blue-950" : ""}`}
+              >
                 <div className="text-sm text-muted-foreground">
-                  {day.toLocaleDateString('en-US', { weekday: 'short' })}
+                  {day.toLocaleDateString("en-US", { weekday: "short" })}
                 </div>
-                <div className={`text-lg font-semibold ${isToday ? 'text-blue-600' : ''}`}>
+                <div
+                  className={`text-lg font-semibold ${isToday ? "text-blue-600" : ""}`}
+                >
                   {day.getDate()}
                 </div>
                 {dayBookings.length > 0 && (
                   <div className="text-xs text-bronze font-medium">
-                    {dayBookings.length} booking{dayBookings.length !== 1 ? 's' : ''}
+                    {dayBookings.length} booking
+                    {dayBookings.length !== 1 ? "s" : ""}
                   </div>
                 )}
               </div>
@@ -479,9 +514,16 @@ export function AdminCalendar() {
         <div className="flex-1 grid grid-cols-8 max-h-[500px] overflow-y-auto">
           {/* Time labels */}
           <div className="border-r">
-            {businessHours.map(hour => (
-              <div key={hour} className="h-16 border-b p-2 text-sm text-muted-foreground">
-                {hour === 12 ? '12 PM' : hour > 12 ? `${hour - 12} PM` : `${hour} AM`}
+            {businessHours.map((hour) => (
+              <div
+                key={hour}
+                className="h-16 border-b p-2 text-sm text-muted-foreground"
+              >
+                {hour === 12
+                  ? "12 PM"
+                  : hour > 12
+                    ? `${hour - 12} PM`
+                    : `${hour} AM`}
               </div>
             ))}
           </div>
@@ -492,7 +534,7 @@ export function AdminCalendar() {
 
             return (
               <div key={dayIndex} className="border-l">
-                {businessHours.map(hour => (
+                {businessHours.map((hour) => (
                   <div key={hour} className="h-16 border-b p-1">
                     {dayBookings.map((booking: Booking) => {
                       try {
@@ -504,19 +546,23 @@ export function AdminCalendar() {
                               key={booking.id}
                               className={`text-xs p-1 rounded cursor-pointer hover:opacity-80 transition-opacity ${getStatusColor(booking.status)}`}
                               onClick={() => setSelectedBooking(booking)}
-                              title={`${booking.client?.name || 'Unknown'} - ${booking.service?.name || 'Service'}`}
+                              title={`${booking.client?.name || "Unknown"} - ${booking.service?.name || "Service"}`}
                             >
                               <div className="font-medium">
-                                {booking.client?.name || 'Unknown'}
+                                {booking.client?.name || "Unknown"}
                               </div>
                               <div className="text-muted-foreground">
-                                {booking.service?.name || 'Service'}
+                                {booking.service?.name || "Service"}
                               </div>
                             </div>
                           );
                         }
                       } catch (error) {
-                        console.error('Error processing booking in week view:', booking, error);
+                        console.error(
+                          "Error processing booking in week view:",
+                          booking,
+                          error,
+                        );
                       }
                       return null;
                     })}
@@ -540,10 +586,10 @@ export function AdminCalendar() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">
-              {currentDate.toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                month: 'long', 
-                day: 'numeric' 
+              {currentDate.toLocaleDateString("en-US", {
+                weekday: "long",
+                month: "long",
+                day: "numeric",
               })}
             </CardTitle>
           </CardHeader>
@@ -557,10 +603,14 @@ export function AdminCalendar() {
         {/* Time slots */}
         <Card>
           <CardContent className="p-0">
-            {hours.map(hour => (
+            {hours.map((hour) => (
               <div key={hour} className="flex border-b">
                 <div className="w-20 p-4 border-r text-sm text-muted-foreground">
-                  {hour === 12 ? '12 PM' : hour > 12 ? `${hour - 12} PM` : `${hour} AM`}
+                  {hour === 12
+                    ? "12 PM"
+                    : hour > 12
+                      ? `${hour - 12} PM`
+                      : `${hour} AM`}
                 </div>
                 <div className="flex-1 p-4">
                   {dayBookings.map((booking: Booking) => {
@@ -574,10 +624,15 @@ export function AdminCalendar() {
                             className={`p-3 rounded-lg border cursor-pointer hover:opacity-90 transition-opacity ${getStatusColor(booking.status)}`}
                             onClick={() => setSelectedBooking(booking)}
                           >
-                            <div className="font-medium">{booking.client?.name || 'Unknown Client'}</div>
-                            <div className="text-sm">{booking.service?.name || 'Service'}</div>
+                            <div className="font-medium">
+                              {booking.client?.name || "Unknown Client"}
+                            </div>
+                            <div className="text-sm">
+                              {booking.service?.name || "Service"}
+                            </div>
                             <div className="text-xs text-muted-foreground">
-                              {formatTime(booking.date)} • {booking.duration || 2} hours
+                              {formatTime(booking.date)} •{" "}
+                              {booking.duration || 2} hours
                             </div>
                             {booking.location && (
                               <div className="text-xs text-muted-foreground flex items-center mt-1">
@@ -589,7 +644,11 @@ export function AdminCalendar() {
                         );
                       }
                     } catch (error) {
-                      console.error('Error processing booking in day view:', booking, error);
+                      console.error(
+                        "Error processing booking in day view:",
+                        booking,
+                        error,
+                      );
                     }
                     return null;
                   })}
@@ -612,14 +671,14 @@ export function AdminCalendar() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => navigate('prev')}
+              onClick={() => navigate("prev")}
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => navigate('next')}
+              onClick={() => navigate("next")}
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
@@ -640,27 +699,27 @@ export function AdminCalendar() {
           {/* View Toggle */}
           <div className="flex border rounded-lg">
             <Button
-              variant={viewMode === 'month' ? 'default' : 'ghost'}
+              variant={viewMode === "month" ? "default" : "ghost"}
               size="sm"
-              onClick={() => setViewMode('month')}
+              onClick={() => setViewMode("month")}
               className="rounded-r-none"
             >
               <Grid3X3 className="h-4 w-4 mr-1" />
               Month
             </Button>
             <Button
-              variant={viewMode === 'week' ? 'default' : 'ghost'}
+              variant={viewMode === "week" ? "default" : "ghost"}
               size="sm"
-              onClick={() => setViewMode('week')}
+              onClick={() => setViewMode("week")}
               className="rounded-none"
             >
               <CalendarDays className="h-4 w-4 mr-1" />
               Week
             </Button>
             <Button
-              variant={viewMode === 'day' ? 'default' : 'ghost'}
+              variant={viewMode === "day" ? "default" : "ghost"}
               size="sm"
-              onClick={() => setViewMode('day')}
+              onClick={() => setViewMode("day")}
               className="rounded-l-none"
             >
               <Calendar className="h-4 w-4 mr-1" />
@@ -671,7 +730,7 @@ export function AdminCalendar() {
           <Button
             onClick={() => {
               setCurrentDate(new Date());
-              console.log('Calendar Debug - Current bookings:', bookings);
+              console.log("Calendar Debug - Current bookings:", bookings);
             }}
             variant="outline"
             size="sm"
@@ -680,7 +739,7 @@ export function AdminCalendar() {
           </Button>
 
           {/* Debug info - remove in production */}
-          {process.env.NODE_ENV === 'development' && bookings && (
+          {process.env.NODE_ENV === "development" && bookings && (
             <div className="text-xs text-muted-foreground">
               {bookings.length} bookings loaded
             </div>
@@ -692,7 +751,9 @@ export function AdminCalendar() {
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
-            <h4 className="text-sm font-medium text-muted-foreground">Appointment Status Legend:</h4>
+            <h4 className="text-sm font-medium text-muted-foreground">
+              Appointment Status Legend:
+            </h4>
             <div className="flex items-center space-x-6">
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 rounded border bg-green-100 border-green-200"></div>
@@ -718,9 +779,9 @@ export function AdminCalendar() {
       {/* Calendar Content */}
       <Card>
         <CardContent className="p-6">
-          {viewMode === 'month' && renderMonthView()}
-          {viewMode === 'week' && renderWeekView()}
-          {viewMode === 'day' && renderDayView()}
+          {viewMode === "month" && renderMonthView()}
+          {viewMode === "week" && renderWeekView()}
+          {viewMode === "day" && renderDayView()}
         </CardContent>
       </Card>
 
@@ -734,15 +795,17 @@ export function AdminCalendar() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="clientName">Client Name *</Label>
-                <Select 
-                  value={newAppointment.clientName} 
+                <Select
+                  value={newAppointment.clientName}
                   onValueChange={(value) => {
-                    const selectedClient = clients.find((c: Client) => c.name === value);
-                    setNewAppointment(prev => ({ 
-                      ...prev, 
+                    const selectedClient = clients.find(
+                      (c: Client) => c.name === value,
+                    );
+                    setNewAppointment((prev) => ({
+                      ...prev,
                       clientName: value,
                       clientEmail: selectedClient?.email || prev.clientEmail,
-                      clientPhone: selectedClient?.phone || prev.clientPhone
+                      clientPhone: selectedClient?.phone || prev.clientPhone,
                     }));
                   }}
                 >
@@ -760,7 +823,12 @@ export function AdminCalendar() {
                 <Input
                   id="clientNameCustom"
                   value={newAppointment.clientName}
-                  onChange={(e) => setNewAppointment(prev => ({ ...prev, clientName: e.target.value }))}
+                  onChange={(e) =>
+                    setNewAppointment((prev) => ({
+                      ...prev,
+                      clientName: e.target.value,
+                    }))
+                  }
                   placeholder="Or enter new client name"
                   className="mt-2"
                 />
@@ -771,7 +839,12 @@ export function AdminCalendar() {
                   id="clientEmail"
                   type="email"
                   value={newAppointment.clientEmail}
-                  onChange={(e) => setNewAppointment(prev => ({ ...prev, clientEmail: e.target.value }))}
+                  onChange={(e) =>
+                    setNewAppointment((prev) => ({
+                      ...prev,
+                      clientEmail: e.target.value,
+                    }))
+                  }
                   placeholder="client@example.com"
                 />
               </div>
@@ -783,7 +856,12 @@ export function AdminCalendar() {
                 <Input
                   id="clientPhone"
                   value={newAppointment.clientPhone}
-                  onChange={(e) => setNewAppointment(prev => ({ ...prev, clientPhone: e.target.value }))}
+                  onChange={(e) =>
+                    setNewAppointment((prev) => ({
+                      ...prev,
+                      clientPhone: e.target.value,
+                    }))
+                  }
                   placeholder="(808) 555-0123"
                 />
               </div>
@@ -792,12 +870,14 @@ export function AdminCalendar() {
                 <Select
                   value={newAppointment.serviceId}
                   onValueChange={(value) => {
-                    const service = services.find((s: Service) => s.id === parseInt(value));
-                    setNewAppointment(prev => ({ 
-                      ...prev, 
+                    const service = services.find(
+                      (s: Service) => s.id === parseInt(value),
+                    );
+                    setNewAppointment((prev) => ({
+                      ...prev,
                       serviceId: value,
-                      totalPrice: service?.price || '',
-                      duration: service?.duration || 120
+                      totalPrice: service?.price || "",
+                      duration: service?.duration || 120,
                     }));
                   }}
                 >
@@ -806,7 +886,10 @@ export function AdminCalendar() {
                   </SelectTrigger>
                   <SelectContent>
                     {services.map((service: Service) => (
-                      <SelectItem key={service.id} value={service.id.toString()}>
+                      <SelectItem
+                        key={service.id}
+                        value={service.id.toString()}
+                      >
                         {service.name} - ${service.price}
                       </SelectItem>
                     ))}
@@ -822,7 +905,12 @@ export function AdminCalendar() {
                   id="appointmentDate"
                   type="date"
                   value={newAppointment.date}
-                  onChange={(e) => setNewAppointment(prev => ({ ...prev, date: e.target.value }))}
+                  onChange={(e) =>
+                    setNewAppointment((prev) => ({
+                      ...prev,
+                      date: e.target.value,
+                    }))
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -831,7 +919,12 @@ export function AdminCalendar() {
                   id="appointmentTime"
                   type="time"
                   value={newAppointment.time}
-                  onChange={(e) => setNewAppointment(prev => ({ ...prev, time: e.target.value }))}
+                  onChange={(e) =>
+                    setNewAppointment((prev) => ({
+                      ...prev,
+                      time: e.target.value,
+                    }))
+                  }
                 />
               </div>
             </div>
@@ -842,7 +935,12 @@ export function AdminCalendar() {
                 <Input
                   id="location"
                   value={newAppointment.location}
-                  onChange={(e) => setNewAppointment(prev => ({ ...prev, location: e.target.value }))}
+                  onChange={(e) =>
+                    setNewAppointment((prev) => ({
+                      ...prev,
+                      location: e.target.value,
+                    }))
+                  }
                   placeholder="Honolulu, Hawaii"
                 />
               </div>
@@ -851,7 +949,12 @@ export function AdminCalendar() {
                 <Input
                   id="totalPrice"
                   value={newAppointment.totalPrice}
-                  onChange={(e) => setNewAppointment(prev => ({ ...prev, totalPrice: e.target.value }))}
+                  onChange={(e) =>
+                    setNewAppointment((prev) => ({
+                      ...prev,
+                      totalPrice: e.target.value,
+                    }))
+                  }
                   placeholder="Service price will auto-fill"
                 />
               </div>
@@ -862,15 +965,20 @@ export function AdminCalendar() {
               <Textarea
                 id="notes"
                 value={newAppointment.notes}
-                onChange={(e) => setNewAppointment(prev => ({ ...prev, notes: e.target.value }))}
+                onChange={(e) =>
+                  setNewAppointment((prev) => ({
+                    ...prev,
+                    notes: e.target.value,
+                  }))
+                }
                 placeholder="Any special requests or notes..."
                 rows={3}
               />
             </div>
 
             <div className="flex justify-end space-x-2 pt-4">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => {
                   setShowCreateDialog(false);
                   resetNewAppointment();
@@ -878,12 +986,14 @@ export function AdminCalendar() {
               >
                 Cancel
               </Button>
-              <Button 
+              <Button
                 onClick={handleCreateAppointment}
                 disabled={createBookingMutation.isPending}
                 className="bg-blue-600 hover:bg-blue-700"
               >
-                {createBookingMutation.isPending ? 'Creating...' : 'Create Appointment'}
+                {createBookingMutation.isPending
+                  ? "Creating..."
+                  : "Create Appointment"}
               </Button>
             </div>
           </div>
@@ -895,11 +1005,12 @@ export function AdminCalendar() {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>
-              Bookings for {selectedDate?.toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                month: 'long', 
-                day: 'numeric',
-                year: 'numeric'
+              Bookings for{" "}
+              {selectedDate?.toLocaleDateString("en-US", {
+                weekday: "long",
+                month: "long",
+                day: "numeric",
+                year: "numeric",
               })}
             </DialogTitle>
           </DialogHeader>
@@ -917,13 +1028,21 @@ export function AdminCalendar() {
                   >
                     <div className="flex justify-between items-start">
                       <div>
-                        <div className="font-medium">{booking.client?.name || 'Unknown Client'}</div>
-                        <div className="text-sm text-muted-foreground">{booking.service?.name || 'Service'}</div>
+                        <div className="font-medium">
+                          {booking.client?.name || "Unknown Client"}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {booking.service?.name || "Service"}
+                        </div>
                         <div className="text-xs text-muted-foreground">
-                          {formatTime(booking.date)} • {booking.duration || 2} hours
+                          {formatTime(booking.date)} • {booking.duration || 2}{" "}
+                          hours
                         </div>
                       </div>
-                      <Badge variant="outline" className={getStatusColor(booking.status)}>
+                      <Badge
+                        variant="outline"
+                        className={getStatusColor(booking.status)}
+                      >
                         {booking.status}
                       </Badge>
                     </div>
@@ -951,7 +1070,10 @@ export function AdminCalendar() {
       </Dialog>
 
       {/* Booking Details Dialog */}
-      <Dialog open={!!selectedBooking} onOpenChange={() => setSelectedBooking(null)}>
+      <Dialog
+        open={!!selectedBooking}
+        onOpenChange={() => setSelectedBooking(null)}
+      >
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Booking Details</DialogTitle>
@@ -962,38 +1084,46 @@ export function AdminCalendar() {
                 <div className="space-y-2">
                   <div className="flex items-center text-sm">
                     <User className="h-4 w-4 mr-2" />
-                    {selectedBooking.client?.name || 'Unknown Client'}
+                    {selectedBooking.client?.name || "Unknown Client"}
                   </div>
                   <div className="flex items-center text-sm">
                     <Mail className="h-4 w-4 mr-2" />
-                    {selectedBooking.client?.email || 'No email'}
+                    {selectedBooking.client?.email || "No email"}
                   </div>
                   <div className="flex items-center text-sm">
                     <Phone className="h-4 w-4 mr-2" />
-                    {selectedBooking.client?.phone || 'No phone'}
+                    {selectedBooking.client?.phone || "No phone"}
                   </div>
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center text-sm">
                     <CalendarIcon className="h-4 w-4 mr-2" />
-                    {selectedBooking.date ? new Date(selectedBooking.date).toLocaleDateString() : 'No date'}
+                    {selectedBooking.date
+                      ? new Date(selectedBooking.date).toLocaleDateString()
+                      : "No date"}
                   </div>
                   <div className="flex items-center text-sm">
                     <Clock className="h-4 w-4 mr-2" />
-                    {selectedBooking.date ? formatTime(selectedBooking.date) : 'No time'}
+                    {selectedBooking.date
+                      ? formatTime(selectedBooking.date)
+                      : "No time"}
                   </div>
                   <div className="flex items-center text-sm">
                     <MapPin className="h-4 w-4 mr-2" />
-                    {selectedBooking.location || 'Location TBD'}
+                    {selectedBooking.location || "Location TBD"}
                   </div>
                 </div>
               </div>
 
               <div>
                 <h4 className="font-medium mb-2">Service</h4>
-                <p className="text-sm">{selectedBooking.service?.name || 'Service details unavailable'}</p>
+                <p className="text-sm">
+                  {selectedBooking.service?.name ||
+                    "Service details unavailable"}
+                </p>
                 <p className="text-xs text-muted-foreground">
-                  {selectedBooking.service?.description || 'No description available'}
+                  {selectedBooking.service?.description ||
+                    "No description available"}
                 </p>
                 {selectedBooking.totalPrice && (
                   <p className="text-sm font-medium mt-2">
@@ -1006,7 +1136,9 @@ export function AdminCalendar() {
                 <h4 className="font-medium mb-2">Status</h4>
                 <Select
                   value={selectedBooking.status}
-                  onValueChange={(value) => handleStatusChange(selectedBooking.id, value)}
+                  onValueChange={(value) =>
+                    handleStatusChange(selectedBooking.id, value)
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -1023,7 +1155,9 @@ export function AdminCalendar() {
               {selectedBooking.notes && (
                 <div>
                   <h4 className="font-medium mb-2">Notes</h4>
-                  <p className="text-sm text-muted-foreground">{selectedBooking.notes}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedBooking.notes}
+                  </p>
                 </div>
               )}
             </div>

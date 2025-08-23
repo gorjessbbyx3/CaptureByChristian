@@ -1,4 +1,3 @@
-
 export const INVOICE_HTML_TEMPLATE = `
 <!DOCTYPE html>
 <html>
@@ -227,37 +226,54 @@ export const INVOICE_HTML_TEMPLATE = `
 export const generateInvoiceHTML = (invoiceData: any) => {
   // Simple template replacement (in production, use a proper template engine)
   let html = INVOICE_HTML_TEMPLATE;
-  
+
   // Replace single values
-  Object.keys(invoiceData).forEach(key => {
-    if (typeof invoiceData[key] === 'string' || typeof invoiceData[key] === 'number') {
-      const regex = new RegExp(`{{${key}}}`, 'g');
+  Object.keys(invoiceData).forEach((key) => {
+    if (
+      typeof invoiceData[key] === "string" ||
+      typeof invoiceData[key] === "number"
+    ) {
+      const regex = new RegExp(`{{${key}}}`, "g");
       html = html.replace(regex, invoiceData[key].toString());
     }
   });
 
   // Handle items array
   if (invoiceData.items && Array.isArray(invoiceData.items)) {
-    const itemsHTML = invoiceData.items.map((item: any) => `
+    const itemsHTML = invoiceData.items
+      .map(
+        (item: any) => `
       <tr class="item-row">
         <td>${item.description}</td>
         <td class="right">${item.quantity}</td>
         <td class="right">$${item.rate.toFixed(2)}</td>
         <td class="right">$${item.amount.toFixed(2)}</td>
       </tr>
-    `).join('');
-    
+    `,
+      )
+      .join("");
+
     html = html.replace(/{{#items}}[\s\S]*?{{\/items}}/g, itemsHTML);
   }
 
   // Handle conditional sections
-  const conditionalSections = ['tax', 'discount', 'clientPhone', 'clientAddress', 'bookingDetails', 'notes'];
-  conditionalSections.forEach(section => {
-    const regex = new RegExp(`{{#${section}}}([\\s\\S]*?){{\\/${section}}}`, 'g');
+  const conditionalSections = [
+    "tax",
+    "discount",
+    "clientPhone",
+    "clientAddress",
+    "bookingDetails",
+    "notes",
+  ];
+  conditionalSections.forEach((section) => {
+    const regex = new RegExp(
+      `{{#${section}}}([\\s\\S]*?){{\\/${section}}}`,
+      "g",
+    );
     if (invoiceData[section]) {
-      html = html.replace(regex, '$1');
+      html = html.replace(regex, "$1");
     } else {
-      html = html.replace(regex, '');
+      html = html.replace(regex, "");
     }
   });
 

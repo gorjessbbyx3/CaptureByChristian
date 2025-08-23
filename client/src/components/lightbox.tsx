@@ -15,19 +15,19 @@ interface LightboxProps {
 export function Lightbox({ isOpen, onClose, image }: LightboxProps) {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         onClose();
       }
     };
 
     if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
+      document.addEventListener("keydown", handleEscape);
+      document.body.style.overflow = "hidden";
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "unset";
     };
   }, [isOpen, onClose]);
 
@@ -41,7 +41,7 @@ export function Lightbox({ isOpen, onClose, image }: LightboxProps) {
           alt={image.title || "Portfolio image"}
           className="max-w-full max-h-full object-contain rounded-lg"
         />
-        
+
         <Button
           variant="ghost"
           size="icon"
@@ -60,12 +60,9 @@ export function Lightbox({ isOpen, onClose, image }: LightboxProps) {
           </div>
         )}
       </div>
-      
+
       {/* Click overlay to close */}
-      <div 
-        className="absolute inset-0 -z-10" 
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 -z-10" onClick={onClose} />
     </div>
   );
 }

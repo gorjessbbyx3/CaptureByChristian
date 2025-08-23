@@ -14,25 +14,29 @@ interface ClientData {
 export function ClientPortalPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [clientData, setClientData] = useState<ClientData | null>(null);
-  const [currentView, setCurrentView] = useState<'dashboard' | 'gallery'>('dashboard');
-  const [selectedGalleryId, setSelectedGalleryId] = useState<string | null>(null);
+  const [currentView, setCurrentView] = useState<"dashboard" | "gallery">(
+    "dashboard",
+  );
+  const [selectedGalleryId, setSelectedGalleryId] = useState<string | null>(
+    null,
+  );
 
   useEffect(() => {
     // Check for existing session
-    const storedClientData = localStorage.getItem('clientPortalData');
+    const storedClientData = localStorage.getItem("clientPortalData");
     if (storedClientData) {
       try {
         const data = JSON.parse(storedClientData);
         setClientData(data);
         setIsAuthenticated(true);
       } catch (error) {
-        localStorage.removeItem('clientPortalData');
+        localStorage.removeItem("clientPortalData");
       }
     }
 
     // Handle magic link authentication
     const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
+    const token = urlParams.get("token");
     if (token) {
       handleMagicLinkAuth(token);
     }
@@ -40,38 +44,42 @@ export function ClientPortalPage() {
 
   const handleMagicLinkAuth = async (token: string) => {
     try {
-      const response = await apiRequest('POST', '/api/client-portal/verify-magic-link', { token });
+      const response = await apiRequest(
+        "POST",
+        "/api/client-portal/verify-magic-link",
+        { token },
+      );
 
       const data = await response.json();
       handleLoginSuccess(data);
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
     } catch (error) {
-      console.error('Magic link authentication failed:', error);
+      console.error("Magic link authentication failed:", error);
     }
   };
 
   const handleLoginSuccess = (data: ClientData) => {
     setClientData(data);
     setIsAuthenticated(true);
-    localStorage.setItem('clientPortalData', JSON.stringify(data));
+    localStorage.setItem("clientPortalData", JSON.stringify(data));
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
     setClientData(null);
-    setCurrentView('dashboard');
+    setCurrentView("dashboard");
     setSelectedGalleryId(null);
-    localStorage.removeItem('clientPortalData');
+    localStorage.removeItem("clientPortalData");
   };
 
   const handleViewGallery = (galleryId: string) => {
     setSelectedGalleryId(galleryId);
-    setCurrentView('gallery');
+    setCurrentView("gallery");
   };
 
   const handleBackToDashboard = () => {
-    setCurrentView('dashboard');
+    setCurrentView("dashboard");
     setSelectedGalleryId(null);
   };
 
@@ -79,7 +87,7 @@ export function ClientPortalPage() {
     return <ClientLogin onLoginSuccess={handleLoginSuccess} />;
   }
 
-  if (currentView === 'gallery' && selectedGalleryId) {
+  if (currentView === "gallery" && selectedGalleryId) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -91,9 +99,9 @@ export function ClientPortalPage() {
               <span>← Back to Dashboard</span>
             </button>
           </div>
-          <GalleryViewer 
-            galleryId={selectedGalleryId} 
-            clientId={clientData?.id.toString() || ''}
+          <GalleryViewer
+            galleryId={selectedGalleryId}
+            clientId={clientData?.id.toString() || ""}
           />
         </div>
       </div>
@@ -101,8 +109,8 @@ export function ClientPortalPage() {
   }
 
   return (
-    <ClientDashboard 
-      clientData={clientData} 
+    <ClientDashboard
+      clientData={clientData}
       onLogout={handleLogout}
       onViewGallery={handleViewGallery}
     />

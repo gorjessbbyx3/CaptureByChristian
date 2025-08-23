@@ -8,14 +8,14 @@ export default function PortfolioPage() {
 
   // Check if user already has access from this session
   useEffect(() => {
-    const portfolioAccess = sessionStorage.getItem('portfolio_access');
-    if (portfolioAccess === 'granted') {
+    const portfolioAccess = sessionStorage.getItem("portfolio_access");
+    if (portfolioAccess === "granted") {
       setHasAccess(true);
     }
   }, []);
 
   const grantAccess = () => {
-    sessionStorage.setItem('portfolio_access', 'granted');
+    sessionStorage.setItem("portfolio_access", "granted");
     setHasAccess(true);
   };
 

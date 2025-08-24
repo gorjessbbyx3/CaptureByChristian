@@ -19,7 +19,20 @@ services:
         generateValue: true
       - key: JWT_SECRET
         generateValue: true
-    healthCheckPath: /api/health
+      - key: RENDER_EXTERNAL_URL
+        fromService:
+          type: web
+          name: capturedbychristian-app
+          property: hostHeader
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_PHONE_NUMBER
+        sync: false
+    healthCheckPath: /health
     buildFilter:
       paths:
         - package*.json
@@ -27,37 +40,28 @@ services:
         - client/**
         - migrations/**
         - shared/**
+        - attached_assets/**
+        - build-server.js
+        - tsconfig.build.json
+        - drizzle.config.ts
     autoDeploy: true
     
   # PostgreSQL Database
-  - type: pserv
+  - type: pgsql
     name: capturedbychristian-db
-    runtime: postgresql
     plan: starter
+    region: oregon
     databaseName: capturedcollective
     databaseUser: postgres
-    ipAllowList: []  # Allow all connections
     
   # Redis for caching (optional)
-  - type: pserv
+  - type: redis
     name: capturedbychristian-redis
-    runtime: redis
     plan: starter
+    region: oregon
     maxmemoryPolicy: allkeys-lru
 
-# Environment-specific configurations
-environments:
-  - name: production
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: RENDER_EXTERNAL_URL
-        fromService:
-          type: web
-          name: capturedbychristian-app
-          property: host
-
-# Previews for PRs
+# Previews for PRs  
 previews:
   generation: automatic
   expiration: 7d

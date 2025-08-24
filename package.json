@@ -105,6 +105,9 @@
     "node": ">=18.0.0",
     "npm": ">=9.0.0"
   },
+  "overrides": {
+    "esbuild": "^0.25.0"
+  },
   "comment_explanation": {
     "build_process": "The build script follows a logical sequence: clean previous builds, compile server TypeScript, build client React app, then copy all necessary files to the dist directory",
     "script_organization": "Scripts are grouped by purpose with comments for clarity. The underscore prefix on comment keys ensures they don't interfere with npm's script running",

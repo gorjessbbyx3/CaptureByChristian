@@ -3,13 +3,9 @@ services:
   - type: web
     name: capturedbychristian-app
     runtime: node
-    # Use npm install at root to avoid lockfile drift errors on Render
-    # Then install client deps explicitly and build
-    buildCommand: >-
-      npm install --no-audit --no-fund --include=dev --ignore-scripts &&
-      cd client && npm ci --no-audit --no-fund && cd .. &&
-      npm run build
-    startCommand: npm run start:production
+    # Uses optimized render:build and render:start commands from package.json
+    buildCommand: npm run render:build
+    startCommand: npm run render:start
     nodeVersion: "20"
     envVars:
       - key: NODE_ENV
@@ -24,6 +20,14 @@ services:
         generateValue: true
       - key: JWT_SECRET
         generateValue: true
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_PHONE_NUMBER
+        sync: false
     healthCheckPath: /api/health
     buildFilter:
       paths:
@@ -35,19 +39,18 @@ services:
     autoDeploy: true
 
   # PostgreSQL Database
-  - type: pserv
+  - type: pgsql
     name: capturedbychristian-db
-    runtime: postgresql
     plan: starter
+    region: oregon
     databaseName: capturedcollective
     databaseUser: postgres
-    ipAllowList: [] # Allow all connections
 
   # Redis for caching (optional)
-  - type: pserv
+  - type: redis
     name: capturedbychristian-redis
-    runtime: redis
     plan: starter
+    region: oregon
     maxmemoryPolicy: allkeys-lru
 
 # Environment-specific configurations

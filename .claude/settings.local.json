@@ -75,7 +75,9 @@
       "Bash(env)",
       "Bash(NODE_ENV=production node dist/server/index.js)",
       "Bash(NODE_ENV=production DATABASE_URL=postgresql://test:test@localhost:5432/test SESSION_SECRET=test-secret node dist/server/index.js)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "WebSearch"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

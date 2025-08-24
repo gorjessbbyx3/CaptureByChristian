@@ -177,17 +177,15 @@ describe("API Routes", () => {
         new Error("Database error"),
       );
 
-      const response = await request(app)
-        .put("/api/profile")
-        .send({
-          name: "Test",
-          title: "Test",
-          bio: "Test",
-          phone: "123",
-          email: "test@test.com",
-          address: "Test",
-          isActive: true,
-        });
+      const response = await request(app).put("/api/profile").send({
+        name: "Test",
+        title: "Test",
+        bio: "Test",
+        phone: "123",
+        email: "test@test.com",
+        address: "Test",
+        isActive: true,
+      });
 
       expect(response.status).toBe(500);
       expect(response.body).toEqual({ error: "Failed to update profile" });

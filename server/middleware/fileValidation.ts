@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import multer from "multer";
 import path from "path";
 import { Request, Response, NextFunction } from "express";

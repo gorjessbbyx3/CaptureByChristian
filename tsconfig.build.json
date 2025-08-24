@@ -7,7 +7,7 @@
     "declaration": false,
     "sourceMap": false,
     "removeComments": true,
-    "allowImportingTsExtensions": false,
+    "allowImportingTsExtensions": true,
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,

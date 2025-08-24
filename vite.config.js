@@ -1,3 +1,4 @@
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
@@ -7,7 +8,14 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  plugins: [react(), runtimeErrorOverlay()],
+  plugins: [
+    react(),
+    runtimeErrorOverlay(),
+    sentryVitePlugin({
+      org: "edify-llc",
+      project: "capturebychristian",
+    }),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "client", "src"),
@@ -19,7 +27,11 @@ export default defineConfig({
   build: {
     outDir: path.resolve(__dirname, "dist/public"),
     emptyOutDir: true,
-    chunkSizeWarningLimit: 2000, // Increased from default 500kb to 2000kb
+
+    // Increased from default 500kb to 2000kb
+    chunkSizeWarningLimit: 2000,
+
+    sourcemap: true,
   },
   server: {
     fs: {

@@ -2,17 +2,21 @@ import { Pool } from "pg";
 import { readFileSync } from "fs";
 
 const pool = new Pool({
-  connectionString: "postgres://myuser:mypassword@localhost:5432/capturebychristian",
+  connectionString:
+    "postgres://myuser:mypassword@localhost:5432/capturebychristian",
 });
 
 async function applyMigration() {
   try {
     console.log("📋 Reading migration file...");
-    const sql = readFileSync("migrations/0000_fantastic_vindicator.sql", "utf8");
-    
+    const sql = readFileSync(
+      "migrations/0000_fantastic_vindicator.sql",
+      "utf8",
+    );
+
     console.log("🚀 Applying migration...");
     await pool.query(sql);
-    
+
     console.log("✅ Migration applied successfully!");
     return true;
   } catch (error) {

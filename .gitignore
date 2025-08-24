@@ -96,3 +96,5 @@ venv
 .env
 env
 **/.env**
+# Sentry Config File
+.env.sentry-build-plugin

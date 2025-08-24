@@ -360,16 +360,15 @@ export const questionnaires = pgTable("questionnaires", {
   name: text("name").notNull(),
   description: text("description"),
   category: text("category"), // seller_intake, buyer_intake, investor_profile
-  questions:
-    json("questions").$type<
-      Array<{
-        id: string;
-        type: string;
-        question: string;
-        required: boolean;
-        options?: string[];
-      }>
-    >(),
+  questions: json("questions").$type<
+    Array<{
+      id: string;
+      type: string;
+      question: string;
+      required: boolean;
+      options?: string[];
+    }>
+  >(),
   active: boolean("active").default(true),
   created_at: timestamp("created_at").defaultNow().notNull(),
 });

@@ -7,7 +7,10 @@ build({
   platform: "node",
   target: "node20",
   format: "esm",
-  outfile: "dist/index.js",
+  outfile: "dist/server/index.js",
+  banner: {
+    js: "import { createRequire } from 'module'; const require = createRequire(import.meta.url);",
+  },
   sourcemap: false,
   external: [
     "fs",

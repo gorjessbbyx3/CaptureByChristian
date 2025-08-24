@@ -68,12 +68,10 @@ export async function registerRoutes(app: Express): Promise<void> {
       res.json(clients);
     } catch (error) {
       console.error("Error fetching clients:", error);
-      res
-        .status(500)
-        .json({
-          error: "Failed to fetch clients",
-          details: (error as Error).message,
-        });
+      res.status(500).json({
+        error: "Failed to fetch clients",
+        details: (error as Error).message,
+      });
     }
   });
 
@@ -87,12 +85,10 @@ export async function registerRoutes(app: Express): Promise<void> {
         res.json(client);
       } catch (error) {
         console.error("Client creation error:", error);
-        res
-          .status(500)
-          .json({
-            error: "Failed to create client",
-            details: (error as Error).message,
-          });
+        res.status(500).json({
+          error: "Failed to create client",
+          details: (error as Error).message,
+        });
       }
     },
   );
@@ -198,12 +194,10 @@ export async function registerRoutes(app: Express): Promise<void> {
       res.json(bookings);
     } catch (error) {
       console.error("Error fetching bookings:", error);
-      res
-        .status(500)
-        .json({
-          error: "Failed to fetch bookings",
-          details: (error as Error).message,
-        });
+      res.status(500).json({
+        error: "Failed to fetch bookings",
+        details: (error as Error).message,
+      });
     }
   });
 
@@ -282,12 +276,10 @@ export async function registerRoutes(app: Express): Promise<void> {
       res.json(booking);
     } catch (error) {
       console.error("Booking creation error:", error);
-      res
-        .status(500)
-        .json({
-          error: "Failed to create booking",
-          details: (error as Error).message,
-        });
+      res.status(500).json({
+        error: "Failed to create booking",
+        details: (error as Error).message,
+      });
     }
   });
 
@@ -1392,21 +1384,17 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
         res.json(invoice);
       } catch (validationError) {
         console.error("Invoice validation error:", validationError);
-        return res
-          .status(400)
-          .json({
-            error: "Invalid invoice data",
-            details: (validationError as any).errors,
-          });
+        return res.status(400).json({
+          error: "Invalid invoice data",
+          details: (validationError as any).errors,
+        });
       }
     } catch (error) {
       console.error("Error creating invoice:", error);
-      res
-        .status(500)
-        .json({
-          error: "Failed to create invoice",
-          details: (error as Error).message,
-        });
+      res.status(500).json({
+        error: "Failed to create invoice",
+        details: (error as Error).message,
+      });
     }
   });
 
@@ -1969,12 +1957,10 @@ Please respond with a JSON object containing:
       res.json(contracts);
     } catch (error) {
       console.error("Error fetching contracts:", error);
-      res
-        .status(500)
-        .json({
-          error: "Failed to fetch contracts",
-          details: (error as Error).message,
-        });
+      res.status(500).json({
+        error: "Failed to fetch contracts",
+        details: (error as Error).message,
+      });
     }
   });
 
@@ -1985,12 +1971,10 @@ Please respond with a JSON object containing:
       res.json(contract);
     } catch (error) {
       console.error("Error creating contract:", error);
-      res
-        .status(500)
-        .json({
-          error: "Failed to create contract",
-          details: (error as Error).message,
-        });
+      res.status(500).json({
+        error: "Failed to create contract",
+        details: (error as Error).message,
+      });
     }
   });
 
@@ -2003,12 +1987,10 @@ Please respond with a JSON object containing:
       res.json(contract);
     } catch (error) {
       console.error("Error fetching contract:", error);
-      res
-        .status(500)
-        .json({
-          error: "Failed to fetch contract",
-          details: (error as Error).message,
-        });
+      res.status(500).json({
+        error: "Failed to fetch contract",
+        details: (error as Error).message,
+      });
     }
   });
 
@@ -2022,12 +2004,10 @@ Please respond with a JSON object containing:
       res.json(contract);
     } catch (error) {
       console.error("Error updating contract:", error);
-      res
-        .status(500)
-        .json({
-          error: "Failed to update contract",
-          details: (error as Error).message,
-        });
+      res.status(500).json({
+        error: "Failed to update contract",
+        details: (error as Error).message,
+      });
     }
   });
 
@@ -2038,12 +2018,10 @@ Please respond with a JSON object containing:
       res.json(result);
     } catch (error) {
       console.error("Error sending contract:", error);
-      res
-        .status(500)
-        .json({
-          error: "Failed to send contract",
-          details: (error as Error).message,
-        });
+      res.status(500).json({
+        error: "Failed to send contract",
+        details: (error as Error).message,
+      });
     }
   });
 

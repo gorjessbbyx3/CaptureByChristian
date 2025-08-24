@@ -9,11 +9,13 @@ import session from "express-session";
 import path from "path";
 import { fileURLToPath } from "url";
 import { registerRoutes } from "./routes.ts";
+import { getDatabaseInitializer } from "./database-init.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const isProd = String(process.env.NODE_ENV || '').toLowerCase() === 'production';
+const isProd =
+  String(process.env.NODE_ENV || "").toLowerCase() === "production";
 // Validate required environment variables in production
 if (isProd) {
   if (!process.env.DATABASE_URL) {
@@ -36,26 +38,31 @@ const PORT = Number(process.env.PORT) || 7000;
 
 // CORS configuration
 const allowedOrigins = isProd
-  ? (process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : true)
-  : ['http://localhost:5173', 'http://127.0.0.1:5173'];
+  ? process.env.FRONTEND_URL
+    ? process.env.FRONTEND_URL.split(",")
+    : process.env.RENDER_EXTERNAL_URL
+      ? [`https://${process.env.RENDER_EXTERNAL_URL}`]
+      : true
+  : ["http://localhost:5173", "http://127.0.0.1:5173"];
 
 app.use(
   cors({
     origin: allowedOrigins,
     credentials: true,
     optionsSuccessStatus: 200,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  })
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  }),
 );
 
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cookieParser());
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || 'your-secret-key-change-in-production',
+    secret:
+      process.env.SESSION_SECRET || "your-secret-key-change-in-production",
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -63,23 +70,39 @@ app.use(
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
     },
-  })
+  }),
 );
 
 // Health check endpoint
-app.get(['/health', '/api/health'], (req, res) => {
-  res.status(200).json({ 
-    status: 'healthy', 
-    timestamp: new Date().toISOString(), 
-    environment: process.env.NODE_ENV 
+app.get(["/health", "/api/health"], (req, res) => {
+  res.status(200).json({
+    status: "healthy",
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV,
   });
 });
 
 // Serve attached assets
-const assetsPath = path.join(__dirname, '../attached_assets');
-app.use('/attached_assets', express.static(assetsPath));
+const assetsPath = path.join(__dirname, "../attached_assets");
+app.use("/attached_assets", express.static(assetsPath));
 
 // API routes
+// Kick off database initialization in the background (runtime, not build)
+if (process.env.DATABASE_URL) {
+  const dbInitializer = getDatabaseInitializer();
+  dbInitializer
+    .initialize()
+    .then((ok) => {
+      if (ok) console.log("✅ Database initialized");
+      else console.warn("⚠️ Database initialization reported issues");
+    })
+    .catch((err) => {
+      console.error("❌ Database initialization error:", err);
+    });
+} else {
+  console.warn("⚠️ DATABASE_URL not set; skipping DB initialization");
+}
+
 registerRoutes(app)
   .then(() => {
     console.log("✅ Routes registered");
@@ -89,7 +112,7 @@ registerRoutes(app)
       // Serve built client from dist/public (aligned with build pipeline)
       const clientDistPath = path.join(__dirname, "../public");
       app.set("trust proxy", 1); // trust first proxy
-      console.log('📦 Client dist path:', clientDistPath);
+      console.log("📦 Client dist path:", clientDistPath);
       app.use(express.static(clientDistPath));
 
       // Handle client-side routing (this must come last)
@@ -99,7 +122,7 @@ registerRoutes(app)
           return res.status(404).json({ error: "API endpoint not found" });
         }
         // Only handle GET requests for client-side routing
-        if (req.method === 'GET') {
+        if (req.method === "GET") {
           return res.sendFile(path.join(clientDistPath, "index.html"));
         }
         next();
@@ -112,18 +135,16 @@ registerRoutes(app)
   });
 
 // Error handling middleware
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use(
   (
     err: unknown,
     req: express.Request,
     res: express.Response,
-    next: express.NextFunction,
+    _next: express.NextFunction,
   ) => {
     console.error("Error:", err);
     res.status(500).json({
-      error:
-        isProd ? "Internal server error" : (err as Error).message,
+      error: isProd ? "Internal server error" : (err as Error).message,
     });
   },
 );

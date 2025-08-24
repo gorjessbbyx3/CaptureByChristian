@@ -3,7 +3,12 @@ services:
   - type: web
     name: capturedbychristian-app
     runtime: node
-    buildCommand: npm ci && npm run build
+    # Use npm install at root to avoid lockfile drift errors on Render
+    # Then install client deps explicitly and build
+    buildCommand: >-
+      npm install --no-audit --no-fund --include=dev --ignore-scripts &&
+      cd client && npm ci --no-audit --no-fund && cd .. &&
+      npm run build
     startCommand: npm run start:production
     nodeVersion: "20"
     envVars:
@@ -28,7 +33,7 @@ services:
         - migrations/**
         - shared/**
     autoDeploy: true
-    
+
   # PostgreSQL Database
   - type: pserv
     name: capturedbychristian-db
@@ -36,8 +41,8 @@ services:
     plan: starter
     databaseName: capturedcollective
     databaseUser: postgres
-    ipAllowList: []  # Allow all connections
-    
+    ipAllowList: [] # Allow all connections
+
   # Redis for caching (optional)
   - type: pserv
     name: capturedbychristian-redis
@@ -56,7 +61,7 @@ environments:
           type: web
           name: capturedbychristian-app
           property: host
-          
+
 # Previews for PRs
 previews:
   generation: automatic

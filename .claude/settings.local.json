@@ -78,7 +78,8 @@
       "Bash(git reset:*)",
       "WebFetch(domain:docs.anthropic.com)",
       "WebSearch",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(gh pr:*)"
     ],
     "deny": [],
     "defaultMode": "acceptEdits"

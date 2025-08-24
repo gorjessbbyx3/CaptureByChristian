@@ -3,9 +3,8 @@ services:
   - type: web
     name: capturedbychristian-app
     runtime: node
-    # Uses optimized render:build and render:start commands from package.json
-    buildCommand: npm run render:build
-    startCommand: npm run render:start
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start:production
     nodeVersion: "20"
     envVars:
       - key: NODE_ENV
@@ -20,14 +19,6 @@ services:
         generateValue: true
       - key: JWT_SECRET
         generateValue: true
-      - key: OPENAI_API_KEY
-        sync: false
-      - key: TWILIO_ACCOUNT_SID
-        sync: false
-      - key: TWILIO_AUTH_TOKEN
-        sync: false
-      - key: TWILIO_PHONE_NUMBER
-        sync: false
     healthCheckPath: /api/health
     buildFilter:
       paths:
@@ -37,20 +28,21 @@ services:
         - migrations/**
         - shared/**
     autoDeploy: true
-
+    
   # PostgreSQL Database
-  - type: pgsql
+  - type: pserv
     name: capturedbychristian-db
+    runtime: postgresql
     plan: starter
-    region: oregon
     databaseName: capturedcollective
     databaseUser: postgres
-
+    ipAllowList: []  # Allow all connections
+    
   # Redis for caching (optional)
-  - type: redis
+  - type: pserv
     name: capturedbychristian-redis
+    runtime: redis
     plan: starter
-    region: oregon
     maxmemoryPolicy: allkeys-lru
 
 # Environment-specific configurations

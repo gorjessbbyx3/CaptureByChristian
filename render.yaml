@@ -46,20 +46,20 @@ services:
         - drizzle.config.ts
     autoDeploy: true
     
-  # PostgreSQL Database
-  - type: postgres
-    name: capturedbychristian-db
-    plan: starter
-    region: oregon
-    databaseName: capturedcollective
-    databaseUser: postgres
-    
   # Redis for caching (optional)
   - type: redis
     name: capturedbychristian-redis
     plan: starter
     region: oregon
     maxmemoryPolicy: allkeys-lru
+
+databases:
+  # PostgreSQL Database
+  - name: capturedbychristian-db
+    plan: starter
+    region: oregon
+    databaseName: capturedcollective
+    user: postgres
 
 # Previews for PRs  
 previews:

@@ -47,7 +47,7 @@ services:
     autoDeploy: true
     
   # PostgreSQL Database
-  - type: pgsql
+  - type: postgres
     name: capturedbychristian-db
     plan: starter
     region: oregon

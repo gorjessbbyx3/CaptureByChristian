@@ -33,8 +33,8 @@ import {
   type InsertClientMessage,
   type Profile,
   type InsertProfile,
-} from "../shared/schema.js";
-import { db } from "./db.js";
+} from "../shared/schema.ts";
+import { db } from "./db.ts";
 import { eq, desc, and, gte, lte, sql } from "drizzle-orm";
 
 export interface IStorage {

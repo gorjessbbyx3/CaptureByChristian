@@ -8,7 +8,7 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import path from "path";
 import { fileURLToPath } from "url";
-import { registerRoutes } from "./routes.js";
+import { registerRoutes } from "./routes.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

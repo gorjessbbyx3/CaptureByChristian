@@ -1,6 +1,6 @@
 import { Pool } from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
-import * as schema from "../shared/schema.js";
+import * as schema from "../shared/schema.ts";
 import dotenv from "dotenv";
 
 // Load environment variables

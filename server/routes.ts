@@ -1,5 +1,5 @@
 import type { Express } from "express";
-import { storage } from "./storage.js";
+import { storage } from "./storage.ts";
 import type {
   InsertClient,
   InsertService,
@@ -7,21 +7,21 @@ import type {
   InsertGalleryImage,
   InsertInvoice,
   InsertContract,
-} from "../shared/schema.js";
+} from "../shared/schema.ts";
 import {
   validateParams,
   validateBody,
   idParamSchema,
-} from "./middleware/validation.js";
-import { createSecureUpload } from "./middleware/fileValidation.js";
+} from "./middleware/validation.ts";
+import { createSecureUpload } from "./middleware/fileValidation.ts";
 
 // Configure secure multer for file uploads
 const upload = createSecureUpload();
 import multer from "multer";
-import { insertServiceSchema, insertClientSchema } from "../shared/schema.js";
+import { insertServiceSchema, insertClientSchema } from "../shared/schema.ts";
 import { z } from "zod";
-import { generateBookingResponse, analyzeImage } from "./openai.js";
-import { getDatabaseInitializer } from "./database-init.js";
+import { generateBookingResponse, analyzeImage } from "./openai.ts";
+import { getDatabaseInitializer } from "./database-init.ts";
 
 export async function registerRoutes(app: Express): Promise<void> {
   // Health check endpoint for Docker

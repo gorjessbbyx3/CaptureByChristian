@@ -1,428 +1,278 @@
-import { useState } from "react";
+
+import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Checkbox } from "@/components/ui/checkbox";
 import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { 
+  FileText, 
   Plus, 
   Edit, 
   Trash2, 
-  FileText, 
-  Users, 
-  TrendingUp, 
+  Send,
+  Users,
   BarChart3,
-  Eye,
-  Settings
+  CheckCircle,
+  Clock,
+  Eye
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { format } from "date-fns";
+import { apiRequest } from "@/lib/queryClient";
 
 interface Question {
   id: string;
-  type: 'text' | 'textarea' | 'select' | 'radio' | 'checkbox' | 'number' | 'email';
+  type: 'text' | 'textarea' | 'select' | 'multiselect' | 'radio' | 'checkbox';
   question: string;
-  required: boolean;
   options?: string[];
+  required: boolean;
+  order: number;
 }
 
 interface Questionnaire {
-  id: string;
-  name: string;
+  id: number;
+  title: string;
   description: string;
-  serviceType: string;
   questions: Question[];
-  active: boolean;
-  responses: number;
-  completionRate: number;
-  avgTime: string;
+  status: 'draft' | 'active' | 'archived';
   createdAt: string;
+  responseCount: number;
+}
+
+interface QuestionnaireResponse {
+  id: number;
+  questionnaireId: number;
+  questionnaireName: string;
+  clientName: string;
+  clientEmail: string;
+  responses: Record<string, any>;
+  status: 'incomplete' | 'completed';
+  submittedAt: string;
 }
 
 export function QuestionnaireSystem() {
   const [selectedQuestionnaire, setSelectedQuestionnaire] = useState<Questionnaire | null>(null);
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const { toast } = useToast();
+  const [questionnaireDialogOpen, setQuestionnaireDialogOpen] = useState(false);
+  const [selectedResponse, setSelectedResponse] = useState<QuestionnaireResponse | null>(null);
+  const [newQuestionnaire, setNewQuestionnaire] = useState({
+    title: '',
+    description: '',
+    questions: [] as Question[]
+  });
+  const [newQuestion, setNewQuestion] = useState({
+    type: 'text' as Question['type'],
+    question: '',
+    options: [''],
+    required: false
+  });
   const queryClient = useQueryClient();
 
-  // Fetch questionnaires from real database
-  const { data: questionnaires = [], isLoading } = useQuery({
+  // Fetch questionnaires
+  const { data: questionnaires = [], isLoading: isLoadingQuestionnaires } = useQuery({
     queryKey: ['/api/questionnaires'],
     queryFn: async () => {
-      const response = await fetch('/api/questionnaires');
-      if (!response.ok) throw new Error('Failed to fetch questionnaires');
-      return response.json();
-    }
+      try {
+        const response = await apiRequest('GET', '/api/questionnaires');
+        const data = await response.json();
+        return Array.isArray(data) ? data : [];
+      } catch (error) {
+        console.error('Failed to fetch questionnaires:', error);
+        return [];
+      }
+    },
   });
 
-  // Fetch questionnaire responses
-  const { data: responses = [] } = useQuery({
+  // Fetch responses
+  const { data: responses = [], isLoading: isLoadingResponses } = useQuery({
     queryKey: ['/api/questionnaire-responses'],
     queryFn: async () => {
-      const response = await fetch('/api/questionnaire-responses');
-      if (!response.ok) throw new Error('Failed to fetch responses');
-      return response.json();
-    }
+      try {
+        const response = await apiRequest('GET', '/api/questionnaire-responses');
+        const data = await response.json();
+        return Array.isArray(data) ? data : [];
+      } catch (error) {
+        console.error('Failed to fetch responses:', error);
+        return [];
+      }
+    },
   });
+
+  // Calculate analytics
+  const analytics = React.useMemo(() => {
+    const totalQuestionnaires = questionnaires.length;
+    const activeQuestionnaires = questionnaires.filter((q: Questionnaire) => q.status === 'active').length;
+    const totalResponses = responses.length;
+    const completedResponses = responses.filter((r: QuestionnaireResponse) => r.status === 'completed').length;
+    const completionRate = totalResponses > 0 ? (completedResponses / totalResponses) * 100 : 0;
+
+    return {
+      totalQuestionnaires,
+      activeQuestionnaires,
+      totalResponses,
+      completedResponses,
+      completionRate
+    };
+  }, [questionnaires, responses]);
 
   // Create questionnaire mutation
   const createQuestionnaireMutation = useMutation({
-    mutationFn: async (questionnaireData: any) => {
-      const response = await fetch('/api/questionnaires', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(questionnaireData),
-      });
-      if (!response.ok) throw new Error('Failed to create questionnaire');
+    mutationFn: async (questionnaireData: typeof newQuestionnaire) => {
+      const response = await apiRequest('POST', '/api/questionnaires', questionnaireData);
+      if (!response.ok) {
+        throw new Error('Failed to create questionnaire');
+      }
       return response.json();
     },
     onSuccess: () => {
-      toast({ title: "Success", description: "Questionnaire created successfully" });
       queryClient.invalidateQueries({ queryKey: ['/api/questionnaires'] });
-      setSelectedQuestionnaire(null);
-      setQuestions([]);
-    },
-    onError: () => {
-      toast({ title: "Error", description: "Failed to create questionnaire", variant: "destructive" });
-    },
-  });
-
-  // Update questionnaire mutation
-  const updateQuestionnaireMutation = useMutation({
-    mutationFn: async ({ id, ...questionnaireData }: any) => {
-      const response = await fetch(`/api/questionnaires/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(questionnaireData),
-      });
-      if (!response.ok) throw new Error('Failed to update questionnaire');
-      return response.json();
-    },
-    onSuccess: () => {
-      toast({ title: "Success", description: "Questionnaire updated successfully" });
-      queryClient.invalidateQueries({ queryKey: ['/api/questionnaires'] });
-      setSelectedQuestionnaire(null);
-      setQuestions([]);
-    },
-    onError: () => {
-      toast({ title: "Error", description: "Failed to update questionnaire", variant: "destructive" });
+      setQuestionnaireDialogOpen(false);
+      setNewQuestionnaire({ title: '', description: '', questions: [] });
     },
   });
 
   // Delete questionnaire mutation
   const deleteQuestionnaireMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const response = await fetch(`/api/questionnaires/${id}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) throw new Error('Failed to delete questionnaire');
+    mutationFn: async (questionnaireId: number) => {
+      const response = await apiRequest('DELETE', `/api/questionnaires/${questionnaireId}`);
+      if (!response.ok) {
+        throw new Error('Failed to delete questionnaire');
+      }
       return response.json();
     },
     onSuccess: () => {
-      toast({ title: "Success", description: "Questionnaire deleted successfully" });
       queryClient.invalidateQueries({ queryKey: ['/api/questionnaires'] });
-    },
-    onError: () => {
-      toast({ title: "Error", description: "Failed to delete questionnaire", variant: "destructive" });
     },
   });
 
   const addQuestion = () => {
-    const newQuestion: Question = {
-      id: `q_${Date.now()}`,
+    if (!newQuestion.question.trim()) return;
+
+    const question: Question = {
+      id: Date.now().toString(),
+      type: newQuestion.type,
+      question: newQuestion.question,
+      options: newQuestion.type === 'select' || newQuestion.type === 'multiselect' || newQuestion.type === 'radio' 
+        ? newQuestion.options.filter(opt => opt.trim()) 
+        : undefined,
+      required: newQuestion.required,
+      order: newQuestionnaire.questions.length + 1
+    };
+
+    setNewQuestionnaire({
+      ...newQuestionnaire,
+      questions: [...newQuestionnaire.questions, question]
+    });
+
+    setNewQuestion({
       type: 'text',
       question: '',
-      required: false,
-      options: []
-    };
-    setQuestions([...questions, newQuestion]);
+      options: [''],
+      required: false
+    });
   };
 
-  const updateQuestion = (index: number, field: keyof Question, value: any) => {
-    const updatedQuestions = [...questions];
-    updatedQuestions[index] = { ...updatedQuestions[index], [field]: value };
-    setQuestions(updatedQuestions);
+  const removeQuestion = (questionId: string) => {
+    setNewQuestionnaire({
+      ...newQuestionnaire,
+      questions: newQuestionnaire.questions.filter(q => q.id !== questionId)
+    });
   };
 
-  const removeQuestion = (index: number) => {
-    setQuestions(questions.filter((_, i) => i !== index));
-  };
-
-  const handleSubmit = (formData: FormData) => {
-    const questionnaireData = {
-      name: formData.get('name'),
-      description: formData.get('description'),
-      serviceType: formData.get('serviceType'),
-      questions: questions,
-      active: formData.get('active') === 'true',
-    };
-
-    if (selectedQuestionnaire) {
-      updateQuestionnaireMutation.mutate({ id: selectedQuestionnaire.id, ...questionnaireData });
-    } else {
-      createQuestionnaireMutation.mutate(questionnaireData);
+  const handleCreateQuestionnaire = () => {
+    if (!newQuestionnaire.title || newQuestionnaire.questions.length === 0) {
+      return;
     }
+    createQuestionnaireMutation.mutate(newQuestionnaire);
   };
 
-  const openEditDialog = (questionnaire: Questionnaire) => {
-    setSelectedQuestionnaire(questionnaire);
-    setQuestions(questionnaire.questions);
-  };
-
-  const resetForm = () => {
-    setSelectedQuestionnaire(null);
-    setQuestions([]);
-  };
-
-  // Calculate real metrics
-  const totalQuestionnaires = questionnaires.length;
-  const activeQuestionnaires = questionnaires.filter((q: any) => q.active).length;
-  const totalResponses = questionnaires.reduce((sum: number, q: any) => sum + (q.responses || 0), 0);
-  const averageCompletion = questionnaires.length > 0 
-    ? questionnaires.reduce((sum: number, q: any) => sum + (q.completionRate || 0), 0) / questionnaires.length 
-    : 0;
-
-  if (isLoading) {
+  if (isLoadingQuestionnaires || isLoadingResponses) {
     return (
       <div className="space-y-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-muted rounded w-1/3 mb-4"></div>
-          <div className="grid md:grid-cols-4 gap-6 mb-6">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-32 bg-muted rounded"></div>
-            ))}
-          </div>
-          <div className="h-96 bg-muted rounded"></div>
-        </div>
+        <Card>
+          <CardContent className="p-6">
+            <div className="text-center text-muted-foreground">Loading questionnaire data...</div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-playfair font-bold">Questionnaire System</h1>
-          <p className="text-muted-foreground">Create and manage client questionnaires</p>
-        </div>
-
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button className="bg-bronze hover:bg-bronze/90" onClick={resetForm}>
-              <Plus className="h-4 w-4 mr-2" />
-              Create Questionnaire
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>
-                {selectedQuestionnaire ? 'Edit Questionnaire' : 'Create New Questionnaire'}
-              </DialogTitle>
-            </DialogHeader>
-            <form action={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="name">Questionnaire Name</Label>
-                  <Input 
-                    id="name" 
-                    name="name" 
-                    defaultValue={selectedQuestionnaire?.name}
-                    required 
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="serviceType">Service Type</Label>
-                  <Select name="serviceType" defaultValue={selectedQuestionnaire?.serviceType}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select service type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="wedding">Wedding</SelectItem>
-                      <SelectItem value="portrait">Portrait</SelectItem>
-                      <SelectItem value="corporate">Corporate</SelectItem>
-                      <SelectItem value="event">Event</SelectItem>
-                      <SelectItem value="commercial">Commercial</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="col-span-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea 
-                    id="description" 
-                    name="description" 
-                    defaultValue={selectedQuestionnaire?.description}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="active">Status</Label>
-                  <Select name="active" defaultValue={selectedQuestionnaire?.active ? "true" : "false"}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="true">Active</SelectItem>
-                      <SelectItem value="false">Draft</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              {/* Questions Section */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold">Questions</h3>
-                  <Button type="button" onClick={addQuestion} variant="outline" size="sm">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Question
-                  </Button>
-                </div>
-
-                {questions.map((question, index) => (
-                  <Card key={question.id}>
-                    <CardContent className="p-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label>Question</Label>
-                          <Input
-                            value={question.question}
-                            onChange={(e) => updateQuestion(index, 'question', e.target.value)}
-                            placeholder="Enter your question"
-                          />
-                        </div>
-                        <div>
-                          <Label>Type</Label>
-                          <Select 
-                            value={question.type} 
-                            onValueChange={(value) => updateQuestion(index, 'type', value)}
-                          >
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="text">Text Input</SelectItem>
-                              <SelectItem value="textarea">Long Text</SelectItem>
-                              <SelectItem value="select">Dropdown</SelectItem>
-                              <SelectItem value="radio">Radio Buttons</SelectItem>
-                              <SelectItem value="checkbox">Checkboxes</SelectItem>
-                              <SelectItem value="number">Number</SelectItem>
-                              <SelectItem value="email">Email</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        {(question.type === 'select' || question.type === 'radio' || question.type === 'checkbox') && (
-                          <div className="col-span-2">
-                            <Label>Options (one per line)</Label>
-                            <Textarea
-                              value={question.options?.join('\n') || ''}
-                              onChange={(e) => updateQuestion(index, 'options', e.target.value.split('\n').filter(Boolean))}
-                              placeholder="Option 1&#10;Option 2&#10;Option 3"
-                            />
-                          </div>
-                        )}
-
-                        <div className="col-span-2 flex items-center justify-between">
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              checked={question.required}
-                              onCheckedChange={(checked) => updateQuestion(index, 'required', checked)}
-                            />
-                            <Label>Required</Label>
-                          </div>
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => removeQuestion(index)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-
-                {questions.length === 0 && (
-                  <div className="text-center py-8 text-muted-foreground border-2 border-dashed rounded-lg">
-                    No questions added yet. Click "Add Question" to get started.
-                  </div>
-                )}
-              </div>
-
-              <div className="flex justify-end space-x-2">
-                <Button 
-                  type="submit" 
-                  disabled={createQuestionnaireMutation.isPending || updateQuestionnaireMutation.isPending}
-                >
-                  {selectedQuestionnaire ? 'Update Questionnaire' : 'Create Questionnaire'}
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid md:grid-cols-4 gap-6">
+      {/* Analytics Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2">
+              <FileText className="h-4 w-4 text-blue-600" />
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Questionnaires</p>
-                <p className="text-3xl font-bold">{totalQuestionnaires}</p>
+                <p className="text-2xl font-bold">{analytics.totalQuestionnaires}</p>
+                <p className="text-xs text-muted-foreground">Total Forms</p>
               </div>
-              <FileText className="h-8 w-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2">
+              <CheckCircle className="h-4 w-4 text-green-600" />
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Active Questionnaires</p>
-                <p className="text-3xl font-bold">{activeQuestionnaires}</p>
+                <p className="text-2xl font-bold">{analytics.activeQuestionnaires}</p>
+                <p className="text-xs text-muted-foreground">Active Forms</p>
               </div>
-              <Settings className="h-8 w-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2">
+              <Users className="h-4 w-4 text-purple-600" />
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Responses</p>
-                <p className="text-3xl font-bold">{totalResponses}</p>
+                <p className="text-2xl font-bold">{analytics.totalResponses}</p>
+                <p className="text-xs text-muted-foreground">Total Responses</p>
               </div>
-              <Users className="h-8 w-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2">
+              <BarChart3 className="h-4 w-4 text-orange-600" />
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Avg Completion</p>
-                <p className="text-3xl font-bold">{averageCompletion.toFixed(0)}%</p>
+                <p className="text-2xl font-bold">{analytics.completedResponses}</p>
+                <p className="text-xs text-muted-foreground">Completed</p>
               </div>
-              <TrendingUp className="h-8 w-8 text-muted-foreground" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2">
+              <Clock className="h-4 w-4 text-red-600" />
+              <div>
+                <p className="text-2xl font-bold">{analytics.completionRate.toFixed(1)}%</p>
+                <p className="text-xs text-muted-foreground">Completion Rate</p>
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Main Content */}
-      <Tabs defaultValue="questionnaires" className="space-y-6">
+      <Tabs defaultValue="questionnaires" className="space-y-4">
         <TabsList>
           <TabsTrigger value="questionnaires">Questionnaires</TabsTrigger>
           <TabsTrigger value="responses">Responses</TabsTrigger>
@@ -431,72 +281,223 @@ export function QuestionnaireSystem() {
 
         <TabsContent value="questionnaires" className="space-y-4">
           <Card>
-            <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Service Type</TableHead>
-                    <TableHead>Questions</TableHead>
-                    <TableHead>Responses</TableHead>
-                    <TableHead>Completion Rate</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {questionnaires.length > 0 ? (
-                    questionnaires.map((questionnaire: any) => (
-                      <TableRow key={questionnaire.id}>
-                        <TableCell>
-                          <div>
-                            <p className="font-semibold">{questionnaire.name}</p>
-                            <p className="text-sm text-muted-foreground">{questionnaire.description}</p>
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <span className="flex items-center">
+                  <FileText className="h-5 w-5 mr-2" />
+                  Client Questionnaires
+                </span>
+                <Dialog open={questionnaireDialogOpen} onOpenChange={setQuestionnaireDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="btn-bronze">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create Questionnaire
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>Create New Questionnaire</DialogTitle>
+                      <DialogDescription>
+                        Build a custom questionnaire to gather information from your clients.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-6">
+                      {/* Basic Information */}
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-sm font-medium">Title</label>
+                          <Input
+                            value={newQuestionnaire.title}
+                            onChange={(e) => setNewQuestionnaire({ ...newQuestionnaire, title: e.target.value })}
+                            placeholder="e.g., Wedding Photography Questionnaire"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium">Description</label>
+                          <Textarea
+                            value={newQuestionnaire.description}
+                            onChange={(e) => setNewQuestionnaire({ ...newQuestionnaire, description: e.target.value })}
+                            placeholder="Brief description of what this questionnaire is for..."
+                          />
+                        </div>
+                      </div>
+
+                      {/* Questions */}
+                      <div>
+                        <h4 className="font-medium mb-4">Questions ({newQuestionnaire.questions.length})</h4>
+                        
+                        {/* Existing Questions */}
+                        {newQuestionnaire.questions.map((question, index) => (
+                          <div key={question.id} className="border rounded-lg p-4 mb-4">
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center space-x-2 mb-2">
+                                  <span className="text-sm font-medium">Q{index + 1}</span>
+                                  <Badge variant="outline">{question.type}</Badge>
+                                  {question.required && <Badge variant="secondary">Required</Badge>}
+                                </div>
+                                <p className="font-medium">{question.question}</p>
+                                {question.options && (
+                                  <div className="mt-2">
+                                    <p className="text-sm text-muted-foreground">Options:</p>
+                                    <ul className="text-sm text-muted-foreground ml-4">
+                                      {question.options.map((option, i) => (
+                                        <li key={i}>• {option}</li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                )}
+                              </div>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => removeQuestion(question.id)}
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </div>
                           </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="capitalize">
-                            {questionnaire.serviceType}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{questionnaire.questions?.length || 0}</TableCell>
-                        <TableCell>{questionnaire.responses || 0}</TableCell>
-                        <TableCell>{questionnaire.completionRate || 0}%</TableCell>
-                        <TableCell>
-                          <Badge variant={questionnaire.active ? "default" : "secondary"}>
-                            {questionnaire.active ? "Active" : "Draft"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center space-x-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => openEditDialog(questionnaire)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => deleteQuestionnaireMutation.mutate(questionnaire.id)}
-                              disabled={deleteQuestionnaireMutation.isPending}
-                            >
-                              <Trash2 className="h-4 w-4" />
+                        ))}
+
+                        {/* Add New Question */}
+                        <div className="border-2 border-dashed rounded-lg p-4">
+                          <h5 className="font-medium mb-3">Add New Question</h5>
+                          <div className="space-y-3">
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <label className="text-sm font-medium">Question Type</label>
+                                <select
+                                  className="w-full p-2 border rounded-md"
+                                  value={newQuestion.type}
+                                  onChange={(e) => setNewQuestion({ ...newQuestion, type: e.target.value as Question['type'] })}
+                                >
+                                  <option value="text">Short Text</option>
+                                  <option value="textarea">Long Text</option>
+                                  <option value="select">Dropdown</option>
+                                  <option value="radio">Radio Buttons</option>
+                                  <option value="checkbox">Checkboxes</option>
+                                </select>
+                              </div>
+                              <div className="flex items-center space-x-2 pt-6">
+                                <input
+                                  type="checkbox"
+                                  checked={newQuestion.required}
+                                  onChange={(e) => setNewQuestion({ ...newQuestion, required: e.target.checked })}
+                                />
+                                <label className="text-sm">Required</label>
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <label className="text-sm font-medium">Question</label>
+                              <Input
+                                value={newQuestion.question}
+                                onChange={(e) => setNewQuestion({ ...newQuestion, question: e.target.value })}
+                                placeholder="Enter your question..."
+                              />
+                            </div>
+
+                            {(newQuestion.type === 'select' || newQuestion.type === 'radio' || newQuestion.type === 'checkbox') && (
+                              <div>
+                                <label className="text-sm font-medium">Options</label>
+                                {newQuestion.options.map((option, index) => (
+                                  <div key={index} className="flex items-center space-x-2 mt-2">
+                                    <Input
+                                      value={option}
+                                      onChange={(e) => {
+                                        const updatedOptions = [...newQuestion.options];
+                                        updatedOptions[index] = e.target.value;
+                                        setNewQuestion({ ...newQuestion, options: updatedOptions });
+                                      }}
+                                      placeholder={`Option ${index + 1}`}
+                                    />
+                                    {index === newQuestion.options.length - 1 && (
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        onClick={() => setNewQuestion({ ...newQuestion, options: [...newQuestion.options, ''] })}
+                                      >
+                                        <Plus className="h-3 w-3" />
+                                      </Button>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+
+                            <Button onClick={addQuestion} variant="outline" className="w-full">
+                              <Plus className="h-4 w-4 mr-2" />
+                              Add Question
                             </Button>
                           </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                        No questionnaires created yet.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-end space-x-2">
+                        <Button variant="outline" onClick={() => setQuestionnaireDialogOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button 
+                          onClick={handleCreateQuestionnaire}
+                          disabled={createQuestionnaireMutation.isPending || !newQuestionnaire.title || newQuestionnaire.questions.length === 0}
+                          className="btn-bronze"
+                        >
+                          {createQuestionnaireMutation.isPending ? 'Creating...' : 'Create Questionnaire'}
+                        </Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {questionnaires.length > 0 ? (
+                <div className="space-y-4">
+                  {questionnaires.map((questionnaire: Questionnaire) => (
+                    <div key={questionnaire.id} className="border rounded-lg p-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <h3 className="font-semibold">{questionnaire.title}</h3>
+                            <Badge variant={questionnaire.status === 'active' ? 'default' : questionnaire.status === 'draft' ? 'secondary' : 'outline'}>
+                              {questionnaire.status}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-2">{questionnaire.description}</p>
+                          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                            <span>{questionnaire.questions.length} questions</span>
+                            <span>{questionnaire.responseCount} responses</span>
+                            <span>Created {format(new Date(questionnaire.createdAt), "MMM d, yyyy")}</span>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <Button size="sm" variant="outline">
+                            <Edit className="h-3 w-3 mr-1" />
+                            Edit
+                          </Button>
+                          <Button size="sm" variant="outline">
+                            <Send className="h-3 w-3 mr-1" />
+                            Send
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => deleteQuestionnaireMutation.mutate(questionnaire.id)}
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground">No questionnaires created yet.</p>
+                  <p className="text-sm text-muted-foreground">Create your first questionnaire to start gathering client information!</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -508,12 +509,41 @@ export function QuestionnaireSystem() {
             </CardHeader>
             <CardContent>
               {responses.length > 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  Response management feature requires additional implementation.
+                <div className="space-y-4">
+                  {responses.map((response: QuestionnaireResponse) => (
+                    <div key={response.id} className="border rounded-lg p-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <h3 className="font-semibold">{response.questionnaireName}</h3>
+                            <Badge variant={response.status === 'completed' ? 'default' : 'secondary'}>
+                              {response.status}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-1">
+                            <strong>Client:</strong> {response.clientName} ({response.clientEmail})
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            <strong>Submitted:</strong> {format(new Date(response.submittedAt), "MMM d, yyyy 'at' h:mm a")}
+                          </p>
+                        </div>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => setSelectedResponse(response)}
+                        >
+                          <Eye className="h-3 w-3 mr-1" />
+                          View Details
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  No responses collected yet.
+                <div className="text-center py-8">
+                  <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground">No responses collected yet.</p>
+                  <p className="text-sm text-muted-foreground">Responses will appear here once clients start filling out questionnaires.</p>
                 </div>
               )}
             </CardContent>
@@ -521,18 +551,103 @@ export function QuestionnaireSystem() {
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Response Analytics</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                Analytics feature requires additional implementation.
-              </div>
-            </CardContent>
-          </Card>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Response Statistics</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex justify-between">
+                    <span>Total Questionnaires</span>
+                    <span className="font-semibold">{analytics.totalQuestionnaires}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Active Questionnaires</span>
+                    <span className="font-semibold">{analytics.activeQuestionnaires}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Total Responses</span>
+                    <span className="font-semibold">{analytics.totalResponses}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Completed Responses</span>
+                    <span className="font-semibold">{analytics.completedResponses}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Completion Rate</span>
+                    <span className="font-semibold">{analytics.completionRate.toFixed(1)}%</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Popular Questions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8 text-muted-foreground">
+                  {analytics.totalResponses > 0 ? (
+                    <p>Question analytics will be displayed here based on response data.</p>
+                  ) : (
+                    <p>No response data available for analysis yet.</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
+
+      {/* Response Details Modal */}
+      <Dialog open={!!selectedResponse} onOpenChange={() => setSelectedResponse(null)}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>
+              Response Details - {selectedResponse?.questionnaireName}
+            </DialogTitle>
+            <DialogDescription>
+              View detailed response from {selectedResponse?.clientName}
+            </DialogDescription>
+          </DialogHeader>
+          {selectedResponse && (
+            <div className="space-y-4">
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <h4 className="font-medium mb-2">Client Information</h4>
+                  <div className="space-y-1 text-sm">
+                    <p><strong>Name:</strong> {selectedResponse.clientName}</p>
+                    <p><strong>Email:</strong> {selectedResponse.clientEmail}</p>
+                    <p><strong>Status:</strong> <Badge variant={selectedResponse.status === 'completed' ? 'default' : 'secondary'}>{selectedResponse.status}</Badge></p>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-medium mb-2">Submission Details</h4>
+                  <div className="space-y-1 text-sm">
+                    <p><strong>Submitted:</strong> {format(new Date(selectedResponse.submittedAt), "PPP 'at' p")}</p>
+                    <p><strong>Questions Answered:</strong> {Object.keys(selectedResponse.responses).length}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="font-medium mb-2">Responses</h4>
+                <div className="space-y-3 max-h-64 overflow-y-auto">
+                  {Object.entries(selectedResponse.responses).map(([questionId, answer]) => (
+                    <div key={questionId} className="border rounded p-3">
+                      <p className="font-medium text-sm mb-1">Question {questionId}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {typeof answer === 'string' ? answer : JSON.stringify(answer)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -1,13 +1,13 @@
-import { 
+import {
   users, clients, services, bookings, contracts, invoices, galleryImages, aiChats, contactMessages, clientPortalSessions, clientMessages, profiles,
-  type User, type InsertUser, type Client, type InsertClient, 
+  type User, type InsertUser, type Client, type InsertClient,
   type Service, type InsertService, type Booking, type InsertBooking,
   type Contract, type InsertContract, type Invoice, type InsertInvoice,
   type GalleryImage, type InsertGalleryImage, type AiChat, type InsertAiChat,
   type ContactMessage, type InsertContactMessage, type ClientMessage, type InsertClientMessage,
   type Profile, type InsertProfile
-} from "@shared/schema";
-import { db } from "./db";
+} from "@shared/schema.js";
+import { db } from "./db.js";
 import { eq, desc, and, gte, lte, sql } from "drizzle-orm";
 
 export interface IStorage {
@@ -181,7 +181,7 @@ export class DatabaseStorage implements IStorage {
       .leftJoin(clients, eq(bookings.clientId, clients.id))
       .leftJoin(services, eq(bookings.serviceId, services.id))
       .orderBy(desc(bookings.date))
-      .then(rows => 
+      .then(rows =>
         rows.map(row => ({
           ...row.bookings,
           client: row.clients!,
@@ -197,9 +197,9 @@ export class DatabaseStorage implements IStorage {
       .leftJoin(clients, eq(bookings.clientId, clients.id))
       .leftJoin(services, eq(bookings.serviceId, services.id))
       .where(eq(bookings.id, id));
-    
+
     if (!result) return undefined;
-    
+
     return {
       ...result.bookings,
       client: result.clients!,
@@ -215,7 +215,7 @@ export class DatabaseStorage implements IStorage {
       .leftJoin(services, eq(bookings.serviceId, services.id))
       .where(and(gte(bookings.date, start), lte(bookings.date, end)))
       .orderBy(bookings.date)
-      .then(rows => 
+      .then(rows =>
         rows.map(row => ({
           ...row.bookings,
           client: row.clients!,
@@ -242,7 +242,7 @@ export class DatabaseStorage implements IStorage {
         .from(contracts)
         .leftJoin(clients, eq(contracts.clientId, clients.id))
         .orderBy(desc(contracts.createdAt));
-      
+
       return contractsData.map(row => ({
         ...row.contracts,
         client: row.clients!
@@ -261,9 +261,9 @@ export class DatabaseStorage implements IStorage {
         .from(contracts)
         .leftJoin(clients, eq(contracts.clientId, clients.id))
         .where(eq(contracts.id, id));
-      
+
       if (!contractData) return undefined;
-      
+
       return {
         ...contractData.contracts,
         client: contractData.clients!
@@ -304,7 +304,7 @@ export class DatabaseStorage implements IStorage {
   async sendContractToPortal(contractId: number): Promise<{ success: boolean; portalLink?: string }> {
     // Generate a secure token for client portal access
     const portalToken = `contract_${contractId}_${Date.now()}_${Math.random().toString(36).substring(2)}`;
-    
+
     // Update contract with portal token and sent timestamp
     await db
       .update(contracts)
@@ -315,10 +315,10 @@ export class DatabaseStorage implements IStorage {
         updatedAt: new Date()
       })
       .where(eq(contracts.id, contractId));
-    
+
     // Create portal link
     const portalLink = `${process.env.REPLIT_DOMAINS || 'localhost:3000'}/client-portal/contract/${portalToken}`;
-    
+
     return {
       success: true,
       portalLink
@@ -391,7 +391,7 @@ export class DatabaseStorage implements IStorage {
   async getMonthlyRevenue(year: number, month: number): Promise<number> {
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0);
-    
+
     const [result] = await db
       .select({ total: sql<number>`sum(${bookings.totalPrice})` })
       .from(bookings)
@@ -402,7 +402,7 @@ export class DatabaseStorage implements IStorage {
           eq(bookings.status, 'confirmed')
         )
       );
-    
+
     return Number(result?.total || 0);
   }
 
@@ -496,24 +496,24 @@ export class DatabaseStorage implements IStorage {
     // Get actual portal session data
     const allSessions = await db.select().from(clientPortalSessions);
     const activeSessions = allSessions.filter((s: any) => s.status === 'active');
-    
+
     // Calculate total logins (session starts)
     const totalLogins = allSessions.length;
-    
+
     // Calculate access rate (active vs total clients)
     const totalClientsResult = await db.select({ count: sql<number>`count(*)` }).from(clients);
     const totalClients = totalClientsResult[0]?.count || 0;
     const accessRate = totalClients > 0 ? Math.round((activeSessions.length / totalClients) * 100) : 0;
-    
+
     // Count downloads from activity logs
     const downloadCount = allSessions.reduce((sum: number, session: any) => {
       const activities = session.activityLog || [];
       return sum + activities.filter((activity: any) => activity.type === 'download').length;
     }, 0);
-    
+
     // Calculate average rating from sessions with ratings
     const sessionsWithRatings = allSessions.filter((s: any) => s.rating && s.rating > 0);
-    const avgRating = sessionsWithRatings.length > 0 
+    const avgRating = sessionsWithRatings.length > 0
       ? (sessionsWithRatings.reduce((sum: number, s: any) => sum + (s.rating || 0), 0) / sessionsWithRatings.length).toFixed(1)
       : null;
 
@@ -534,11 +534,11 @@ export class DatabaseStorage implements IStorage {
   async getInvoiceStats(): Promise<any> {
     try {
       const allBookings = await db.select().from(bookings);
-      
+
       // Calculate stats from actual bookings since no separate invoices table exists yet
       const completedBookings = allBookings.filter(b => b.status === 'completed');
       const totalRevenue = completedBookings.reduce((sum, booking) => sum + Number(booking.totalPrice || 0), 0);
-      
+
       return {
         totalRevenue,
         pendingAmount: 0, // No separate invoice tracking yet
@@ -559,7 +559,7 @@ export class DatabaseStorage implements IStorage {
   async getBusinessKPIs(): Promise<any> {
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth() + 1;
-    
+
     const totalClients = await db.select({ count: sql<number>`count(*)` }).from(clients);
     const monthlyRevenue = await this.getMonthlyRevenue(currentYear, currentMonth);
     const totalBookings = await db.select({ count: sql<number>`count(*)` }).from(bookings);
@@ -570,7 +570,7 @@ export class DatabaseStorage implements IStorage {
       monthlyRecurringRevenue: monthlyRevenue,
       totalClients: Number(totalClients[0]?.count || 0),
       totalBookings: Number(totalBookings[0]?.count || 0),
-      completionRate: totalBookings[0]?.count > 0 ? 
+      completionRate: totalBookings[0]?.count > 0 ?
         (Number(completedBookings[0]?.count || 0) / Number(totalBookings[0]?.count)) * 100 : 0
     };
   }
@@ -579,17 +579,17 @@ export class DatabaseStorage implements IStorage {
     const allClients = await db.select().from(clients);
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    
-    const newClientsThisMonth = allClients.filter(client => 
+
+    const newClientsThisMonth = allClients.filter(client =>
       new Date(client.createdAt) >= thirtyDaysAgo
     );
-    
+
     const clientsWithMultipleBookings = await db
       .select({ clientId: bookings.clientId, count: sql<number>`count(*)` })
       .from(bookings)
       .groupBy(bookings.clientId)
       .having(sql`count(*) > 1`);
-    
+
     const avgLifetimeValue = await this.getMonthlyRevenue(new Date().getFullYear(), new Date().getMonth() + 1) / allClients.length || 0;
 
     return {

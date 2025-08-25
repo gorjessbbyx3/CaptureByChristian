@@ -4,6 +4,12 @@
   "description": "Photography business management system with AI-powered booking assistant",
   "main": "dist/index.js",
   "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
   "scripts": {
     "dev": "tsx server/index.ts",
     "build": "tsc && vite build",

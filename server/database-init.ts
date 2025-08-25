@@ -30,11 +30,11 @@ export class DatabaseInitializer {
       return true;
     } catch (error) {
       console.log('⚠️ Database connection failed, attempting to create database...');
-      
+
       // Extract database name from connection string
       const dbUrl = new URL(process.env.DATABASE_URL!);
       const targetDbName = dbUrl.pathname.slice(1); // Remove leading slash
-      
+
       // Create connection to postgres database to create our target database
       const adminConnectionString = process.env.DATABASE_URL!.replace(`/${targetDbName}`, '/postgres');
       const adminPool = new Pool({
@@ -79,13 +79,13 @@ export class DatabaseInitializer {
   async runMigrations(): Promise<boolean> {
     try {
       console.log('🔄 Starting database migration process...');
-      
+
       // Create drizzle instance for migrations
       const db = drizzle(this.pool);
-      
+
       // Check if migrations directory exists
       const migrationsPath = path.resolve(__dirname, '../migrations');
-      
+
       try {
         await fs.access(migrationsPath);
       } catch {
@@ -97,7 +97,7 @@ export class DatabaseInitializer {
       const hasExistingTables = await this.checkExistingTables();
       if (hasExistingTables) {
         console.log('⚠️ Tables already exist, checking if migrations table exists...');
-        
+
         // Check if drizzle migrations table exists
         const migrationTableExists = await this.pool.query(`
           SELECT EXISTS (
@@ -106,10 +106,10 @@ export class DatabaseInitializer {
             AND table_name = '__drizzle_migrations'
           );
         `);
-        
+
         if (!migrationTableExists.rows[0].exists) {
           console.log('📝 Creating migrations tracking table...');
-          
+
           // Create the migrations table manually
           await this.pool.query(`
             CREATE TABLE IF NOT EXISTS "__drizzle_migrations" (
@@ -118,7 +118,7 @@ export class DatabaseInitializer {
               created_at bigint
             );
           `);
-          
+
           // Mark existing migration as applied
           const migrationHash = await this.getMigrationHash(migrationsPath);
           if (migrationHash) {
@@ -129,17 +129,17 @@ export class DatabaseInitializer {
             console.log('✅ Marked existing schema as migrated');
           }
         }
-        
+
         console.log('✅ Database schema is up to date');
         return true;
       }
 
       // Run migrations normally if no tables exist
       await migrate(db, { migrationsFolder: migrationsPath });
-      
+
       console.log('✅ Database migrations completed successfully');
       return true;
-      
+
     } catch (error) {
       console.error('❌ Migration failed:', error);
       return false;
@@ -172,11 +172,11 @@ export class DatabaseInitializer {
       const journalPath = path.join(migrationsPath, 'meta', '_journal.json');
       const journalContent = await fs.readFile(journalPath, 'utf8');
       const journal = JSON.parse(journalContent);
-      
+
       if (journal.entries && journal.entries.length > 0) {
         return journal.entries[0].when.toString();
       }
-      
+
       return null;
     } catch (error) {
       console.log('⚠️ Could not read migration journal');
@@ -213,7 +213,7 @@ export class DatabaseInitializer {
       ];
 
       console.log('🔍 Verifying database schema...');
-      
+
       for (const tableName of requiredTables) {
         const result = await this.pool.query(`
           SELECT EXISTS (
@@ -222,13 +222,13 @@ export class DatabaseInitializer {
             AND table_name = $1
           );
         `, [tableName]);
-        
+
         if (!result.rows[0].exists) {
           console.log(`⚠️ Table "${tableName}" is missing`);
           return false;
         }
       }
-      
+
       console.log('✅ All required tables exist');
       return true;
     } catch (error) {
@@ -247,7 +247,7 @@ export class DatabaseInitializer {
     }
 
     console.log('🚀 Starting database initialization process...');
-    
+
     try {
       // Step 1: Ensure database exists
       const dbExists = await this.ensureDatabaseExists();
@@ -308,11 +308,11 @@ export function getDatabaseInitializer(): DatabaseInitializer {
   if (!process.env.DATABASE_URL) {
     throw new Error('DATABASE_URL environment variable is required');
   }
-  
+
   if (!dbInitializer) {
     dbInitializer = new DatabaseInitializer(process.env.DATABASE_URL);
   }
-  
+
   return dbInitializer;
 }
 

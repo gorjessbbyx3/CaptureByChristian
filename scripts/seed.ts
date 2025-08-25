@@ -1,4 +1,3 @@
-
 import { pool, db } from "../server/db.js";
 import * as schema from "../shared/schema.js";
 import { users, clients, services, profiles } from "../shared/schema.js";

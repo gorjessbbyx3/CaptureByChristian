@@ -19,6 +19,12 @@ export default defineConfig({
         ]
       : []),
   ],
+  define: {
+    global: 'globalThis',
+  },
+  optimizeDeps: {
+    exclude: ['crypto']
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "client", "src"),

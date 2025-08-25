@@ -21,7 +21,7 @@ const upload = multer({
 import { 
   insertClientSchema, insertBookingSchema, insertServiceSchema,
   insertContractSchema, insertInvoiceSchema, insertGalleryImageSchema
-} from "@shared/schema";
+} from "@shared/schema.js";
 import { z } from "zod";
 import { generateBookingResponse, analyzeImage } from "./openai";
 import { log } from "./vite";
@@ -1129,7 +1129,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       const magicLink = `${process.env.REPL_URL || 'http://localhost:5000'}/client-portal?token=${token}`;
 
       // Import SMS functionality
-      const { sendMagicLinkSMS, isTwilioConfigured } = await import('./twilio');
+      const { sendMagicLinkSMS, isTwilioConfigured } = await import('./twilio.js');
 
       if (!isTwilioConfigured()) {
         console.log(`Magic link for ${client.email}: ${magicLink}`);
@@ -1483,7 +1483,7 @@ Please respond with a JSON object containing:
       const invoiceData = req.body;
 
       // Import PDF generator
-      const { generateInvoiceHTML } = await import("./pdf-generator");
+      const { generateInvoiceHTML } = await import("./pdf-generator.js");
 
       // Convert invoice data to proper format
       const pdfData = {
@@ -1521,7 +1521,7 @@ Please respond with a JSON object containing:
       const { invoice, includePaymentLink } = req.body;
 
       // Import email functionality
-      const { emailInvoice } = await import("./pdf-generator");
+      const { emailInvoice } = await import("./pdf-generator.js");
 
       // Convert invoice data
       const emailData = {

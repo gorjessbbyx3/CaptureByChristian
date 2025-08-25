@@ -23,6 +23,12 @@ export default defineConfig({
     global: 'globalThis',
   },
   optimizeDeps: {
+    include: ['crypto-js']
+  },
+  define: {
+    global: 'globalThis',
+  },
+  optimizeDeps: {
     exclude: ['crypto']
   },
   resolve: {

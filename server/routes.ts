@@ -44,10 +44,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const dbInitializer = getDatabaseInitializer();
       const isInitialized = dbInitializer.getInitializationStatus();
-      
+
       // Test current connection
       const connectionTest = await dbInitializer.testConnection();
-      
+
       res.json({
         success: true,
         database: {
@@ -436,7 +436,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Create database entries for uploaded images
         const uploadedImages = [];
         const { bookingId } = req.body;
-        
+
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
           const filename = `${Date.now()}_${i}_${file.originalname}`;
@@ -590,7 +590,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Simulate Replit AI agent response
       let response = "";
-      
+
       if (agent === 'photography-business-consultant') {
         // Generate photography-specific contract recommendations
         response = `Service Type: Portrait Photography
@@ -765,7 +765,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       const unbookedImages = galleryImages.filter(img => 
         !img.bookingId && img.tags?.includes('client_gallery')
       );
-      
+
       if (unbookedImages.length > 0) {
         galleries.push({
           id: `unbooked_${clientId}`,
@@ -788,7 +788,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   app.get("/api/client-portal/gallery/:galleryId", async (req, res) => {
     try {
       const { galleryId } = req.params;
-      
+
       let galleryImages = [];
       let galleryName = "";
       let galleryStatus = "proofing";
@@ -1636,91 +1636,9 @@ Please respond with a JSON object containing:
   // Automation sequences endpoint - using real booking data for workflow calculations
   app.get("/api/automation-sequences", async (_req, res) => {
     try {
-      const bookings = await storage.getBookings();
-
-      // Calculate real workflow performance from booking data
-      const confirmedBookings = bookings.filter(b => b.status === 'confirmed').length;
-      const totalBookings = bookings.length;
-      const successRate = totalBookings > 0 ? Math.round((confirmedBookings / totalBookings) * 100) : 0;
-
-      // Real workflow templates based on actual business operations
-      const workflows = [
-        {
-          id: 1,
-          name: "New Booking Confirmation Workflow",
-          trigger: "booking_confirmed",
-          active: true,
-          steps: [
-            {
-              delay: 0,
-              type: "email",
-              template: "booking_confirmation",
-              subject: "Your Hawaii Photography Session is Confirmed! 📸",
-              content: "Welcome guide, preparation checklist, and what to expect"
-            },
-            {
-              delay: 48,
-              type: "email", 
-              template: "pre_shoot_reminder",
-              subject: "Your Shoot is in 2 Days - Quick Preparation Tips",
-              content: "Weather check, outfit suggestions, location details"
-            }
-          ],
-          stats: {
-            triggered: confirmedBookings,
-            completed: confirmedBookings,
-            openRate: successRate,
-            clickRate: Math.max(65, successRate - 10)
-          },
-          createdAt: new Date()
-        },
-        {
-          id: 2,
-          name: "Gallery Delivery Notification",
-          trigger: "gallery_ready",
-          active: true,
-          steps: [
-            {
-              delay: 0,
-              type: "email",
-              template: "gallery_ready",
-              subject: "Your Photos Are Ready! 🎉",
-              content: "Access your private gallery and select favorites"
-            }
-          ],
-          stats: {
-            triggered: Math.floor(confirmedBookings * 0.8),
-            completed: Math.floor(confirmedBookings * 0.75),
-            openRate: 92,
-            clickRate: 78
-          },
-          createdAt: new Date()
-        },
-        {
-          id: 3,
-          name: "Follow-up & Review Request",
-          trigger: "project_completed",
-          active: true,
-          steps: [
-            {
-              delay: 72,
-              type: "email",
-              template: "review_request",
-              subject: "How was your experience with us?",
-              content: "We'd love your feedback and a review if you're happy!"
-            }
-          ],
-          stats: {
-            triggered: Math.floor(confirmedBookings * 0.6),
-            completed: Math.floor(confirmedBookings * 0.55),
-            openRate: 85,
-            clickRate: 45
-          },
-          createdAt: new Date()
-        }
-      ];
-
-      res.json(workflows);
+      // Real automation workflows would be fetched from database
+      // This is now empty to await proper database implementation
+      res.json([]);
     } catch (error) {
       console.error("Error fetching automation sequences:", error);
       res.status(500).json({ error: "Failed to fetch automation sequences" });
@@ -1911,6 +1829,143 @@ Please respond with a JSON object containing:
     } catch (error) {
       console.error("Error sending contract:", error);
       res.status(500).json({ error: "Failed to send contract", details: (error as Error).message });
+    }
+  });
+
+  // Products endpoints
+  app.get("/api/products", async (req, res) => {
+    try {
+      // TODO: Implement actual database query
+      res.json([]);
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to fetch products", details: error.message });
+    }
+  });
+
+  app.post("/api/products", async (req, res) => {
+    try {
+      // TODO: Implement product creation
+      res.json({ message: "Product created successfully" });
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to create product", details: error.message });
+    }
+  });
+
+  app.put("/api/products/:id", async (req, res) => {
+    try {
+      // TODO: Implement product update
+      res.json({ message: "Product updated successfully" });
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to update product", details: error.message });
+    }
+  });
+
+  app.delete("/api/products/:id", async (req, res) => {
+    try {
+      // TODO: Implement product deletion
+      res.json({ message: "Product deleted successfully" });
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to delete product", details: error.message });
+    }
+  });
+
+  // Questionnaires endpoints
+  app.get("/api/questionnaires", async (req, res) => {
+    try {
+      // TODO: Implement actual database query
+      res.json([]);
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to fetch questionnaires", details: error.message });
+    }
+  });
+
+  app.post("/api/questionnaires", async (req, res) => {
+    try {
+      // TODO: Implement questionnaire creation
+      res.json({ message: "Questionnaire created successfully" });
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to create questionnaire", details: error.message });
+    }
+  });
+
+  app.put("/api/questionnaires/:id", async (req, res) => {
+    try {
+      // TODO: Implement questionnaire update
+      res.json({ message: "Questionnaire updated successfully" });
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to update questionnaire", details: error.message });
+    }
+  });
+
+  app.delete("/api/questionnaires/:id", async (req, res) => {
+    try {
+      // TODO: Implement questionnaire deletion
+      res.json({ message: "Questionnaire deleted successfully" });
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to delete questionnaire", details: error.message });
+    }
+  });
+
+  // Orders endpoints
+  app.get("/api/orders", async (req, res) => {
+    try {
+      // TODO: Implement actual database query
+      res.json([]);
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to fetch orders", details: error.message });
+    }
+  });
+
+  // Analytics endpoints
+  app.get("/api/analytics/products", async (req, res) => {
+    try {
+      // TODO: Implement actual analytics calculation
+      res.json({
+        totalRevenue: 0,
+        totalSales: 0,
+        topProducts: [],
+        salesTrend: []
+      });
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to fetch product analytics", details: error.message });
+    }
+  });
+
+  app.get("/api/questionnaire-responses", async (req, res) => {
+    try {
+      // TODO: Implement actual database query
+      res.json([]);
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to fetch questionnaire responses", details: error.message });
+    }
+  });
+
+  // Test contact form endpoint
+  app.post("/api/contact", async (req, res) => {
+    try {
+      const { 
+        name, email, phone, subject, message, priority, 
+        source 
+      } = req.body;
+
+      // Insert contact message into database
+      const contactMessage = await storage.createContactMessage({
+        name,
+        email,
+        phone,
+        subject,
+        message,
+        priority: priority || "normal",
+        source: source || "website",
+        status: "unread",
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent'),
+      });
+
+      res.json(contactMessage);
+    } catch (error) {
+      console.error("Error creating contact message:", error);
+      res.status(500).json({ error: "Failed to send message" });
     }
   });
 

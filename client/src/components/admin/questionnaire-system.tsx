@@ -1,670 +1,538 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
 import { 
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { 
-  FileText, 
   Plus, 
   Edit, 
+  Trash2, 
+  FileText, 
+  Users, 
+  TrendingUp, 
+  BarChart3,
   Eye,
-  Copy,
-  Settings,
-  Users,
-  Calendar,
-  Camera,
-  Heart,
-  Building,
-  Home,
-  Zap,
-  Target,
-  Clock,
-  CheckCircle
+  Settings
 } from "lucide-react";
-import { format } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
+
+interface Question {
+  id: string;
+  type: 'text' | 'textarea' | 'select' | 'radio' | 'checkbox' | 'number' | 'email';
+  question: string;
+  required: boolean;
+  options?: string[];
+}
+
+interface Questionnaire {
+  id: string;
+  name: string;
+  description: string;
+  serviceType: string;
+  questions: Question[];
+  active: boolean;
+  responses: number;
+  completionRate: number;
+  avgTime: string;
+  createdAt: string;
+}
 
 export function QuestionnaireSystem() {
-  const [newQuestionnaireOpen, setNewQuestionnaireOpen] = useState(false);
-  const [questionnaireBuilder, setQuestionnaireBuilder] = useState(false);
+  const [selectedQuestionnaire, setSelectedQuestionnaire] = useState<Questionnaire | null>(null);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-  return (
-    <div className="space-y-6">
-      {/* Feature Not Implemented Notice */}
-      <Card className="border-dashed border-2">
-        <CardContent className="p-8 text-center">
-          <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">Questionnaire System</h3>
-          <p className="text-muted-foreground mb-4">
-            This advanced questionnaire system requires database implementation for questionnaires, responses, and automation.
-            Feature planned for future development.
-          </p>
-        </CardContent>
-      </Card>
-    </div>
-  );
-
-  // Questionnaire system requires database implementation
-  const questionnaires = [
-    {
-      id: 1,
-      name: "Wedding Photography Questionnaire",
-      description: "Comprehensive pre-wedding consultation form",
-      serviceType: "wedding",
-      questions: [
-        {
-          id: "wedding_date",
-          type: "date",
-          question: "What is your wedding date?",
-          required: true
-        },
-        {
-          id: "venue_name",
-          type: "text", 
-          question: "Wedding venue name and address",
-          required: true
-        },
-        {
-          id: "guest_count",
-          type: "select",
-          question: "Approximate number of guests",
-          required: true,
-          options: ["Under 50", "50-100", "100-150", "150-200", "200+"]
-        },
-        {
-          id: "ceremony_time",
-          type: "text",
-          question: "Ceremony start time",
-          required: true
-        },
-        {
-          id: "photography_style",
-          type: "multiselect",
-          question: "Preferred photography style",
-          required: false,
-          options: ["Traditional", "Photojournalistic", "Fine Art", "Modern", "Vintage"]
-        },
-        {
-          id: "must_have_shots",
-          type: "textarea",
-          question: "Must-have shots or special requests",
-          required: false
-        },
-        {
-          id: "family_dynamics",
-          type: "textarea",
-          question: "Any family dynamics or sensitivities we should know about?",
-          required: false
-        },
-        {
-          id: "drone_coverage",
-          type: "select",
-          question: "Would you like drone coverage of the venue?",
-          required: false,
-          options: ["Yes, definitely", "Maybe, tell me more", "No thanks"]
-        }
-      ],
-      active: true,
-      responses: 23,
-      completionRate: 89,
-      avgTime: "8 minutes",
-      createdAt: "2025-06-01T10:00:00Z"
-    },
-    {
-      id: 2,
-      name: "Portrait Session Preferences",
-      description: "Individual, couple, and family portrait consultation",
-      serviceType: "portrait", 
-      questions: [
-        {
-          id: "session_purpose",
-          type: "select",
-          question: "What is the purpose of this session?",
-          required: true,
-          options: ["Family photos", "Couple photos", "Individual portraits", "Maternity", "Engagement", "Professional headshots"]
-        },
-        {
-          id: "group_size",
-          type: "text",
-          question: "How many people will be in the photos?",
-          required: true
-        },
-        {
-          id: "location_preference",
-          type: "multiselect",
-          question: "Preferred location types",
-          required: false,
-          options: ["Beach", "Urban/City", "Nature/Park", "Home/Indoor", "Studio", "Unique Hawaii Location"]
-        },
-        {
-          id: "style_inspiration",
-          type: "textarea",
-          question: "Any inspiration photos or style preferences?",
-          required: false
-        },
-        {
-          id: "wardrobe_guidance",
-          type: "select",
-          question: "Would you like wardrobe styling advice?",
-          required: false,
-          options: ["Yes, please!", "Just basic tips", "No, we're all set"]
-        },
-        {
-          id: "children_ages",
-          type: "text",
-          question: "If including children, what are their ages?",
-          required: false
-        }
-      ],
-      active: true,
-      responses: 34,
-      completionRate: 94,
-      avgTime: "5 minutes",
-      createdAt: "2025-05-15T14:30:00Z"
-    },
-    {
-      id: 3,
-      name: "Corporate Event Photography Brief",
-      description: "Business event and corporate photography requirements",
-      serviceType: "corporate",
-      questions: [
-        {
-          id: "event_type",
-          type: "select",
-          question: "Type of corporate event",
-          required: true,
-          options: ["Conference", "Product Launch", "Team Building", "Awards Ceremony", "Company Party", "Headshots", "Other"]
-        },
-        {
-          id: "company_name",
-          type: "text",
-          question: "Company name",
-          required: true
-        },
-        {
-          id: "event_duration",
-          type: "text",
-          question: "Event duration (hours)",
-          required: true
-        },
-        {
-          id: "key_moments",
-          type: "textarea",
-          question: "Key moments or speakers to capture",
-          required: true
-        },
-        {
-          id: "branding_requirements",
-          type: "textarea",
-          question: "Brand guidelines or photo requirements",
-          required: false
-        },
-        {
-          id: "delivery_timeline",
-          type: "select",
-          question: "Photo delivery timeline needed",
-          required: true,
-          options: ["Same day", "24 hours", "48 hours", "1 week", "Flexible"]
-        }
-      ],
-      active: true,
-      responses: 12,
-      completionRate: 83,
-      avgTime: "6 minutes", 
-      createdAt: "2025-04-20T09:15:00Z"
-    },
-    {
-      id: 4,
-      name: "Real Estate Photography Requirements",
-      description: "Property photography specifications and requirements",
-      serviceType: "real_estate",
-      questions: [
-        {
-          id: "property_type",
-          type: "select",
-          question: "Property type",
-          required: true,
-          options: ["Single Family Home", "Condo/Townhouse", "Commercial Property", "Vacation Rental", "Land/Development"]
-        },
-        {
-          id: "property_size",
-          type: "text",
-          question: "Approximate square footage",
-          required: false
-        },
-        {
-          id: "special_features",
-          type: "multiselect",
-          question: "Special features to highlight",
-          required: false,
-          options: ["Ocean View", "Mountain View", "Pool", "Large Yard", "Updated Kitchen", "Home Theater", "Wine Cellar", "Garage"]
-        },
-        {
-          id: "drone_required",
-          type: "select",
-          question: "Drone photography needed?",
-          required: true,
-          options: ["Yes, essential", "Yes, if weather permits", "No"]
-        },
-        {
-          id: "listing_timeline",
-          type: "select",
-          question: "When does the property go on market?",
-          required: true,
-          options: ["This week", "Next week", "Within a month", "Flexible"]
-        },
-        {
-          id: "virtual_tour",
-          type: "select",
-          question: "Interest in virtual tour add-on?",
-          required: false,
-          options: ["Very interested", "Maybe", "Not needed"]
-        }
-      ],
-      active: true,
-      responses: 18,
-      completionRate: 91,
-      avgTime: "4 minutes",
-      createdAt: "2025-05-01T16:45:00Z"
-    },
-    {
-      id: 5,
-      name: "Adventure/Lifestyle Session Planning",
-      description: "Active lifestyle and adventure photography preparation",
-      serviceType: "adventure",
-      questions: [
-        {
-          id: "activity_type",
-          type: "multiselect",
-          question: "Activities to capture",
-          required: true,
-          options: ["Surfing", "Hiking", "Yoga", "Rock Climbing", "Biking", "Running", "Beach Activities", "Water Sports"]
-        },
-        {
-          id: "experience_level",
-          type: "select",
-          question: "Your experience level with this activity",
-          required: false,
-          options: ["Beginner", "Intermediate", "Advanced", "Professional"]
-        },
-        {
-          id: "safety_considerations",
-          type: "textarea",
-          question: "Any safety considerations or physical limitations?",
-          required: false
-        },
-        {
-          id: "gear_provided",
-          type: "select",
-          question: "Do you have your own gear/equipment?",
-          required: false,
-          options: ["Yes, everything", "Some items", "Need to rent", "Not sure"]
-        },
-        {
-          id: "action_preference",
-          type: "select",
-          question: "Photo style preference",
-          required: false,
-          options: ["Action shots", "Lifestyle/posed", "Mix of both", "Candid moments"]
-        }
-      ],
-      active: true,
-      responses: 8,
-      completionRate: 75,
-      avgTime: "7 minutes",
-      createdAt: "2025-03-10T11:30:00Z"
-    }
-  ];
-
-  // Fetch real questionnaire responses from database
-  const { data: responses = [] } = useQuery({
-    queryKey: ['/api/questionnaire-responses'],
+  // Fetch questionnaires from real database
+  const { data: questionnaires = [], isLoading } = useQuery({
+    queryKey: ['/api/questionnaires'],
     queryFn: async () => {
-      const response = await fetch('/api/questionnaire-responses');
-      if (!response.ok) throw new Error('Failed to fetch questionnaire responses');
+      const response = await fetch('/api/questionnaires');
+      if (!response.ok) throw new Error('Failed to fetch questionnaires');
       return response.json();
     }
   });
 
-  const getServiceIcon = (serviceType: string) => {
-    switch (serviceType) {
-      case "wedding": return <Heart className="h-4 w-4" />;
-      case "portrait": return <Users className="h-4 w-4" />;
-      case "corporate": return <Building className="h-4 w-4" />;
-      case "real_estate": return <Home className="h-4 w-4" />;
-      case "adventure": return <Zap className="h-4 w-4" />;
-      default: return <Camera className="h-4 w-4" />;
+  // Fetch questionnaire responses
+  const { data: responses = [] } = useQuery({
+    queryKey: ['/api/questionnaire-responses'],
+    queryFn: async () => {
+      const response = await fetch('/api/questionnaire-responses');
+      if (!response.ok) throw new Error('Failed to fetch responses');
+      return response.json();
+    }
+  });
+
+  // Create questionnaire mutation
+  const createQuestionnaireMutation = useMutation({
+    mutationFn: async (questionnaireData: any) => {
+      const response = await fetch('/api/questionnaires', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(questionnaireData),
+      });
+      if (!response.ok) throw new Error('Failed to create questionnaire');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Success", description: "Questionnaire created successfully" });
+      queryClient.invalidateQueries({ queryKey: ['/api/questionnaires'] });
+      setSelectedQuestionnaire(null);
+      setQuestions([]);
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to create questionnaire", variant: "destructive" });
+    },
+  });
+
+  // Update questionnaire mutation
+  const updateQuestionnaireMutation = useMutation({
+    mutationFn: async ({ id, ...questionnaireData }: any) => {
+      const response = await fetch(`/api/questionnaires/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(questionnaireData),
+      });
+      if (!response.ok) throw new Error('Failed to update questionnaire');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Success", description: "Questionnaire updated successfully" });
+      queryClient.invalidateQueries({ queryKey: ['/api/questionnaires'] });
+      setSelectedQuestionnaire(null);
+      setQuestions([]);
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to update questionnaire", variant: "destructive" });
+    },
+  });
+
+  // Delete questionnaire mutation
+  const deleteQuestionnaireMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/api/questionnaires/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete questionnaire');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Success", description: "Questionnaire deleted successfully" });
+      queryClient.invalidateQueries({ queryKey: ['/api/questionnaires'] });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to delete questionnaire", variant: "destructive" });
+    },
+  });
+
+  const addQuestion = () => {
+    const newQuestion: Question = {
+      id: `q_${Date.now()}`,
+      type: 'text',
+      question: '',
+      required: false,
+      options: []
+    };
+    setQuestions([...questions, newQuestion]);
+  };
+
+  const updateQuestion = (index: number, field: keyof Question, value: any) => {
+    const updatedQuestions = [...questions];
+    updatedQuestions[index] = { ...updatedQuestions[index], [field]: value };
+    setQuestions(updatedQuestions);
+  };
+
+  const removeQuestion = (index: number) => {
+    setQuestions(questions.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = (formData: FormData) => {
+    const questionnaireData = {
+      name: formData.get('name'),
+      description: formData.get('description'),
+      serviceType: formData.get('serviceType'),
+      questions: questions,
+      active: formData.get('active') === 'true',
+    };
+
+    if (selectedQuestionnaire) {
+      updateQuestionnaireMutation.mutate({ id: selectedQuestionnaire.id, ...questionnaireData });
+    } else {
+      createQuestionnaireMutation.mutate(questionnaireData);
     }
   };
 
-  const getQuestionIcon = (type: string) => {
-    switch (type) {
-      case "text": return "📝";
-      case "textarea": return "📄"; 
-      case "select": return "📋";
-      case "multiselect": return "☑️";
-      case "date": return "📅";
-      case "file": return "📎";
-      default: return "❓";
-    }
+  const openEditDialog = (questionnaire: Questionnaire) => {
+    setSelectedQuestionnaire(questionnaire);
+    setQuestions(questionnaire.questions);
   };
 
-  const questionnaireStats = {
-    total: questionnaires.length,
-    active: questionnaires.filter(q => q.active).length,
-    totalResponses: questionnaires.reduce((sum, q) => sum + q.responses, 0),
-    avgCompletion: Math.round(questionnaires.reduce((sum, q) => sum + q.completionRate, 0) / questionnaires.length)
+  const resetForm = () => {
+    setSelectedQuestionnaire(null);
+    setQuestions([]);
   };
+
+  // Calculate real metrics
+  const totalQuestionnaires = questionnaires.length;
+  const activeQuestionnaires = questionnaires.filter((q: any) => q.active).length;
+  const totalResponses = questionnaires.reduce((sum: number, q: any) => sum + (q.responses || 0), 0);
+  const averageCompletion = questionnaires.length > 0 
+    ? questionnaires.reduce((sum: number, q: any) => sum + (q.completionRate || 0), 0) / questionnaires.length 
+    : 0;
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="animate-pulse">
+          <div className="h-8 bg-muted rounded w-1/3 mb-4"></div>
+          <div className="grid md:grid-cols-4 gap-6 mb-6">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="h-32 bg-muted rounded"></div>
+            ))}
+          </div>
+          <div className="h-96 bg-muted rounded"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      {/* Questionnaire Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <FileText className="h-4 w-4 text-bronze" />
-              <div>
-                <p className="text-2xl font-bold">{questionnaireStats.total}</p>
-                <p className="text-xs text-muted-foreground">Total Forms</p>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-playfair font-bold">Questionnaire System</h1>
+          <p className="text-muted-foreground">Create and manage client questionnaires</p>
+        </div>
+
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="bg-bronze hover:bg-bronze/90" onClick={resetForm}>
+              <Plus className="h-4 w-4 mr-2" />
+              Create Questionnaire
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>
+                {selectedQuestionnaire ? 'Edit Questionnaire' : 'Create New Questionnaire'}
+              </DialogTitle>
+            </DialogHeader>
+            <form action={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="name">Questionnaire Name</Label>
+                  <Input 
+                    id="name" 
+                    name="name" 
+                    defaultValue={selectedQuestionnaire?.name}
+                    required 
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="serviceType">Service Type</Label>
+                  <Select name="serviceType" defaultValue={selectedQuestionnaire?.serviceType}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select service type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="wedding">Wedding</SelectItem>
+                      <SelectItem value="portrait">Portrait</SelectItem>
+                      <SelectItem value="corporate">Corporate</SelectItem>
+                      <SelectItem value="event">Event</SelectItem>
+                      <SelectItem value="commercial">Commercial</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="col-span-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea 
+                    id="description" 
+                    name="description" 
+                    defaultValue={selectedQuestionnaire?.description}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="active">Status</Label>
+                  <Select name="active" defaultValue={selectedQuestionnaire?.active ? "true" : "false"}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="true">Active</SelectItem>
+                      <SelectItem value="false">Draft</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
+
+              {/* Questions Section */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold">Questions</h3>
+                  <Button type="button" onClick={addQuestion} variant="outline" size="sm">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Question
+                  </Button>
+                </div>
+
+                {questions.map((question, index) => (
+                  <Card key={question.id}>
+                    <CardContent className="p-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label>Question</Label>
+                          <Input
+                            value={question.question}
+                            onChange={(e) => updateQuestion(index, 'question', e.target.value)}
+                            placeholder="Enter your question"
+                          />
+                        </div>
+                        <div>
+                          <Label>Type</Label>
+                          <Select 
+                            value={question.type} 
+                            onValueChange={(value) => updateQuestion(index, 'type', value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="text">Text Input</SelectItem>
+                              <SelectItem value="textarea">Long Text</SelectItem>
+                              <SelectItem value="select">Dropdown</SelectItem>
+                              <SelectItem value="radio">Radio Buttons</SelectItem>
+                              <SelectItem value="checkbox">Checkboxes</SelectItem>
+                              <SelectItem value="number">Number</SelectItem>
+                              <SelectItem value="email">Email</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {(question.type === 'select' || question.type === 'radio' || question.type === 'checkbox') && (
+                          <div className="col-span-2">
+                            <Label>Options (one per line)</Label>
+                            <Textarea
+                              value={question.options?.join('\n') || ''}
+                              onChange={(e) => updateQuestion(index, 'options', e.target.value.split('\n').filter(Boolean))}
+                              placeholder="Option 1&#10;Option 2&#10;Option 3"
+                            />
+                          </div>
+                        )}
+
+                        <div className="col-span-2 flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              checked={question.required}
+                              onCheckedChange={(checked) => updateQuestion(index, 'required', checked)}
+                            />
+                            <Label>Required</Label>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => removeQuestion(index)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+
+                {questions.length === 0 && (
+                  <div className="text-center py-8 text-muted-foreground border-2 border-dashed rounded-lg">
+                    No questions added yet. Click "Add Question" to get started.
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-end space-x-2">
+                <Button 
+                  type="submit" 
+                  disabled={createQuestionnaireMutation.isPending || updateQuestionnaireMutation.isPending}
+                >
+                  {selectedQuestionnaire ? 'Update Questionnaire' : 'Create Questionnaire'}
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid md:grid-cols-4 gap-6">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Questionnaires</p>
+                <p className="text-3xl font-bold">{totalQuestionnaires}</p>
+              </div>
+              <FileText className="h-8 w-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <CheckCircle className="h-4 w-4 text-green-500" />
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-2xl font-bold">{questionnaireStats.active}</p>
-                <p className="text-xs text-muted-foreground">Active Forms</p>
+                <p className="text-sm font-medium text-muted-foreground">Active Questionnaires</p>
+                <p className="text-3xl font-bold">{activeQuestionnaires}</p>
               </div>
+              <Settings className="h-8 w-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Users className="h-4 w-4 text-blue-500" />
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-2xl font-bold">{questionnaireStats.totalResponses}</p>
-                <p className="text-xs text-muted-foreground">Responses</p>
+                <p className="text-sm font-medium text-muted-foreground">Total Responses</p>
+                <p className="text-3xl font-bold">{totalResponses}</p>
               </div>
+              <Users className="h-8 w-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Target className="h-4 w-4 text-purple-500" />
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-2xl font-bold">{questionnaireStats.avgCompletion}%</p>
-                <p className="text-xs text-muted-foreground">Completion Rate</p>
+                <p className="text-sm font-medium text-muted-foreground">Avg Completion</p>
+                <p className="text-3xl font-bold">{averageCompletion.toFixed(0)}%</p>
               </div>
+              <TrendingUp className="h-8 w-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Questionnaire Management */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <span className="flex items-center">
-              <FileText className="h-5 w-5 mr-2" />
-              Questionnaire Templates
-            </span>
-            <div className="flex space-x-2">
-              <Button variant="outline" onClick={() => setQuestionnaireBuilder(true)}>
-                <Settings className="h-4 w-4 mr-2" />
-                Builder
-              </Button>
-              <Button className="btn-bronze" onClick={() => setNewQuestionnaireOpen(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Create Form
-              </Button>
-            </div>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {questionnaires.map((questionnaire) => (
-              <div key={questionnaire.id} className="border rounded-lg p-4">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <div className="text-bronze">
-                        {getServiceIcon(questionnaire.serviceType)}
-                      </div>
-                      <h3 className="font-semibold">{questionnaire.name}</h3>
-                      <Badge variant={questionnaire.active ? "default" : "secondary"}>
-                        {questionnaire.active ? "Active" : "Inactive"}
-                      </Badge>
-                      <Badge variant="outline" className="capitalize">
-                        {questionnaire.serviceType.replace(/_/g, ' ')}
-                      </Badge>
-                    </div>
-                    
-                    <p className="text-sm text-muted-foreground mb-3">{questionnaire.description}</p>
-                    
-                    <div className="grid md:grid-cols-4 gap-4 text-sm mb-4">
-                      <div>
-                        <p className="text-muted-foreground">Questions</p>
-                        <p className="font-medium">{questionnaire.questions.length}</p>
-                      </div>
-                      <div>
-                        <p className="text-muted-foreground">Responses</p>
-                        <p className="font-medium">{questionnaire.responses}</p>
-                      </div>
-                      <div>
-                        <p className="text-muted-foreground">Completion Rate</p>
-                        <p className="font-medium">{questionnaire.completionRate}%</p>
-                      </div>
-                      <div>
-                        <p className="text-muted-foreground">Avg Time</p>
-                        <p className="font-medium">{questionnaire.avgTime}</p>
-                      </div>
-                    </div>
+      {/* Main Content */}
+      <Tabs defaultValue="questionnaires" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="questionnaires">Questionnaires</TabsTrigger>
+          <TabsTrigger value="responses">Responses</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+        </TabsList>
 
-                    {/* Question Preview */}
-                    <div>
-                      <p className="text-sm font-medium mb-2">Questions Preview:</p>
-                      <div className="flex flex-wrap gap-2">
-                        {questionnaire.questions.slice(0, 5).map((question, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
-                            {getQuestionIcon(question.type)} {question.question.substring(0, 30)}...
-                          </Badge>
-                        ))}
-                        {questionnaire.questions.length > 5 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{questionnaire.questions.length - 5} more
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex flex-col space-y-2">
-                    <Button size="sm" variant="outline">
-                      <Edit className="h-3 w-3 mr-1" />
-                      Edit
-                    </Button>
-                    <Button size="sm" variant="outline">
-                      <Eye className="h-3 w-3 mr-1" />
-                      Preview
-                    </Button>
-                    <Button size="sm" variant="outline">
-                      <Copy className="h-3 w-3 mr-1" />
-                      Duplicate
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Recent Responses */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <Clock className="h-5 w-5 mr-2" />
-            Recent Form Responses
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {responses.map((response: any) => {
-              const questionnaire = questionnaires.find(q => q.id === response.questionnaireId);
-              return (
-                <div key={response.id} className="border rounded-lg p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <h3 className="font-semibold">{response.clientName}</h3>
-                        <span className="text-muted-foreground">•</span>
-                        <span className="text-sm text-muted-foreground">{questionnaire?.name}</span>
-                        <Badge variant="outline">
-                          {format(new Date(response.completedAt), "MMM d, yyyy")}
-                        </Badge>
-                      </div>
-                      
-                      <div className="text-sm text-muted-foreground mb-2">
-                        <strong>Session Date:</strong> {format(new Date(response.bookingDate), "MMMM d, yyyy")}
-                      </div>
-                      
-                      <div className="space-y-1 text-sm">
-                        {Object.entries(response.responses).slice(0, 3).map(([key, value]) => (
-                          <div key={key} className="flex">
-                            <span className="text-muted-foreground w-32 capitalize">{key.replace(/_/g, ' ')}:</span>
-                            <span className="flex-1">
-                              {Array.isArray(value) ? value.join(', ') : String(value)}
-                            </span>
+        <TabsContent value="questionnaires" className="space-y-4">
+          <Card>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Service Type</TableHead>
+                    <TableHead>Questions</TableHead>
+                    <TableHead>Responses</TableHead>
+                    <TableHead>Completion Rate</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {questionnaires.length > 0 ? (
+                    questionnaires.map((questionnaire: any) => (
+                      <TableRow key={questionnaire.id}>
+                        <TableCell>
+                          <div>
+                            <p className="font-semibold">{questionnaire.name}</p>
+                            <p className="text-sm text-muted-foreground">{questionnaire.description}</p>
                           </div>
-                        ))}
-                        {Object.keys(response.responses).length > 3 && (
-                          <div className="text-bronze text-sm">
-                            +{Object.keys(response.responses).length - 3} more responses
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="capitalize">
+                            {questionnaire.serviceType}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{questionnaire.questions?.length || 0}</TableCell>
+                        <TableCell>{questionnaire.responses || 0}</TableCell>
+                        <TableCell>{questionnaire.completionRate || 0}%</TableCell>
+                        <TableCell>
+                          <Badge variant={questionnaire.active ? "default" : "secondary"}>
+                            {questionnaire.active ? "Active" : "Draft"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center space-x-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => openEditDialog(questionnaire)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => deleteQuestionnaireMutation.mutate(questionnaire.id)}
+                              disabled={deleteQuestionnaireMutation.isPending}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
                           </div>
-                        )}
-                      </div>
-                    </div>
-                    
-                    <div className="flex flex-col space-y-2">
-                      <Button size="sm" variant="outline">
-                        <Eye className="h-3 w-3 mr-1" />
-                        View Full
-                      </Button>
-                      <Button size="sm" className="btn-bronze">
-                        <Calendar className="h-3 w-3 mr-1" />
-                        Plan Session
-                      </Button>
-                    </div>
-                  </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                        No questionnaires created yet.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="responses" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Questionnaire Responses</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {responses.length > 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  Response management feature requires additional implementation.
                 </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  No responses collected yet.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      {/* Create New Questionnaire Dialog */}
-      <Dialog open={newQuestionnaireOpen} onOpenChange={setNewQuestionnaireOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Create New Questionnaire</DialogTitle>
-            <DialogDescription>
-              Create custom questionnaires for different photography services and client types.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium">Questionnaire Name</label>
-                <Input placeholder="e.g., Wedding Photography Consultation" />
+        <TabsContent value="analytics" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Response Analytics</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8 text-muted-foreground">
+                Analytics feature requires additional implementation.
               </div>
-              <div>
-                <label className="text-sm font-medium">Service Type</label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select service type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="wedding">Wedding</SelectItem>
-                    <SelectItem value="portrait">Portrait</SelectItem>
-                    <SelectItem value="corporate">Corporate</SelectItem>
-                    <SelectItem value="real_estate">Real Estate</SelectItem>
-                    <SelectItem value="adventure">Adventure</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div>
-              <label className="text-sm font-medium">Description</label>
-              <Textarea placeholder="Describe what this questionnaire covers..." />
-            </div>
-            <div className="flex items-center space-x-2">
-              <Switch />
-              <label className="text-sm">Active immediately</label>
-            </div>
-            <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setNewQuestionnaireOpen(false)}>
-                Cancel
-              </Button>
-              <Button className="btn-bronze">
-                Create & Add Questions
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Questionnaire Builder Modal */}
-      <Dialog open={questionnaireBuilder} onOpenChange={setQuestionnaireBuilder}>
-        <DialogContent className="max-w-4xl">
-          <DialogHeader>
-            <DialogTitle>Questionnaire Builder</DialogTitle>
-          </DialogHeader>
-          <div className="text-center py-12">
-            <Settings className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="text-lg font-semibold mb-2">Advanced Form Builder</h3>
-            <p className="text-muted-foreground mb-6">
-              Drag-and-drop question builder with conditional logic, file uploads, and smart validation
-            </p>
-            <div className="grid md:grid-cols-3 gap-4">
-              <div className="p-4 border rounded-lg">
-                <FileText className="h-8 w-8 mx-auto mb-2 text-bronze" />
-                <h4 className="font-medium">Question Types</h4>
-                <p className="text-sm text-muted-foreground">Text, date, select, multi-select, file upload</p>
-              </div>
-              <div className="p-4 border rounded-lg">
-                <Zap className="h-8 w-8 mx-auto mb-2 text-bronze" />
-                <h4 className="font-medium">Smart Logic</h4>
-                <p className="text-sm text-muted-foreground">Conditional questions based on answers</p>
-              </div>
-              <div className="p-4 border rounded-lg">
-                <Target className="h-8 w-8 mx-auto mb-2 text-bronze" />
-                <h4 className="font-medium">Analytics</h4>
-                <p className="text-sm text-muted-foreground">Response tracking and insights</p>
-              </div>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

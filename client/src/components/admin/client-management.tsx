@@ -402,7 +402,7 @@ export function ClientManagement() {
               ) : (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                    {searchTerm ? 'No clients found matching your search.' : 'No clients found.'}
+                    No clients found.
                   </TableCell>
                 </TableRow>
               )}

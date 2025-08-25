@@ -1,538 +1,513 @@
+
 import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { 
-  ShoppingCart, 
+  Plus, 
+  Edit, 
+  Trash2, 
   Package, 
   DollarSign, 
-  TrendingUp,
-  Plus,
-  Edit,
+  TrendingUp, 
+  ShoppingCart,
   Eye,
-  Truck,
-  Image,
-  FileText,
-  Star,
-  Award,
-  Users
+  Search
 } from "lucide-react";
-import { format } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
 
 export function ProductSales() {
-  return (
-    <div className="space-y-6">
-      {/* Feature Not Implemented Notice */}
-      <Card className="border-dashed border-2">
-        <CardContent className="p-8 text-center">
-          <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">Product Sales System</h3>
-          <p className="text-muted-foreground mb-4">
-            This advanced e-commerce system requires database implementation for products, orders, inventory, and shipping.
-            Feature planned for future development.
-          </p>
-        </CardContent>
-      </Card>
-    </div>
-  );
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-  const [newProductOpen, setNewProductOpen] = useState(false);
-
-  // Product sales feature requires database implementation
-  const products = [
-    {
-      id: 1,
-      name: "8x10 Premium Prints",
-      description: "Professional quality prints on premium photo paper",
-      category: "prints",
-      price: 25.00,
-      cost: 8.50,
-      sku: "PRINT-8X10",
-      variants: [
-        { name: "Matte Finish", price: 25.00 },
-        { name: "Glossy Finish", price: 25.00 },
-        { name: "Metallic Finish", price: 35.00 }
-      ],
-      active: true,
-      sales: 45,
-      revenue: 1125.00,
-      createdAt: "2025-06-01T10:00:00Z"
-    },
-    {
-      id: 2,
-      name: "Wedding Album - Luxury",
-      description: "50-page premium leather wedding album with custom design",
-      category: "albums",
-      price: 450.00,
-      cost: 180.00,
-      sku: "ALBUM-WEDDING-LUX",
-      variants: [
-        { name: "Black Leather", price: 450.00 },
-        { name: "Brown Leather", price: 450.00 },
-        { name: "White Leather", price: 475.00 }
-      ],
-      active: true,
-      sales: 8,
-      revenue: 3600.00,
-      createdAt: "2025-05-15T14:30:00Z"
-    },
-    {
-      id: 3,
-      name: "Canvas Wall Art - 16x20",
-      description: "Gallery-wrapped canvas prints ready to hang",
-      category: "canvas",
-      price: 85.00,
-      cost: 25.00,
-      sku: "CANVAS-16X20",
-      variants: [
-        { name: "Standard Wrap", price: 85.00 },
-        { name: "Floating Frame", price: 125.00 }
-      ],
-      active: true,
-      sales: 23,
-      revenue: 1955.00,
-      createdAt: "2025-05-20T09:15:00Z"
-    },
-    {
-      id: 4,
-      name: "Digital Download Package",
-      description: "High-resolution digital files with print release",
-      category: "digital",
-      price: 150.00,
-      cost: 0.00,
-      sku: "DIGITAL-PACK",
-      variants: [
-        { name: "Standard Resolution", price: 150.00 },
-        { name: "High Resolution + RAW", price: 250.00 }
-      ],
-      active: true,
-      sales: 67,
-      revenue: 10050.00,
-      createdAt: "2025-04-10T16:45:00Z"
-    },
-    {
-      id: 5,
-      name: "Portrait Session Prints",
-      description: "Curated print package from portrait sessions",
-      category: "prints",
-      price: 75.00,
-      cost: 20.00,
-      sku: "PORTRAIT-PRINTS",
-      variants: [
-        { name: "5 Prints (5x7)", price: 75.00 },
-        { name: "10 Prints (5x7)", price: 125.00 },
-        { name: "Mixed Size Package", price: 150.00 }
-      ],
-      active: true,
-      sales: 31,
-      revenue: 2325.00,
-      createdAt: "2025-03-25T11:20:00Z"
+  // Fetch products from real database
+  const { data: products = [], isLoading: productsLoading } = useQuery({
+    queryKey: ['/api/products'],
+    queryFn: async () => {
+      const response = await fetch('/api/products');
+      if (!response.ok) throw new Error('Failed to fetch products');
+      return response.json();
     }
-  ];
+  });
 
-  // Mock orders data
-  const orders = [
-    {
-      id: 1,
-      clientId: 1,
-      clientName: "Sarah Johnson",
-      items: [
-        { productId: 2, variant: "Black Leather", quantity: 1, price: 450.00 },
-        { productId: 1, variant: "Matte Finish", quantity: 10, price: 250.00 }
-      ],
-      subtotal: 700.00,
-      tax: 56.00,
-      shipping: 15.00,
-      total: 771.00,
-      status: "shipped",
-      trackingNumber: "1Z999AA1234567890",
-      createdAt: "2025-07-08T14:30:00Z",
-      fulfilledAt: "2025-07-10T09:15:00Z"
-    },
-    {
-      id: 2,
-      clientId: 3,
-      clientName: "Emily Rodriguez",
-      items: [
-        { productId: 3, variant: "Floating Frame", quantity: 2, price: 250.00 },
-        { productId: 4, variant: "High Resolution + RAW", quantity: 1, price: 250.00 }
-      ],
-      subtotal: 500.00,
-      tax: 40.00,
-      shipping: 20.00,
-      total: 560.00,
-      status: "processing",
-      trackingNumber: null,
-      createdAt: "2025-07-09T16:20:00Z",
-      fulfilledAt: null
-    },
-    {
-      id: 3,
-      clientId: 5,
-      clientName: "Jessica Martinez",
-      items: [
-        { productId: 5, variant: "Mixed Size Package", quantity: 1, price: 150.00 }
-      ],
-      subtotal: 150.00,
-      tax: 12.00,
-      shipping: 10.00,
-      total: 172.00,
-      status: "pending",
-      trackingNumber: null,
-      createdAt: "2025-07-11T10:45:00Z",
-      fulfilledAt: null
+  // Fetch sales analytics from real database
+  const { data: analytics } = useQuery({
+    queryKey: ['/api/analytics/products'],
+    queryFn: async () => {
+      const response = await fetch('/api/analytics/products');
+      if (!response.ok) throw new Error('Failed to fetch analytics');
+      return response.json();
     }
-  ];
+  });
 
-  const productStats = {
-    totalProducts: products.length,
-    activeProducts: products.filter(p => p.active).length,
-    totalRevenue: products.reduce((sum, p) => sum + p.revenue, 0),
-    totalSales: products.reduce((sum, p) => sum + p.sales, 0),
-    avgOrderValue: 305.00,
-    topCategory: "Digital"
-  };
+  // Fetch orders from real database
+  const { data: orders = [] } = useQuery({
+    queryKey: ['/api/orders'],
+    queryFn: async () => {
+      const response = await fetch('/api/orders');
+      if (!response.ok) throw new Error('Failed to fetch orders');
+      return response.json();
+    }
+  });
 
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case "prints": return <Image className="h-4 w-4" />;
-      case "albums": return <FileText className="h-4 w-4" />;
-      case "canvas": return <Award className="h-4 w-4" />;
-      case "digital": return <Package className="h-4 w-4" />;
-      default: return <ShoppingCart className="h-4 w-4" />;
+  // Create product mutation
+  const createProductMutation = useMutation({
+    mutationFn: async (productData: any) => {
+      const response = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(productData),
+      });
+      if (!response.ok) throw new Error('Failed to create product');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Success", description: "Product created successfully" });
+      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+      setSelectedProduct(null);
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to create product", variant: "destructive" });
+    },
+  });
+
+  // Update product mutation
+  const updateProductMutation = useMutation({
+    mutationFn: async ({ id, ...productData }: any) => {
+      const response = await fetch(`/api/products/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(productData),
+      });
+      if (!response.ok) throw new Error('Failed to update product');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Success", description: "Product updated successfully" });
+      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+      setSelectedProduct(null);
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to update product", variant: "destructive" });
+    },
+  });
+
+  // Delete product mutation
+  const deleteProductMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/api/products/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete product');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Success", description: "Product deleted successfully" });
+      queryClient.invalidateQueries({ queryKey: ['/api/products'] });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to delete product", variant: "destructive" });
+    },
+  });
+
+  // Filter products
+  const filteredProducts = products.filter((product: any) => {
+    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         product.sku?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = categoryFilter === "all" || product.category === categoryFilter;
+    const matchesStatus = statusFilter === "all" || 
+                         (statusFilter === "active" && product.active) ||
+                         (statusFilter === "inactive" && !product.active);
+    
+    return matchesSearch && matchesCategory && matchesStatus;
+  });
+
+  const handleSubmit = (formData: FormData) => {
+    const productData = {
+      name: formData.get('name'),
+      description: formData.get('description'),
+      category: formData.get('category'),
+      price: parseFloat(formData.get('price') as string),
+      cost: parseFloat(formData.get('cost') as string) || 0,
+      sku: formData.get('sku'),
+      active: formData.get('active') === 'true',
+    };
+
+    if (selectedProduct) {
+      updateProductMutation.mutate({ id: selectedProduct.id, ...productData });
+    } else {
+      createProductMutation.mutate(productData);
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "shipped": return "bg-green-100 text-green-800";
-      case "processing": return "bg-blue-100 text-blue-800";
-      case "pending": return "bg-yellow-100 text-yellow-800";
-      case "delivered": return "bg-purple-100 text-purple-800";
-      case "cancelled": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
-    }
-  };
+  // Calculate real metrics from actual data
+  const totalProducts = products.length;
+  const totalRevenue = products.reduce((sum: number, product: any) => sum + (product.revenue || 0), 0);
+  const totalSales = products.reduce((sum: number, product: any) => sum + (product.sales || 0), 0);
+  const averageOrderValue = totalSales > 0 ? totalRevenue / totalSales : 0;
 
-  const calculateMargin = (price: number, cost: number) => {
-    if (price === 0) return 0;
-    return Math.round(((price - cost) / price) * 100);
-  };
+  if (productsLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="animate-pulse">
+          <div className="h-8 bg-muted rounded w-1/3 mb-4"></div>
+          <div className="grid md:grid-cols-4 gap-6 mb-6">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="h-32 bg-muted rounded"></div>
+            ))}
+          </div>
+          <div className="h-96 bg-muted rounded"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      {/* Product Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Package className="h-4 w-4 text-bronze" />
-              <div>
-                <p className="text-2xl font-bold">{productStats.totalProducts}</p>
-                <p className="text-xs text-muted-foreground">Products</p>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-playfair font-bold">Product Sales</h1>
+          <p className="text-muted-foreground">Manage products and track sales performance</p>
+        </div>
+        
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="bg-bronze hover:bg-bronze/90" onClick={() => setSelectedProduct(null)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Product
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>{selectedProduct ? 'Edit Product' : 'Create New Product'}</DialogTitle>
+            </DialogHeader>
+            <form action={handleSubmit}>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="name">Product Name</Label>
+                  <Input 
+                    id="name" 
+                    name="name" 
+                    defaultValue={selectedProduct?.name}
+                    required 
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="sku">SKU</Label>
+                  <Input 
+                    id="sku" 
+                    name="sku" 
+                    defaultValue={selectedProduct?.sku}
+                  />
+                </div>
+                <div className="col-span-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea 
+                    id="description" 
+                    name="description" 
+                    defaultValue={selectedProduct?.description}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="category">Category</Label>
+                  <Select name="category" defaultValue={selectedProduct?.category}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="prints">Prints</SelectItem>
+                      <SelectItem value="albums">Albums</SelectItem>
+                      <SelectItem value="canvas">Canvas</SelectItem>
+                      <SelectItem value="digital">Digital</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="price">Price ($)</Label>
+                  <Input 
+                    id="price" 
+                    name="price" 
+                    type="number" 
+                    step="0.01"
+                    defaultValue={selectedProduct?.price}
+                    required 
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="cost">Cost ($)</Label>
+                  <Input 
+                    id="cost" 
+                    name="cost" 
+                    type="number" 
+                    step="0.01"
+                    defaultValue={selectedProduct?.cost}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="active">Status</Label>
+                  <Select name="active" defaultValue={selectedProduct?.active ? "true" : "false"}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="true">Active</SelectItem>
+                      <SelectItem value="false">Inactive</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
+              <div className="flex justify-end space-x-2 mt-6">
+                <Button type="submit" disabled={createProductMutation.isPending || updateProductMutation.isPending}>
+                  {selectedProduct ? 'Update Product' : 'Create Product'}
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid md:grid-cols-4 gap-6">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Products</p>
+                <p className="text-3xl font-bold">{totalProducts}</p>
+              </div>
+              <Package className="h-8 w-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
-
+        
         <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <ShoppingCart className="h-4 w-4 text-blue-500" />
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-2xl font-bold">{productStats.totalSales}</p>
-                <p className="text-xs text-muted-foreground">Total Sales</p>
+                <p className="text-sm font-medium text-muted-foreground">Total Revenue</p>
+                <p className="text-3xl font-bold">${totalRevenue.toLocaleString()}</p>
               </div>
+              <DollarSign className="h-8 w-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
-
+        
         <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <DollarSign className="h-4 w-4 text-green-500" />
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-2xl font-bold">${productStats.totalRevenue.toLocaleString()}</p>
-                <p className="text-xs text-muted-foreground">Revenue</p>
+                <p className="text-sm font-medium text-muted-foreground">Total Sales</p>
+                <p className="text-3xl font-bold">{totalSales}</p>
               </div>
+              <ShoppingCart className="h-8 w-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
-
+        
         <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <TrendingUp className="h-4 w-4 text-purple-500" />
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-2xl font-bold">${productStats.avgOrderValue}</p>
-                <p className="text-xs text-muted-foreground">Avg Order</p>
+                <p className="text-sm font-medium text-muted-foreground">Avg Order Value</p>
+                <p className="text-3xl font-bold">${averageOrderValue.toFixed(2)}</p>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Star className="h-4 w-4 text-yellow-500" />
-              <div>
-                <p className="text-2xl font-bold">{productStats.topCategory}</p>
-                <p className="text-xs text-muted-foreground">Top Category</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Users className="h-4 w-4 text-red-500" />
-              <div>
-                <p className="text-2xl font-bold">{orders.length}</p>
-                <p className="text-xs text-muted-foreground">Orders</p>
-              </div>
+              <TrendingUp className="h-8 w-8 text-muted-foreground" />
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Products Management */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <span className="flex items-center">
-              <Package className="h-5 w-5 mr-2" />
-              Product Catalog
-            </span>
-            <Button className="btn-bronze" onClick={() => setNewProductOpen(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Product
-            </Button>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {products.map((product) => (
-              <div key={product.id} className="border rounded-lg p-4">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <div className="text-bronze">
-                        {getCategoryIcon(product.category)}
-                      </div>
-                      <h3 className="font-semibold">{product.name}</h3>
-                      <Badge variant={product.active ? "default" : "secondary"}>
-                        {product.active ? "Active" : "Inactive"}
-                      </Badge>
-                      <Badge variant="outline" className="capitalize">
-                        {product.category}
-                      </Badge>
-                    </div>
-                    
-                    <p className="text-sm text-muted-foreground mb-3">{product.description}</p>
-                    
-                    <div className="grid md:grid-cols-4 gap-4 text-sm">
-                      <div>
-                        <p className="text-muted-foreground">Price</p>
-                        <p className="font-medium">${product.price.toFixed(2)}</p>
-                      </div>
-                      <div>
-                        <p className="text-muted-foreground">Cost</p>
-                        <p className="font-medium">${product.cost.toFixed(2)}</p>
-                      </div>
-                      <div>
-                        <p className="text-muted-foreground">Margin</p>
-                        <p className="font-medium">{calculateMargin(product.price, product.cost)}%</p>
-                      </div>
-                      <div>
-                        <p className="text-muted-foreground">SKU</p>
-                        <p className="font-medium">{product.sku}</p>
-                      </div>
-                    </div>
+      {/* Main Content */}
+      <Tabs defaultValue="products" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="products">Products</TabsTrigger>
+          <TabsTrigger value="orders">Orders</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+        </TabsList>
 
-                    {/* Product Variants */}
-                    <div className="mt-3">
-                      <p className="text-sm font-medium mb-2">Variants:</p>
-                      <div className="flex flex-wrap gap-2">
-                        {product.variants.map((variant, index) => (
-                          <Badge key={index} variant="outline">
-                            {variant.name} - ${variant.price.toFixed(2)}
+        <TabsContent value="products" className="space-y-4">
+          {/* Filters */}
+          <div className="flex items-center space-x-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search products..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+              <SelectTrigger className="w-40">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="prints">Prints</SelectItem>
+                <SelectItem value="albums">Albums</SelectItem>
+                <SelectItem value="canvas">Canvas</SelectItem>
+                <SelectItem value="digital">Digital</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Products Table */}
+          <Card>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Product</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead>Sales</TableHead>
+                    <TableHead>Revenue</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredProducts.length > 0 ? (
+                    filteredProducts.map((product: any) => (
+                      <TableRow key={product.id}>
+                        <TableCell>
+                          <div>
+                            <p className="font-semibold">{product.name}</p>
+                            <p className="text-sm text-muted-foreground">{product.sku}</p>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="capitalize">
+                            {product.category}
                           </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="text-right">
-                    <div className="mb-4">
-                      <div className="text-lg font-bold text-bronze">{product.sales}</div>
-                      <div className="text-xs text-muted-foreground">Sales</div>
-                      <div className="text-lg font-bold text-green-600">${product.revenue.toLocaleString()}</div>
-                      <div className="text-xs text-muted-foreground">Revenue</div>
-                    </div>
-                    <div className="flex flex-col space-y-2">
-                      <Button size="sm" variant="outline">
-                        <Edit className="h-3 w-3 mr-1" />
-                        Edit
-                      </Button>
-                      <Button size="sm" variant="outline">
-                        <Eye className="h-3 w-3 mr-1" />
-                        Analytics
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+                        </TableCell>
+                        <TableCell>${product.price?.toFixed(2)}</TableCell>
+                        <TableCell>{product.sales || 0}</TableCell>
+                        <TableCell>${(product.revenue || 0).toLocaleString()}</TableCell>
+                        <TableCell>
+                          <Badge variant={product.active ? "default" : "secondary"}>
+                            {product.active ? "Active" : "Inactive"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center space-x-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setSelectedProduct(product)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => deleteProductMutation.mutate(product.id)}
+                              disabled={deleteProductMutation.isPending}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                        {searchTerm || categoryFilter !== "all" || statusFilter !== "all" 
+                          ? 'No products found matching your filters.' 
+                          : 'No products created yet.'}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      {/* Recent Orders */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center">
-            <ShoppingCart className="h-5 w-5 mr-2" />
-            Recent Orders
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {orders.map((order) => (
-              <div key={order.id} className="border rounded-lg p-4">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="font-semibold">Order #{order.id.toString().padStart(3, '0')}</h3>
-                      <span className="text-muted-foreground">•</span>
-                      <span className="font-medium">{order.clientName}</span>
-                      <Badge className={getStatusColor(order.status)}>
-                        {order.status}
-                      </Badge>
-                      {order.trackingNumber && (
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <Truck className="h-3 w-3 mr-1" />
-                          {order.trackingNumber}
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="space-y-1 text-sm mb-3">
-                      {order.items.map((item, index) => (
-                        <div key={index} className="flex justify-between">
-                          <span>{products.find(p => p.id === item.productId)?.name} ({item.variant})</span>
-                          <span>{item.quantity}x ${item.price.toFixed(2)}</span>
-                        </div>
-                      ))}
-                    </div>
-                    
-                    <div className="grid md:grid-cols-3 gap-4 text-sm text-muted-foreground">
-                      <div>
-                        <p><strong>Subtotal:</strong> ${order.subtotal.toFixed(2)}</p>
-                        <p><strong>Tax:</strong> ${order.tax.toFixed(2)}</p>
-                        <p><strong>Shipping:</strong> ${order.shipping.toFixed(2)}</p>
-                      </div>
-                      <div>
-                        <p><strong>Total:</strong> ${order.total.toFixed(2)}</p>
-                        <p><strong>Ordered:</strong> {format(new Date(order.createdAt), "MMM d, yyyy")}</p>
-                      </div>
-                      <div>
-                        {order.fulfilledAt && (
-                          <p><strong>Fulfilled:</strong> {format(new Date(order.fulfilledAt), "MMM d, yyyy")}</p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="text-right">
-                    <div className="text-lg font-bold text-green-600 mb-2">
-                      ${order.total.toFixed(2)}
-                    </div>
-                    <div className="flex flex-col space-y-2">
-                      <Button size="sm" variant="outline">
-                        <Eye className="h-3 w-3 mr-1" />
-                        View
-                      </Button>
-                      {order.status === "pending" && (
-                        <Button size="sm" className="btn-bronze">
-                          <Truck className="h-3 w-3 mr-1" />
-                          Fulfill
-                        </Button>
-                      )}
-                    </div>
-                  </div>
+        <TabsContent value="orders" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Orders</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {orders.length > 0 ? (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Order ID</TableHead>
+                      <TableHead>Client</TableHead>
+                      <TableHead>Products</TableHead>
+                      <TableHead>Total</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Date</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {orders.map((order: any) => (
+                      <TableRow key={order.id}>
+                        <TableCell>#{order.id}</TableCell>
+                        <TableCell>{order.clientName}</TableCell>
+                        <TableCell>{order.items?.length || 0} items</TableCell>
+                        <TableCell>${order.total?.toFixed(2)}</TableCell>
+                        <TableCell>
+                          <Badge variant={
+                            order.status === 'completed' ? 'default' :
+                            order.status === 'processing' ? 'secondary' : 'outline'
+                          }>
+                            {order.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  No orders found.
                 </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      {/* Create New Product Dialog */}
-      <Dialog open={newProductOpen} onOpenChange={setNewProductOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Add New Product</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium">Product Name</label>
-                <Input placeholder="e.g., Wedding Album - Premium" />
+        <TabsContent value="analytics" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Sales Analytics</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8 text-muted-foreground">
+                Analytics feature requires additional implementation.
               </div>
-              <div>
-                <label className="text-sm font-medium">Category</label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="prints">Prints</SelectItem>
-                    <SelectItem value="albums">Albums</SelectItem>
-                    <SelectItem value="canvas">Canvas</SelectItem>
-                    <SelectItem value="digital">Digital</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div>
-              <label className="text-sm font-medium">Description</label>
-              <Textarea placeholder="Product description..." />
-            </div>
-            <div className="grid md:grid-cols-3 gap-4">
-              <div>
-                <label className="text-sm font-medium">Price</label>
-                <Input type="number" placeholder="0.00" />
-              </div>
-              <div>
-                <label className="text-sm font-medium">Cost</label>
-                <Input type="number" placeholder="0.00" />
-              </div>
-              <div>
-                <label className="text-sm font-medium">SKU</label>
-                <Input placeholder="PRODUCT-SKU" />
-              </div>
-            </div>
-            <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setNewProductOpen(false)}>
-                Cancel
-              </Button>
-              <Button className="btn-bronze">
-                Add Product
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

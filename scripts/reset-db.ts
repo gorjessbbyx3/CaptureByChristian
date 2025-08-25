@@ -51,6 +51,4 @@ async function resetDatabase() {
   }
 }
 
-if (require.main === module) {
-  resetDatabase();
-}
+resetDatabase();

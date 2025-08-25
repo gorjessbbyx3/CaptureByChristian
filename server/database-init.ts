@@ -93,7 +93,48 @@ export class DatabaseInitializer {
         return true;
       }
 
-      // Run migrations
+      // Check if migrations have already been applied
+      const hasExistingTables = await this.checkExistingTables();
+      if (hasExistingTables) {
+        console.log('⚠️ Tables already exist, checking if migrations table exists...');
+        
+        // Check if drizzle migrations table exists
+        const migrationTableExists = await this.pool.query(`
+          SELECT EXISTS (
+            SELECT FROM information_schema.tables 
+            WHERE table_schema = 'public' 
+            AND table_name = '__drizzle_migrations'
+          );
+        `);
+        
+        if (!migrationTableExists.rows[0].exists) {
+          console.log('📝 Creating migrations tracking table...');
+          
+          // Create the migrations table manually
+          await this.pool.query(`
+            CREATE TABLE IF NOT EXISTS "__drizzle_migrations" (
+              id SERIAL PRIMARY KEY,
+              hash text NOT NULL,
+              created_at bigint
+            );
+          `);
+          
+          // Mark existing migration as applied
+          const migrationHash = await this.getMigrationHash(migrationsPath);
+          if (migrationHash) {
+            await this.pool.query(`
+              INSERT INTO "__drizzle_migrations" (hash, created_at) 
+              VALUES ($1, $2)
+            `, [migrationHash, Date.now()]);
+            console.log('✅ Marked existing schema as migrated');
+          }
+        }
+        
+        console.log('✅ Database schema is up to date');
+        return true;
+      }
+
+      // Run migrations normally if no tables exist
       await migrate(db, { migrationsFolder: migrationsPath });
       
       console.log('✅ Database migrations completed successfully');
@@ -102,6 +143,44 @@ export class DatabaseInitializer {
     } catch (error) {
       console.error('❌ Migration failed:', error);
       return false;
+    }
+  }
+
+  /**
+   * Check if any of our main tables already exist
+   */
+  async checkExistingTables(): Promise<boolean> {
+    try {
+      const result = await this.pool.query(`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables 
+          WHERE table_schema = 'public' 
+          AND table_name IN ('users', 'clients', 'services', 'bookings')
+        );
+      `);
+      return result.rows[0].exists;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /**
+   * Get the hash of the first migration file
+   */
+  async getMigrationHash(migrationsPath: string): Promise<string | null> {
+    try {
+      const journalPath = path.join(migrationsPath, 'meta', '_journal.json');
+      const journalContent = await fs.readFile(journalPath, 'utf8');
+      const journal = JSON.parse(journalContent);
+      
+      if (journal.entries && journal.entries.length > 0) {
+        return journal.entries[0].when.toString();
+      }
+      
+      return null;
+    } catch (error) {
+      console.log('⚠️ Could not read migration journal');
+      return null;
     }
   }
 

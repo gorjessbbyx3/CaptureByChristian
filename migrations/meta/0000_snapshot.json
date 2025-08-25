@@ -1,5 +1,5 @@
 {
-  "id": "fb9375a6-ff3f-4953-b66a-51fad2503775",
+  "id": "fd7fbb57-f102-4e81-a88f-7b8efea955a6",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -703,6 +703,19 @@
           "primaryKey": false,
           "notNull": false
         },
+        "ai_category": {
+          "name": "ai_category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'general_inquiry'"
+        },
+        "suggested_response": {
+          "name": "suggested_response",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -729,26 +742,26 @@
           "primaryKey": true,
           "notNull": true
         },
-        "booking_id": {
-          "name": "booking_id",
+        "bookingId": {
+          "name": "bookingId",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
-        "client_id": {
-          "name": "client_id",
+        "clientId": {
+          "name": "clientId",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
-        "contract_type": {
-          "name": "contract_type",
+        "contractType": {
+          "name": "contractType",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "service_type": {
-          "name": "service_type",
+        "serviceType": {
+          "name": "serviceType",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -766,20 +779,20 @@
           "primaryKey": false,
           "notNull": true
         },
-        "template_content": {
-          "name": "template_content",
+        "templateContent": {
+          "name": "templateContent",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "signed_content": {
-          "name": "signed_content",
+        "signedContent": {
+          "name": "signedContent",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "session_date": {
-          "name": "session_date",
+        "sessionDate": {
+          "name": "sessionDate",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
@@ -790,32 +803,32 @@
           "primaryKey": false,
           "notNull": false
         },
-        "package_type": {
-          "name": "package_type",
+        "packageType": {
+          "name": "packageType",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "total_amount": {
-          "name": "total_amount",
+        "totalAmount": {
+          "name": "totalAmount",
           "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": false
         },
-        "retainer_amount": {
-          "name": "retainer_amount",
+        "retainerAmount": {
+          "name": "retainerAmount",
           "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": false
         },
-        "balance_amount": {
-          "name": "balance_amount",
+        "balanceAmount": {
+          "name": "balanceAmount",
           "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": false
         },
-        "payment_terms": {
-          "name": "payment_terms",
+        "paymentTerms": {
+          "name": "paymentTerms",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -832,69 +845,88 @@
           "primaryKey": false,
           "notNull": false
         },
-        "usage_rights": {
-          "name": "usage_rights",
+        "usageRights": {
+          "name": "usageRights",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "cancellation_policy": {
-          "name": "cancellation_policy",
+        "cancellationPolicy": {
+          "name": "cancellationPolicy",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "additional_terms": {
-          "name": "additional_terms",
+        "additionalTerms": {
+          "name": "additionalTerms",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "signature_data": {
-          "name": "signature_data",
+        "clientSignature": {
+          "name": "clientSignature",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "signed_at": {
-          "name": "signed_at",
+        "clientSignedAt": {
+          "name": "clientSignedAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
         },
-        "photographer_signature": {
-          "name": "photographer_signature",
+        "clientIpAddress": {
+          "name": "clientIpAddress",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "photographer_signed_at": {
-          "name": "photographer_signed_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "signature_request_sent": {
-          "name": "signature_request_sent",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "portal_access_token": {
-          "name": "portal_access_token",
+        "photographerSignature": {
+          "name": "photographerSignature",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "created_at": {
-          "name": "created_at",
+        "photographerSignedAt": {
+          "name": "photographerSignedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "signatureRequestSent": {
+          "name": "signatureRequestSent",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "portalAccessToken": {
+          "name": "portalAccessToken",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "isFullySigned": {
+          "name": "isFullySigned",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "signatureMetadata": {
+          "name": "signatureMetadata",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
         },
-        "updated_at": {
-          "name": "updated_at",
+        "updatedAt": {
+          "name": "updatedAt",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
@@ -903,12 +935,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "contracts_booking_id_bookings_id_fk": {
-          "name": "contracts_booking_id_bookings_id_fk",
+        "contracts_bookingId_bookings_id_fk": {
+          "name": "contracts_bookingId_bookings_id_fk",
           "tableFrom": "contracts",
           "tableTo": "bookings",
           "columnsFrom": [
-            "booking_id"
+            "bookingId"
           ],
           "columnsTo": [
             "id"
@@ -916,12 +948,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "contracts_client_id_clients_id_fk": {
-          "name": "contracts_client_id_clients_id_fk",
+        "contracts_clientId_clients_id_fk": {
+          "name": "contracts_clientId_clients_id_fk",
           "tableFrom": "contracts",
           "tableTo": "clients",
           "columnsFrom": [
-            "client_id"
+            "clientId"
           ],
           "columnsTo": [
             "id"

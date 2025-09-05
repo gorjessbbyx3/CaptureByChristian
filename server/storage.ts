@@ -111,8 +111,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    // For backwards compatibility, treat username as email since users table has no username column
-    const [user] = await db.select().from(users).where(eq(users.email, username));
+    // Look up by actual username column
+    const [user] = await db.select().from(users).where(eq(users.username, username));
     return user || undefined;
   }
 

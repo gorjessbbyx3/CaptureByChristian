@@ -1565,34 +1565,7 @@ Please respond with a JSON object containing:
     }
   });
 
-  // Contact form submission endpoint
-  app.post("/api/contact", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
-    try {
-      const { 
-        name, email, phone, subject, message, priority, 
-        source 
-      } = req.body;
-
-      // Insert contact message into database
-      const contactMessage = await storage.createContactMessage({
-        name,
-        email,
-        phone,
-        subject,
-        message,
-        priority: priority || "normal",
-        source: source || "website",
-        status: "unread",
-        ipAddress: req.ip,
-        userAgent: req.get('User-Agent'),
-      });
-
-      res.json(contactMessage);
-    } catch (error) {
-      console.error("Error creating contact message:", error);
-      res.status(500).json({ error: "Failed to send message" });
-    }
-  });
+  // Note: Duplicate contact route removed - using public version below
 
   app.patch("/api/contact-messages/:id", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {

@@ -61,7 +61,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
 
       const token = generateToken(payload);
-      
+
       res.json({
         success: true,
         token,
@@ -136,7 +136,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Client routes
-  app.get("/api/clients", authenticateToken, requireAdmin, async (_req, res) => {
+  app.get("/api/clients", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
     try {
       const clients = await storage.getClients();
       res.json(clients);
@@ -173,7 +173,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Service routes
-  app.get("/api/services", async (_req, res) => {
+  app.get("/api/services", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
     try {
       const services = await storage.getActiveServices();
       res.json(services);
@@ -197,7 +197,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Update service
-  app.patch('/api/services/:id', async (req, res) => {
+  app.patch('/api/services/:id', authenticateToken, requireAdmin, async (req, res) => {
     try {
       const serviceId = parseInt(req.params.id);
       const updateSchema = insertServiceSchema.partial();
@@ -216,7 +216,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Delete service
-  app.delete('/api/services/:id', async (req, res) => {
+  app.delete('/api/services/:id', authenticateToken, requireAdmin, async (req, res) => {
     try {
       await storage.deleteService(parseInt(req.params.id));
       res.json({ success: true });
@@ -227,7 +227,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get all services (including inactive) for admin
-  app.get('/api/services/admin', async (_req, res) => {
+  app.get('/api/services/admin', authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
     try {
       const services = await storage.getServices();
       res.json(services);
@@ -238,7 +238,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Booking routes
-  app.get("/api/bookings", authenticateToken, requireAdmin, async (_req, res) => {
+  app.get("/api/bookings", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
     try {
       const bookings = await storage.getBookings();
       res.json(bookings);
@@ -331,7 +331,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/bookings/:id", async (req, res) => {
+  app.get("/api/bookings/:id", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const booking = await storage.getBooking(parseInt(req.params.id));
       if (!booking) {
@@ -343,7 +343,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/bookings/:id", async (req, res) => {
+  app.patch("/api/bookings/:id", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const updateData = req.body;
       const booking = await storage.updateBooking(parseInt(req.params.id), updateData);
@@ -383,7 +383,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Contract routes
-  app.get("/api/contracts/:bookingId", async (req, res) => {
+  app.get("/api/contracts/:bookingId", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const contract = await storage.getContract(parseInt(req.params.bookingId));
       if (!contract) {
@@ -395,7 +395,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/contracts", async (req, res) => {
+  app.post("/api/contracts", authenticateToken, requireAdmin, async (req, res) => {
     try {
       console.log('Received contract data:', req.body);
       const contractData = insertContractSchema.parse(req.body);
@@ -412,7 +412,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/contracts/:id", async (req, res) => {
+  app.patch("/api/contracts/:id", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const updateData = req.body;
       const contract = await storage.updateContract(parseInt(req.params.id), updateData);
@@ -435,7 +435,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/gallery", async (req, res) => {
+  app.post("/api/gallery", authenticateToken, requireAdmin, async (req, res) => {
     try {
       const imageData = insertGalleryImageSchema.parse(req.body);
 
@@ -460,109 +460,88 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/gallery/upload", (req, res) => {
-    upload.array('images', 10)(req, res, async (err) => {
-      try {
-        // Handle multer errors
-        if (err) {
-          if (err instanceof multer.MulterError) {
-            if (err.code === 'LIMIT_FILE_SIZE') {
-              return res.status(400).json({ 
-                error: "File too large", 
-                message: "Image file size must be less than 50MB. Please compress your image and try again.",
-                details: err.message 
-              });
-            }
-            if (err.code === 'LIMIT_FILE_COUNT') {
-              return res.status(400).json({ 
-                error: "Too many files", 
-                message: "You can upload a maximum of 10 images at once.",
-                details: err.message 
-              });
-            }
-            return res.status(400).json({ 
-              error: "Upload error", 
-              message: err.message 
-            });
-          }
-          return res.status(400).json({ 
-            error: "Invalid file", 
-            message: err.message 
-          });
+  app.post("/api/gallery/upload", authenticateToken, requireAdmin, (req: AuthRequest, res) => {
+    upload.array('images', 10), async (req, res) => {
+    try {
+      const files = req.files as Express.Multer.File[];
+
+      if (!files || files.length === 0) {
+        return res.status(400).json({ error: "No files uploaded" });
+      }
+
+      // Validate file types and sizes
+      for (const file of files) {
+        if (!file.mimetype.startsWith('image/')) {
+          return res.status(400).json({ error: `Invalid file type: ${file.originalname}. Only images are allowed.` });
         }
-
-        const files = req.files as Express.Multer.File[];
-        const { category = "portfolio" } = req.body;
-
-        if (!files || files.length === 0) {
-          return res.status(400).json({ 
-            error: "No files uploaded",
-            message: "Please select at least one image file to upload."
-          });
+        if (file.size > 10 * 1024 * 1024) { // 10MB limit
+          return res.status(400).json({ error: `File too large: ${file.originalname}. Maximum size is 10MB.` });
         }
+      }
 
-        console.log(`Processing ${files.length} uploaded file(s)...`);
+      const { category = "portfolio" } = req.body;
 
-        // Create database entries for uploaded images
-        const uploadedImages = [];
-        const { bookingId } = req.body;
+      console.log(`Processing ${files.length} uploaded file(s)...`);
 
-        for (let i = 0; i < files.length; i++) {
-          const file = files[i];
-          const filename = `${Date.now()}_${i}_${file.originalname}`;
+      // Create database entries for uploaded images
+      const uploadedImages = [];
+      const { bookingId } = req.body;
 
-          // For demo: using base64 data URL since we don't have cloud storage
-          const base64Data = file.buffer.toString('base64');
-          const dataUrl = `data:${file.mimetype};base64,${base64Data}`;
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const filename = `${Date.now()}_${i}_${file.originalname}`;
 
-          try {
-            const imageData = {
-              filename,
-              originalName: file.originalname,
-              url: dataUrl, // Base64 data URL containing the actual image
-              thumbnailUrl: dataUrl, // Using same image as thumbnail for demo
-              category,
-              tags: [category, "uploaded"],
-              featured: false,
-              bookingId: bookingId ? parseInt(bookingId) : null,
-            };
+        // For demo: using base64 data URL since we don't have cloud storage
+        const base64Data = file.buffer.toString('base64');
+        const dataUrl = `data:${file.mimetype};base64,${base64Data}`;
 
-            // Save to database
-            const savedImage = await storage.createGalleryImage(imageData);
-            uploadedImages.push(savedImage);
+        try {
+          const imageData = {
+            filename,
+            originalName: file.originalname,
+            url: dataUrl, // Base64 data URL containing the actual image
+            thumbnailUrl: dataUrl, // Using same image as thumbnail for demo
+            category,
+            tags: [category, "uploaded"],
+            featured: false,
+            bookingId: bookingId ? parseInt(bookingId) : null,
+          };
 
-            console.log(`Saved image ${i + 1}/${files.length}: ${file.originalname}`);
-          } catch (dbError) {
-            console.error(`Failed to save image ${file.originalname}:`, dbError);
-            // Continue with other images even if one fails
-          }
+          // Save to database
+          const savedImage = await storage.createGalleryImage(imageData);
+          uploadedImages.push(savedImage);
+
+          console.log(`Saved image ${i + 1}/${files.length}: ${file.originalname}`);
+        } catch (dbError) {
+          console.error(`Failed to save image ${file.originalname}:`, dbError);
+          // Continue with other images even if one fails
         }
+      }
 
-        if (uploadedImages.length === 0) {
-          return res.status(500).json({ 
-            error: "Save failed", 
-            message: "Failed to save any images to the gallery. Please try again."
-          });
-        }
-
-        console.log(`Successfully uploaded ${uploadedImages.length} image(s) to gallery`);
-
-        res.json({ 
-          message: `${uploadedImages.length} image(s) uploaded successfully`,
-          images: uploadedImages
-        });
-      } catch (error) {
-        console.error("Error in upload handler:", error);
-        res.status(500).json({ 
-          error: "Upload failed", 
-          message: "An unexpected error occurred while uploading. Please try again.",
-          details: (error as Error).message 
+      if (uploadedImages.length === 0) {
+        return res.status(500).json({ 
+          error: "Save failed", 
+          message: "Failed to save any images to the gallery. Please try again."
         });
       }
-    });
+
+      console.log(`Successfully uploaded ${uploadedImages.length} image(s) to gallery`);
+
+      res.json({ 
+        message: `${uploadedImages.length} image(s) uploaded successfully`,
+        images: uploadedImages
+      });
+    } catch (error) {
+      console.error("Error in upload handler:", error);
+      res.status(500).json({ 
+        error: "Upload failed", 
+        message: "An unexpected error occurred while uploading. Please try again.",
+        details: (error as Error).message 
+      });
+    }
   });
 
-  app.delete("/api/gallery/:id", async (req, res) => {
+  app.delete("/api/gallery/:id", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const imageId = parseInt(req.params.id);
 
@@ -575,7 +554,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/gallery/:id/featured", async (req, res) => {
+  app.patch("/api/gallery/:id/featured", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const imageId = parseInt(req.params.id);
       const { featured } = req.body;
@@ -593,7 +572,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // AI Chat routes (legacy OpenAI)
-  app.post("/api/ai-chat", async (req, res) => {
+  app.post("/api/ai-chat", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const { sessionId, message, clientEmail } = req.body;
 
@@ -650,7 +629,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Replit AI Chat routes
-  app.post("/api/replit-ai-chat", async (req, res) => {
+  app.post("/api/replit-ai-chat", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const { sessionId, message, agent = 'general-assistant' } = req.body;
 
@@ -688,7 +667,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
-  app.get("/api/ai-chat/:sessionId", async (req, res) => {
+  app.get("/api/ai-chat/:sessionId", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const chat = await storage.getAiChat(req.params.sessionId);
       if (!chat) {
@@ -701,7 +680,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // Analytics routes
-  app.get("/api/analytics/stats", authenticateToken, requireAdmin, async (_req, res) => {
+  app.get("/api/analytics/stats", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
     try {
       const stats = await storage.getBookingStats();
       res.json(stats);
@@ -711,7 +690,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
 
-  app.get("/api/analytics/revenue/:year/:month", authenticateToken, requireAdmin, async (req, res) => {
+  app.get("/api/analytics/revenue/:year/:month", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const year = parseInt(req.params.year);
       const month = parseInt(req.params.month);
@@ -723,7 +702,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // Invoice routes
-  app.get("/api/invoices/:bookingId", async (req, res) => {
+  app.get("/api/invoices/:bookingId", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const invoice = await storage.getInvoice(parseInt(req.params.bookingId));
       if (!invoice) {
@@ -735,7 +714,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
-  app.post("/api/invoices", async (req, res) => {
+  app.post("/api/invoices", authenticateToken, requireAdmin, async (req, res) => {
     try {
       const invoiceData = insertInvoiceSchema.parse(req.body);
       const invoice = await storage.createInvoice(invoiceData);
@@ -792,7 +771,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       try {
         const { neonEmailService } = await import('./neon-email.js');
         const emailSent = await neonEmailService.sendMagicLinkEmail(email, client.name, magicLink);
-        
+
         if (emailSent) {
           console.log(`✅ Magic link sent to: ${email}`);
           res.json({ message: "Magic link sent to your email" });
@@ -812,7 +791,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
-  app.get("/api/client-portal/bookings", async (req, res) => {
+  app.get("/api/client-portal/bookings", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const clientId = parseInt(req.query.clientId as string);
       const bookings = await storage.getBookings();
@@ -825,7 +804,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
-  app.get("/api/client-portal/galleries", async (req, res) => {
+  app.get("/api/client-portal/galleries", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const clientId = parseInt(req.query.clientId as string);
 
@@ -872,7 +851,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
-  app.get("/api/client-portal/gallery/:galleryId", async (req, res) => {
+  app.get("/api/client-portal/gallery/:galleryId", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const { galleryId } = req.params;
 
@@ -923,7 +902,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
-  app.get("/api/client-portal/selections/:galleryId", async (req, res) => {
+  app.get("/api/client-portal/selections/:galleryId", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const { galleryId } = req.params;
       const clientId = req.query.clientId;
@@ -944,7 +923,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
-  app.post("/api/client-portal/selections/:galleryId", async (req, res) => {
+  app.post("/api/client-portal/selections/:galleryId", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const { galleryId } = req.params;
       const { clientId, favorites, comments } = req.body;
@@ -962,7 +941,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
-  app.get("/api/client-portal/contracts", async (req, res) => {
+  app.get("/api/client-portal/contracts", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const clientId = parseInt(req.query.clientId as string);
 
@@ -993,7 +972,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // Client portal contract signing endpoint
-  app.post("/api/client-portal/contracts/:id/sign", async (req, res) => {
+  app.post("/api/client-portal/contracts/:id/sign", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const contractId = parseInt(req.params.id);
       const { signatureData } = req.body;
@@ -1038,7 +1017,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // Get contract for signing by token
-  app.get("/api/client-portal/contracts/sign/:token", async (req, res) => {
+  app.get("/api/client-portal/contracts/sign/:token", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const { token } = req.params;
 
@@ -1068,7 +1047,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // ===== Admin Client Portal API Routes =====
-  app.get("/api/admin/client-portal-sessions", async (_req, res) => {
+  app.get("/api/admin/client-portal-sessions", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
     try {
       const sessions = await storage.getClientPortalSessions();
       res.json(sessions);
@@ -1079,7 +1058,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // Send welcome emails to all clients
-  app.post("/api/admin/send-welcome-emails", async (_req, res) => {
+  app.post("/api/admin/send-welcome-emails", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
     try {
       const clients = await storage.getClients();
       // Implementation would send actual emails via email service
@@ -1093,7 +1072,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // Reset all client portal sessions
-  app.post("/api/admin/reset-portal-sessions", async (_req, res) => {
+  app.post("/api/admin/reset-portal-sessions", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
     try {
       // Implementation would reset all active sessions
       console.log("Resetting all client portal sessions");
@@ -1105,7 +1084,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // Get questionnaire responses
-  app.get("/api/questionnaire-responses", async (_req, res) => {
+  app.get("/api/questionnaire-responses", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
     try {
       // const questionnaires = await storage.getQuestionnaires();
       // For now, return empty array since we don't have response tracking yet
@@ -1116,7 +1095,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
-  app.get("/api/admin/client-portal-stats", async (_req, res) => {
+  app.get("/api/admin/client-portal-stats", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
     try {
       const stats = await storage.getClientPortalStats();
       res.json(stats);
@@ -1127,7 +1106,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // Client Portal Invoices
-  app.get("/api/client-portal/invoices", async (req, res) => {
+  app.get("/api/client-portal/invoices", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const clientId = parseInt(req.query.clientId as string);
 
@@ -1155,7 +1134,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // ===== Client Credential Management API Routes =====
-  app.get("/api/admin/client-credentials", async (_req, res) => {
+  app.get("/api/admin/client-credentials", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
     try {
       const clients = await storage.getClients();
 
@@ -1180,7 +1159,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
-  app.post("/api/admin/client-credentials/set-password", async (req, res) => {
+  app.post("/api/admin/client-credentials/set-password", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const { clientId, password } = req.body;
 
@@ -1198,7 +1177,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
-  app.post("/api/admin/client-credentials/magic-link", async (req, res) => {
+  app.post("/api/admin/client-credentials/magic-link", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const { clientId } = req.body;
 
@@ -1252,7 +1231,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // Get client credentials for admin management
-  app.get("/api/client-credentials", async (_req, res) => {
+  app.get("/api/client-credentials", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
     try {
       const clients = await storage.getClients();
 
@@ -1277,7 +1256,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
-  app.post("/api/admin/client-credentials/toggle-access", async (req, res) => {
+  app.post("/api/admin/client-credentials/toggle-access", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const { clientId, enabled } = req.body;
 
@@ -1295,7 +1274,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // ===== Invoice Analytics API Routes =====
-  app.get("/api/invoices/stats", async (_req, res) => {
+  app.get("/api/invoices/stats", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
     try {
       const stats = await storage.getInvoiceStats();
       res.json(stats);
@@ -1306,7 +1285,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // Get all invoices
-  app.get("/api/invoices", async (_req, res) => {
+  app.get("/api/invoices", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
     try {
       // Get real invoices from database
       const bookings = await storage.getBookings();
@@ -1370,7 +1349,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // Create new invoice (auto-generate from booking)
-  app.post("/api/invoices", async (req, res) => {
+  app.post("/api/invoices", authenticateToken, requireAdmin, async (req, res) => {
     try {
       const { bookingId } = req.body;
 
@@ -1409,7 +1388,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
-  app.get("/api/analytics/business-kpis", authenticateToken, requireAdmin, async (_req, res) => {
+  app.get("/api/analytics/business-kpis", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
     try {
       const kpis = await storage.getBusinessKPIs();
       res.json(kpis);
@@ -1419,7 +1398,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
-  app.get("/api/analytics/clients", authenticateToken, requireAdmin, async (_req, res) => {
+  app.get("/api/analytics/clients", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
     try {
       const metrics = await storage.getClientMetrics();
       res.json(metrics);
@@ -1430,7 +1409,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // ===== Contact Messages API Routes =====
-  app.get("/api/contact-messages", async (_req, res) => {
+  app.get("/api/contact-messages", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
     try {
       const messages = await storage.getContactMessages();
       res.json(messages);
@@ -1441,7 +1420,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // AI contact categorization endpoint
-  app.post("/api/ai/categorize-contact", async (req, res) => {
+  app.post("/api/ai/categorize-contact", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const { subject, message } = req.body;
 
@@ -1510,7 +1489,7 @@ Please respond with a JSON object containing:
   });
 
   // Contact form submission endpoint
-  app.post("/api/contact", async (req, res) => {
+  app.post("/api/contact", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const { 
         name, email, phone, subject, message, priority, 
@@ -1538,7 +1517,7 @@ Please respond with a JSON object containing:
     }
   });
 
-  app.patch("/api/contact-messages/:id", async (req, res) => {
+  app.patch("/api/contact-messages/:id", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const { id } = req.params;
       const updates = req.body;
@@ -1551,7 +1530,7 @@ Please respond with a JSON object containing:
     }
   });
 
-  app.delete("/api/contact-messages/:id", async (req, res) => {
+  app.delete("/api/contact-messages/:id", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const { id } = req.params;
       await storage.deleteContactMessage(parseInt(id));
@@ -1564,7 +1543,7 @@ Please respond with a JSON object containing:
 
 
   // ===== Invoice PDF & Email Routes =====
-  app.post("/api/invoices/pdf/:invoiceNumber", async (req, res) => {
+  app.post("/api/invoices/pdf/:invoiceNumber", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const { invoiceNumber } = req.params;
       const invoiceData = req.body;
@@ -1602,7 +1581,7 @@ Please respond with a JSON object containing:
     }
   });
 
-  app.post("/api/invoices/send/:invoiceNumber", async (req, res) => {
+  app.post("/api/invoices/send/:invoiceNumber", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const { invoiceNumber } = req.params;
       const { invoice, includePaymentLink } = req.body;
@@ -1643,7 +1622,7 @@ Please respond with a JSON object containing:
   });
 
   // Real-time analytics endpoint
-  app.get("/api/analytics/realtime", authenticateToken, requireAdmin, async (_req, res) => {
+  app.get("/api/analytics/realtime", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
     try {
       const bookings = await storage.getBookings();
       const clients = await storage.getClients();
@@ -1721,7 +1700,7 @@ Please respond with a JSON object containing:
   });
 
   // Automation sequences endpoint - using real booking data for workflow calculations
-  app.get("/api/automation-sequences", async (_req, res) => {
+  app.get("/api/automation-sequences", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
     try {
       // Real automation workflows would be fetched from database
       // This is now empty to await proper database implementation
@@ -1733,7 +1712,7 @@ Please respond with a JSON object containing:
   });
 
   // Automation workflow creation endpoint
-  app.post("/api/automation-sequences", async (req, res) => {
+  app.post("/api/automation-sequences", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const { name, trigger, steps, active } = req.body;
 
@@ -1761,7 +1740,7 @@ Please respond with a JSON object containing:
   });
 
   // Client Portal Messaging API
-  app.get("/api/client-portal/messages", async (req, res) => {
+  app.get("/api/client-portal/messages", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const clientId = parseInt(req.query.clientId as string);
 
@@ -1777,7 +1756,7 @@ Please respond with a JSON object containing:
     }
   });
 
-  app.post("/api/client-portal/send-message", async (req, res) => {
+  app.post("/api/client-portal/send-message", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const { clientId, message, senderName, senderEmail } = req.body;
 
@@ -1847,7 +1826,7 @@ Please respond with a JSON object containing:
     }
   });
 
-  app.put("/api/profile", async (req, res) => {
+  app.put("/api/profile", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const profileData = req.body;
       const updatedProfile = await storage.updateProfile(profileData);
@@ -1859,7 +1838,7 @@ Please respond with a JSON object containing:
   });
 
   // Contract routes
-  app.get("/api/contracts", async (_req, res) => {
+  app.get("/api/contracts", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
     try {
       const contracts = await storage.getContracts();
       res.json(contracts);
@@ -1869,7 +1848,7 @@ Please respond with a JSON object containing:
     }
   });
 
-  app.post("/api/contracts", async (req, res) => {
+  app.post("/api/contracts", authenticateToken, requireAdmin, async (req, res) => {
     try {
       const contractData = insertContractSchema.parse(req.body);
       const contract = await storage.createContract(contractData);
@@ -1884,7 +1863,7 @@ Please respond with a JSON object containing:
     }
   });
 
-  app.get("/api/contracts/:id", async (req, res) => {
+  app.get("/api/contracts/:id", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const contract = await storage.getContract(parseInt(req.params.id));
       if (!contract) {
@@ -1897,7 +1876,7 @@ Please respond with a JSON object containing:
     }
   });
 
-  app.put("/api/contracts/:id", async (req, res) => {
+  app.put("/api/contracts/:id", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const updates = req.body;
       const contract = await storage.updateContract(parseInt(req.params.id), updates);
@@ -1908,7 +1887,7 @@ Please respond with a JSON object containing:
     }
   });
 
-  app.post("/api/contracts/:id/send", async (req, res) => {
+  app.post("/api/contracts/:id/send", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const contractId = parseInt(req.params.id);
       const result = await storage.sendContractToPortal(contractId);
@@ -1920,7 +1899,7 @@ Please respond with a JSON object containing:
   });
 
   // Products endpoints
-  app.get("/api/products", async (req, res) => {
+  app.get("/api/products", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       // TODO: Implement actual database query
       res.json([]);
@@ -1929,7 +1908,7 @@ Please respond with a JSON object containing:
     }
   });
 
-  app.post("/api/products", async (req, res) => {
+  app.post("/api/products", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       // TODO: Implement product creation
       res.json({ message: "Product created successfully" });
@@ -1938,7 +1917,7 @@ Please respond with a JSON object containing:
     }
   });
 
-  app.put("/api/products/:id", async (req, res) => {
+  app.put("/api/products/:id", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       // TODO: Implement product update
       res.json({ message: "Product updated successfully" });
@@ -1947,7 +1926,7 @@ Please respond with a JSON object containing:
     }
   });
 
-  app.delete("/api/products/:id", async (req, res) => {
+  app.delete("/api/products/:id", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       // TODO: Implement product deletion
       res.json({ message: "Product deleted successfully" });
@@ -1957,7 +1936,7 @@ Please respond with a JSON object containing:
   });
 
   // Questionnaires endpoints
-  app.get("/api/questionnaires", async (req, res) => {
+  app.get("/api/questionnaires", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       // TODO: Implement actual database query
       res.json([]);
@@ -1966,7 +1945,7 @@ Please respond with a JSON object containing:
     }
   });
 
-  app.post("/api/questionnaires", async (req, res) => {
+  app.post("/api/questionnaires", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       // TODO: Implement questionnaire creation
       res.json({ message: "Questionnaire created successfully" });
@@ -1975,7 +1954,7 @@ Please respond with a JSON object containing:
     }
   });
 
-  app.put("/api/questionnaires/:id", async (req, res) => {
+  app.put("/api/questionnaires/:id", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       // TODO: Implement questionnaire update
       res.json({ message: "Questionnaire updated successfully" });
@@ -1984,7 +1963,7 @@ Please respond with a JSON object containing:
     }
   });
 
-  app.delete("/api/questionnaires/:id", async (req, res) => {
+  app.delete("/api/questionnaires/:id", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       // TODO: Implement questionnaire deletion
       res.json({ message: "Questionnaire deleted successfully" });
@@ -1994,7 +1973,7 @@ Please respond with a JSON object containing:
   });
 
   // Orders endpoints
-  app.get("/api/orders", async (req, res) => {
+  app.get("/api/orders", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       // TODO: Implement actual database query
       res.json([]);
@@ -2004,7 +1983,7 @@ Please respond with a JSON object containing:
   });
 
   // Analytics endpoints
-  app.get("/api/analytics/products", async (req, res) => {
+  app.get("/api/analytics/products", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       // TODO: Implement actual analytics calculation
       res.json({
@@ -2018,7 +1997,7 @@ Please respond with a JSON object containing:
     }
   });
 
-  app.get("/api/questionnaire-responses", async (req, res) => {
+  app.get("/api/questionnaire-responses", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       // TODO: Implement actual database query
       res.json([]);
@@ -2028,7 +2007,7 @@ Please respond with a JSON object containing:
   });
 
   // Test contact form endpoint
-  app.post("/api/contact", async (req, res) => {
+  app.post("/api/contact", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const { 
         name, email, phone, subject, message, priority, 

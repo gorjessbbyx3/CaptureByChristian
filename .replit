@@ -1,4 +1,4 @@
-modules = ["python-3.12", "nodejs-18", "web", "cpp-clang14"]
+modules = ["python-3.12", "web", "cpp-clang14", "nodejs-20"]
 run = "npm run dev"
 hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
 
@@ -15,7 +15,7 @@ run = ["npm", "run", "start"]
 PORT = "5000"
 
 [workflows]
-runButton = "Start Application"
+runButton = "Project"
 
 [[workflows.workflow]]
 name = "Project"

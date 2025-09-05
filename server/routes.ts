@@ -11,10 +11,10 @@ const upload = multer({
     files: 10, // Maximum 10 files per upload
   },
   fileFilter: (_req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) {
+    if (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
       cb(null, true);
     } else {
-      cb(new Error('Only image files are allowed'));
+      cb(new Error('Only image and video files are allowed'));
     }
   },
 });
@@ -510,15 +510,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "No files uploaded" });
       }
 
-      // Enhanced file validation
-      const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/heic', 'image/tiff'];
-      const maxFileSize = 50 * 1024 * 1024; // 50MB for high-res photography
+      // Enhanced file validation for images and videos
+      const allowedMimeTypes = [
+        // Image formats
+        'image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/heic', 'image/tiff',
+        // Video formats
+        'video/mp4', 'video/mov', 'video/avi', 'video/wmv', 'video/flv', 'video/webm', 'video/mkv', 'video/m4v', 'video/3gp', 'video/quicktime'
+      ];
+      const maxFileSize = 100 * 1024 * 1024; // 100MB for high-res photography and videos
 
       for (const file of files) {
         // Strict MIME type validation
         if (!allowedMimeTypes.includes(file.mimetype.toLowerCase())) {
           return res.status(400).json({ 
-            error: `Invalid file type: ${file.originalname}. Only JPEG, PNG, WebP, HEIC, and TIFF images are allowed.`,
+            error: `Invalid file type: ${file.originalname}. Only JPEG, PNG, WebP, HEIC, TIFF images and MP4, MOV, AVI, WMV, WebM, MKV videos are allowed.`,
             allowedTypes: allowedMimeTypes
           });
         }
@@ -531,16 +536,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
         }
 
-        // Basic file header validation (magic number check)
+        // Basic file header validation (magic number check) for images and videos
         const magicNumbers = {
+          // Image magic numbers
           'image/jpeg': [0xFF, 0xD8, 0xFF],
           'image/png': [0x89, 0x50, 0x4E, 0x47],
-          'image/webp': [0x52, 0x49, 0x46, 0x46]
+          'image/webp': [0x52, 0x49, 0x46, 0x46],
+          // Video magic numbers
+          'video/mp4': [0x00, 0x00, 0x00, 0x18, 0x66, 0x74, 0x79, 0x70], // ftyp
+          'video/mov': [0x00, 0x00, 0x00, 0x14, 0x66, 0x74, 0x79, 0x70], // ftyp
+          'video/quicktime': [0x00, 0x00, 0x00, 0x14, 0x66, 0x74, 0x79, 0x70],
+          'video/avi': [0x52, 0x49, 0x46, 0x46], // RIFF
+          'video/webm': [0x1A, 0x45, 0xDF, 0xA3] // EBML
         };
 
         if (magicNumbers[file.mimetype as keyof typeof magicNumbers]) {
-          const header = Array.from(file.buffer.slice(0, 4));
           const expectedHeader = magicNumbers[file.mimetype as keyof typeof magicNumbers];
+          const header = Array.from(file.buffer.slice(0, expectedHeader.length));
           if (!expectedHeader.every((byte, index) => header[index] === byte)) {
             return res.status(400).json({ 
               error: `File appears corrupted or invalid: ${file.originalname}. Please try re-uploading.`
@@ -548,8 +560,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
 
-        // File name validation
-        if (!/^[\w\-. ]+\.(jpe?g|png|webp|heic|tiff)$/i.test(file.originalname)) {
+        // File name validation for images and videos
+        if (!/^[\w\-. ]+\.(jpe?g|png|webp|heic|tiff|mp4|mov|avi|wmv|flv|webm|mkv|m4v|3gp)$/i.test(file.originalname)) {
           return res.status(400).json({ 
             error: `Invalid filename: ${file.originalname}. Use only letters, numbers, spaces, dots, and hyphens.`
           });

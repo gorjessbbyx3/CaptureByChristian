@@ -210,20 +210,20 @@ export function PortfolioManagement() {
               <DialogTrigger asChild>
                 <Button className="btn-bronze">
                   <Plus className="h-4 w-4 mr-1" />
-                  Upload Photos
+                  Upload Media
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-md">
                 <DialogHeader>
-                  <DialogTitle>Upload Portfolio Images</DialogTitle>
+                  <DialogTitle>Upload Portfolio Media</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium mb-2">Select Images</label>
+                    <label className="block text-sm font-medium mb-2">Select Images & Videos</label>
                     <Input
                       type="file"
                       multiple
-                      accept="image/*"
+                      accept="image/*,video/*"
                       onChange={handleFileSelect}
                       className="mb-2"
                     />
@@ -254,7 +254,7 @@ export function PortfolioManagement() {
                   <div>
                     <label className="block text-sm font-medium mb-2">Description (Optional)</label>
                     <Input
-                      placeholder="Image description..."
+                      placeholder="Media description..."
                       value={uploadDescription}
                       onChange={(e) => setUploadDescription(e.target.value)}
                     />
@@ -265,7 +265,7 @@ export function PortfolioManagement() {
                     disabled={selectedFiles.length === 0 || uploadMutation.isPending}
                     className="w-full"
                   >
-                    {uploadMutation.isPending ? 'Uploading...' : 'Upload Images'}
+                    {uploadMutation.isPending ? 'Uploading...' : 'Upload Media'}
                   </Button>
                 </div>
               </DialogContent>

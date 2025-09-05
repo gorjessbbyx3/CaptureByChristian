@@ -297,7 +297,7 @@ export function ClientPortal() {
                   <DialogHeader>
                     <DialogTitle>Upload Gallery for Client</DialogTitle>
                     <DialogDescription>
-                      Select a client and upload photos to their private gallery.
+                      Select a client and upload photos and videos to their private gallery.
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4">
@@ -323,11 +323,11 @@ export function ClientPortal() {
                     </div>
 
                     <div>
-                      <label className="text-sm font-medium">Select Photos</label>
+                      <label className="text-sm font-medium">Select Photos & Videos</label>
                       <Input
                         type="file"
                         multiple
-                        accept="image/*"
+                        accept="image/*,video/*"
                         onChange={handleFileSelect}
                         className="mt-1"
                       />

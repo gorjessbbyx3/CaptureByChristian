@@ -206,10 +206,13 @@ export class DatabaseInitializer {
    */
   async verifySchema(): Promise<boolean> {
     try {
+      // Check if all required tables exist
       const requiredTables = [
-        'users', 'clients', 'services', 'bookings', 
-        'contracts', 'invoices', 'gallery_images', 
-        'contact_messages', 'ai_chats'
+        'users', 'clients', 'services', 'bookings', 'contracts', 
+        'invoices', 'gallery_images', 'ai_chats', 'leads', 'communication_log',
+        'automation_sequences', 'questionnaires', 'client_portal_sessions',
+        'products', 'orders', 'team_members', 'contact_messages',
+        'client_messages', 'profiles'
       ];
 
       console.log('🔍 Verifying database schema...');

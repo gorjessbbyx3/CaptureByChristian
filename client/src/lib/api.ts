@@ -1,4 +1,5 @@
 import { apiRequest } from './queryClient';
+import axios from 'axios';
 
 export async function createBooking(bookingData: any) {
   const response = await apiRequest('POST', '/api/bookings', bookingData);
@@ -54,3 +55,39 @@ export async function fetchAnalytics() {
   const response = await apiRequest('GET', '/api/analytics/stats');
   return response.json();
 }
+
+// Base API configuration
+const api = axios.create({
+  baseURL: '/api',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Add request interceptor to include auth token
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('admin_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor to handle auth errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Clear auth data and redirect to login
+      localStorage.removeItem('admin_token');
+      localStorage.removeItem('admin_user');
+      window.location.href = '/admin-login';
+    }
+    return Promise.reject(error);
+  }
+);

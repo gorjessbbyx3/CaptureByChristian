@@ -1,93 +1,84 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import { useLocation } from "wouter";
 
 interface AuthState {
   isAuthenticated: boolean;
-  username: string | null;
-  loginTime: string | null;
+  user: any;
   token: string | null;
-}
-
-interface LoginResponse {
-  success: boolean;
-  token?: string;
-  user?: {
-    id: number;
-    username: string;
-    email: string;
-    role: string;
-  };
-  error?: string;
 }
 
 export function useAuth() {
   const [authState, setAuthState] = useState<AuthState>(() => {
-    // Initialize state synchronously from localStorage
-    const token = localStorage.getItem("auth_token");
-    const isAuthenticated = localStorage.getItem("admin_authenticated") === "true";
-    const username = localStorage.getItem("admin_username");
-    const loginTime = localStorage.getItem("admin_login_time");
-    
-    // Check session validity immediately
-    if (isAuthenticated && loginTime) {
-      const loginTimestamp = new Date(loginTime).getTime();
-      const currentTime = new Date().getTime();
-      const sessionDuration = 24 * 60 * 60 * 1000;
-      
-      if (currentTime - loginTimestamp > sessionDuration) {
-        // Session expired
+    const token = localStorage.getItem("admin_token");
+    const user = localStorage.getItem("admin_user");
+
+    if (token && user) {
+      try {
+        return {
+          isAuthenticated: true,
+          user: JSON.parse(user),
+          token
+        };
+      } catch (error) {
+        // Clear invalid data
+        localStorage.removeItem('admin_token');
+        localStorage.removeItem('admin_user');
         return {
           isAuthenticated: false,
-          username: null,
-          loginTime: null,
-          token: null,
+          user: null,
+          token: null
         };
       }
     }
-    
+
     return {
-      isAuthenticated,
-      username,
-      loginTime,
-      token,
+      isAuthenticated: false,
+      user: null,
+      token: null
     };
   });
   const [_location, setLocation] = useLocation();
 
   useEffect(() => {
     const checkAuth = () => {
-      const token = localStorage.getItem("auth_token");
-      const isAuthenticated = localStorage.getItem("admin_authenticated") === "true";
-      const username = localStorage.getItem("admin_username");
-      const loginTime = localStorage.getItem("admin_login_time");
+      const token = localStorage.getItem("admin_token");
+      const user = localStorage.getItem("admin_user");
 
-      // Check if session is still valid (24 hours)
-      if (isAuthenticated && loginTime) {
-        const loginTimestamp = new Date(loginTime).getTime();
-        const currentTime = new Date().getTime();
-        const sessionDuration = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-
-        if (currentTime - loginTimestamp > sessionDuration) {
-          // Session expired, logout
-          logout();
-          return;
+      if (token && user) {
+        try {
+          setAuthState({
+            isAuthenticated: true,
+            user: JSON.parse(user),
+            token
+          });
+        } catch (error) {
+          // Clear invalid data if parsing fails
+          localStorage.removeItem('admin_token');
+          localStorage.removeItem('admin_user');
+          setAuthState({
+            isAuthenticated: false,
+            user: null,
+            token: null
+          });
         }
+      } else {
+        // No token or user found, ensure state reflects logged out status
+        setAuthState({
+          isAuthenticated: false,
+          user: null,
+          token: null
+        });
       }
-
-      setAuthState({
-        isAuthenticated,
-        username,
-        loginTime,
-        token,
-      });
     };
 
     // Listen for storage changes from other tabs
     window.addEventListener('storage', checkAuth);
+    // Initial check in case the component mounts after storage has been updated
+    checkAuth();
     return () => window.removeEventListener('storage', checkAuth);
   }, []);
 
-  // Login with JWT token
+  // Login with JWT token and user data
   const login = async (username: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
       const response = await fetch("/api/auth/admin/login", {
@@ -102,37 +93,51 @@ export function useAuth() {
 
       if (response.ok && data.success && data.user && data.token) {
         // Store authentication data
-        localStorage.setItem("admin_authenticated", "true");
-        localStorage.setItem("admin_username", data.user.username);
-        localStorage.setItem("admin_login_time", new Date().toISOString());
-        localStorage.setItem("auth_token", data.token);
+        localStorage.setItem("admin_token", data.token);
+        localStorage.setItem("admin_user", JSON.stringify(data.user));
 
         setAuthState({
           isAuthenticated: true,
-          username: data.user.username,
-          loginTime: new Date().toISOString(),
+          user: data.user,
           token: data.token,
         });
 
         return { success: true };
       } else {
+        // Clear any potentially stale data on failed login
+        localStorage.removeItem("admin_token");
+        localStorage.removeItem("admin_user");
+        setAuthState({
+          isAuthenticated: false,
+          user: null,
+          token: null,
+        });
         return { success: false, error: data.error || "Login failed" };
       }
     } catch (error) {
+      // Clear any potentially stale data on network error
+      localStorage.removeItem("admin_token");
+      localStorage.removeItem("admin_user");
+      setAuthState({
+        isAuthenticated: false,
+        user: null,
+        token: null,
+      });
       return { success: false, error: "Network error occurred" };
     }
   };
 
   const logout = () => {
+    localStorage.removeItem("admin_token");
+    localStorage.removeItem("admin_user");
+    // Remove old keys if they exist, for backward compatibility
     localStorage.removeItem("admin_authenticated");
     localStorage.removeItem("admin_username");
     localStorage.removeItem("admin_login_time");
-    localStorage.removeItem("auth_token");
-    
+
     setAuthState({
       isAuthenticated: false,
-      username: null,
-      loginTime: null,
+      user: null,
       token: null,
     });
     setLocation("/admin-login");

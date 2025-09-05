@@ -105,7 +105,7 @@ export default function Admin() {
   const { isAuthenticated, username, logout } = useAuth();
   const [, setLocation] = useLocation();
 
-  // Check authentication on component mount
+  // Authentication check
   useEffect(() => {
     const checkAuth = async () => {
       // Small delay to ensure localStorage is read properly

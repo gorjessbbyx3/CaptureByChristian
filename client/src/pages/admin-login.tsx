@@ -14,7 +14,7 @@ export function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [, setLocation] = useLocation();
+  const [, navigate] = useLocation(); // Renamed from setLocation to navigate for clarity
   const { login } = useAuth();
 
   // Clear any existing auth data when login page loads
@@ -23,7 +23,7 @@ export function AdminLogin() {
     localStorage.removeItem("admin_authenticated");
     localStorage.removeItem("admin_username");
     localStorage.removeItem("admin_login_time");
-    localStorage.removeItem("auth_token");
+    localStorage.removeItem("auth_token"); // This might be redundant if 'admin_token' is used
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,10 +37,20 @@ export function AdminLogin() {
 
     try {
       const result = await login(username.trim(), password.trim());
-      
-      if (result.success) {
-        console.log("🎉 Login successful, redirecting to /admin");
-        setLocation("/admin");
+
+      if (result.success && result.token) {
+        console.log("🎉 Credentials valid, storing auth data...");
+
+        // Store JWT token and user data
+        localStorage.setItem('admin_token', result.token);
+        localStorage.setItem('admin_user', JSON.stringify(result.user));
+        localStorage.setItem('admin_authenticated', 'true');
+        localStorage.setItem('admin_username', result.user.username);
+        localStorage.setItem('admin_login_time', new Date().toISOString());
+        console.log("💾 Auth data stored");
+
+        console.log("🚀 Redirecting to /admin");
+        navigate("/admin");
       } else {
         console.log("❌ Login failed:", result.error);
         setError(result.error || "Login failed. Please check your credentials and try again.");

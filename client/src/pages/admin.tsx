@@ -16,6 +16,7 @@ import { ContractManagement } from "@/components/admin/contract-management";
 import { AdminInbox } from "@/components/admin/inbox";
 import { ClientCredentials } from "@/components/admin/client-credentials";
 import { ProfileManagement } from "@/components/admin/profile-management";
+import { Integrations } from "@/components/admin/integrations";
 import { ClientPortal } from "@/components/admin/client-portal";
 import { ServiceManagement } from "@/components/admin/service-management";
 import { Button } from "@/components/ui/button";

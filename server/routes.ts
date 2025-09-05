@@ -20,8 +20,7 @@ const upload = multer({
 });
 import { 
   insertClientSchema, insertBookingSchema, insertServiceSchema,
-  insertContractSchema, insertInvoiceSchema, insertGalleryImageSchema,
-  insertUserSchema
+  insertContractSchema, insertInvoiceSchema, insertGalleryImageSchema
 } from "@shared/schema.js";
 import { z } from "zod";
 import { generateBookingResponse, analyzeImage } from "./openai";
@@ -44,7 +43,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         password: z.string().min(1)
       }).parse(req.body);
 
+      // Authenticate using email as username
       const user = await storage.getUserByUsername(username);
+      
       if (!user || user.role !== 'admin') {
         return res.status(401).json({ error: 'Invalid credentials' });
       }
@@ -172,8 +173,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Service routes
-  app.get("/api/services", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
+  // Public service routes
+  app.get("/api/services", async (_req, res) => {
     try {
       const services = await storage.getActiveServices();
       res.json(services);
@@ -2090,7 +2091,7 @@ Please respond with a JSON object containing:
       // Get actual questionnaire data from contact messages
       const contactMessages = await storage.getContactMessages();
       const responses = contactMessages
-        .filter(msg => msg.type === 'consultation' || msg.category === 'booking_inquiry')
+        .filter(msg => msg.status === 'pending' || msg.status === 'responded')
         .map(msg => ({
           id: msg.id,
           clientName: msg.name,
@@ -2114,8 +2115,8 @@ Please respond with a JSON object containing:
     }
   });
 
-  // Test contact form endpoint
-  app.post("/api/contact", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
+  // Public contact form endpoint (no authentication required)
+  app.post("/api/contact", async (req, res) => {
     try {
       const { 
         name, email, phone, subject, message, priority, 

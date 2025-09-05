@@ -1,7 +1,7 @@
 import { db } from './db.js';
 import { 
-  users, clients, services, bookings, contracts, invoices, 
-  galleryImages, aiChats, contactMessages, clientPortalSessions 
+  clients, services, bookings, contracts, invoices, 
+  galleryImages, contactMessages 
 } from '../shared/schema.js';
 
 async function seedDatabase() {
@@ -160,70 +160,70 @@ async function seedDatabase() {
     console.log('📅 Seeding bookings...');
     const bookingData = [
       {
-        client_id: insertedClients[0].id,
-        service_id: insertedServices[0].id, // Wedding
-        event_date: new Date('2025-02-14'),
-        event_time: '4:00 PM',
+        clientId: insertedClients[0].id,
+        serviceId: insertedServices[0].id, // Wedding
+        date: new Date('2025-02-14'),
+        duration: 480, // 8 hours in minutes
         location: 'Lanikai Beach, Kailua, HI',
         status: 'confirmed',
         notes: 'Sunset ceremony at 6:30 PM. Reception at Paradise Bay Resort.',
-        total_amount: 2850.00,
-        deposit_amount: 1000.00
+        totalPrice: 2850.00,
+        depositPaid: true
       },
       {
-        client_id: insertedClients[1].id,
-        service_id: insertedServices[1].id, // Portrait
-        event_date: new Date('2025-01-20'),
-        event_time: '9:00 AM',
+        clientId: insertedClients[1].id,
+        serviceId: insertedServices[1].id, // Portrait
+        date: new Date('2025-01-20'),
+        duration: 120, // 2 hours in minutes
         location: 'Kapiolani Park, Honolulu, HI',
         status: 'confirmed',
         notes: 'Family of 5. Children ages 3, 7, and 12.',
-        total_amount: 450.00,
-        deposit_amount: 150.00
+        totalPrice: 450.00,
+        depositPaid: true
       },
       {
-        client_id: insertedClients[2].id,
-        service_id: insertedServices[3].id, // Real Estate
-        event_date: new Date('2025-01-18'),
-        event_time: '2:00 PM',
+        clientId: insertedClients[2].id,
+        serviceId: insertedServices[3].id, // Real Estate
+        date: new Date('2025-01-18'),
+        duration: 180, // 3 hours in minutes
         location: '123 Ocean View Dr, Honolulu, HI',
         status: 'completed',
         notes: 'Luxury oceanfront property. Include aerial shots of infinity pool.',
-        total_amount: 500.00,
-        deposit_amount: 200.00
+        totalPrice: 500.00,
+        depositPaid: true
       },
       {
-        client_id: insertedClients[3].id,
-        service_id: insertedServices[1].id, // Portrait
-        event_date: new Date('2025-02-08'),
-        event_time: '5:30 PM',
+        clientId: insertedClients[3].id,
+        serviceId: insertedServices[1].id, // Portrait
+        date: new Date('2025-02-08'),
+        duration: 120, // 2 hours in minutes
         location: 'Waikiki Beach, Honolulu, HI',
         status: 'pending',
         notes: '10th anniversary celebration. Golden hour shoot.',
-        total_amount: 450.00,
-        deposit_amount: 150.00
+        totalPrice: 450.00,
+        depositPaid: false
       },
       {
-        client_id: insertedClients[4].id,
-        service_id: insertedServices[2].id, // Commercial
-        event_date: new Date('2025-01-25'),
-        event_time: '10:00 AM',
+        clientId: insertedClients[4].id,
+        serviceId: insertedServices[2].id, // Commercial
+        date: new Date('2025-01-25'),
+        duration: 240, // 4 hours in minutes
         location: 'Kailua Coffee Shop, 456 Beach Rd, Kailua, HI',
         status: 'confirmed',
         notes: 'Product shots and lifestyle photography. Focus on coffee brewing process.',
-        total_amount: 950.00,
-        deposit_amount: 400.00
+        totalPrice: 950.00,
+        depositPaid: true
       },
       {
-        client_id: insertedClients[5].id,
-        service_id: insertedServices[1].id, // Portrait
-        event_date: new Date('2025-03-05'),
-        event_time: '4:00 PM',
+        clientId: insertedClients[5].id,
+        serviceId: insertedServices[1].id, // Portrait
+        date: new Date('2025-03-05'),
+        duration: 120, // 2 hours in minutes
         location: 'Diamond Head State Monument, Honolulu, HI',
         status: 'pending',
         notes: 'Maternity session. 32 weeks pregnant. Prefer flowing dresses.',
-        total_amount: 450.00,
-        deposit_amount: 150.00
+        totalPrice: 450.00,
+        depositPaid: false
       }
     ];
 
@@ -303,7 +303,17 @@ async function seedDatabase() {
     ];
 
     for (const image of galleryData) {
-      await db.insert(galleryImages).values(image);
+      await db.insert(galleryImages).values({
+        filename: image.filename,
+        originalName: image.originalName,
+        url: image.url,
+        thumbnailUrl: image.thumbnailUrl,
+        category: image.category,
+        tags: image.tags,
+        featured: image.featured,
+        bookingId: image.bookingId,
+        aiAnalysis: image.aiAnalysis
+      });
     }
 
     // Seed Contracts

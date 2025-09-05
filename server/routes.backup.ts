@@ -298,43 +298,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       console.log("Found service:", service);
 
-      // Check for booking conflicts before creating
-      const requestedDate = new Date(requestData.date);
-      const sessionDuration = requestData.duration || service.duration || 2; // Default 2 hours
-
-      // Create date range for conflict checking (session duration + 1 hour buffer)
-      const bufferStart = new Date(requestedDate.getTime() - (30 * 60 * 1000)); // 30 min before
-      const bufferEnd = new Date(requestedDate.getTime() + ((sessionDuration + 1) * 60 * 60 * 1000)); // Session + 1 hour after
-
-      console.log(`Checking for conflicts between ${bufferStart.toISOString()} and ${bufferEnd.toISOString()}`);
-
-      const conflictingBookings = await storage.getBookingsByDateRange(bufferStart, bufferEnd);
-      const activeConflicts = conflictingBookings.filter(booking => 
-        booking.status === 'confirmed' || booking.status === 'pending'
-      );
-
-      if (activeConflicts.length > 0) {
-        const conflict = activeConflicts[0];
-        console.log("Booking conflict detected:", conflict);
-        return res.status(409).json({ 
-          error: "Booking conflict detected",
-          message: `A ${conflict.service?.name || 'session'} is already scheduled on ${new Date(conflict.date).toLocaleDateString()}. Please choose a different date or time.`,
-          conflictingBooking: {
-            id: conflict.id,
-            date: conflict.date,
-            service: conflict.service?.name,
-            client: conflict.client?.name,
-            status: conflict.status
-          },
-          suggestedAlternatives: [
-            new Date(bufferEnd.getTime() + (60 * 60 * 1000)).toISOString(), // 1 hour after conflict ends
-            new Date(requestedDate.getTime() + (24 * 60 * 60 * 1000)).toISOString(), // Next day same time
-          ]
-        });
-      }
-
-      console.log("No conflicts found, proceeding with booking creation");
-
       // Prepare booking data for database insertion
       const bookingData = {
         clientId: client.id,
@@ -497,11 +460,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/gallery/upload", 
-    authenticateToken, 
-    requireAdmin,
-    upload.array('images', 10), 
-    async (req, res) => {
+  app.post("/api/gallery/upload", authenticateToken, requireAdmin, (req: AuthRequest, res) => {
+    upload.array('images', 10), async (req, res) => {
     try {
       const files = req.files as Express.Multer.File[];
 
@@ -509,49 +469,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "No files uploaded" });
       }
 
-      // Enhanced file validation
-      const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/heic', 'image/tiff'];
-      const maxFileSize = 50 * 1024 * 1024; // 50MB for high-res photography
-
+      // Validate file types and sizes
       for (const file of files) {
-        // Strict MIME type validation
-        if (!allowedMimeTypes.includes(file.mimetype.toLowerCase())) {
-          return res.status(400).json({ 
-            error: `Invalid file type: ${file.originalname}. Only JPEG, PNG, WebP, HEIC, and TIFF images are allowed.`,
-            allowedTypes: allowedMimeTypes
-          });
+        if (!file.mimetype.startsWith('image/')) {
+          return res.status(400).json({ error: `Invalid file type: ${file.originalname}. Only images are allowed.` });
         }
-
-        // File size validation
-        if (file.size > maxFileSize) {
-          return res.status(400).json({ 
-            error: `File too large: ${file.originalname}. Maximum size is ${Math.round(maxFileSize / (1024 * 1024))}MB.`,
-            fileSize: Math.round(file.size / (1024 * 1024)) + "MB"
-          });
-        }
-
-        // Basic file header validation (magic number check)
-        const magicNumbers = {
-          'image/jpeg': [0xFF, 0xD8, 0xFF],
-          'image/png': [0x89, 0x50, 0x4E, 0x47],
-          'image/webp': [0x52, 0x49, 0x46, 0x46]
-        };
-
-        if (magicNumbers[file.mimetype as keyof typeof magicNumbers]) {
-          const header = Array.from(file.buffer.slice(0, 4));
-          const expectedHeader = magicNumbers[file.mimetype as keyof typeof magicNumbers];
-          if (!expectedHeader.every((byte, index) => header[index] === byte)) {
-            return res.status(400).json({ 
-              error: `File appears corrupted or invalid: ${file.originalname}. Please try re-uploading.`
-            });
-          }
-        }
-
-        // File name validation
-        if (!/^[\w\-. ]+\.(jpe?g|png|webp|heic|tiff)$/i.test(file.originalname)) {
-          return res.status(400).json({ 
-            error: `Invalid filename: ${file.originalname}. Use only letters, numbers, spaces, dots, and hyphens.`
-          });
+        if (file.size > 10 * 1024 * 1024) { // 10MB limit
+          return res.status(400).json({ error: `File too large: ${file.originalname}. Maximum size is 10MB.` });
         }
       }
 
@@ -1977,21 +1901,9 @@ Please respond with a JSON object containing:
   // Products endpoints
   app.get("/api/products", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
-      // Get actual product data from galleries that can be sold as products
-      const featuredImages = await storage.getFeaturedImages();
-      const products = featuredImages.map(image => ({
-        id: `gallery-${image.id}`,
-        name: `${image.category} Print - ${image.filename}`,
-        category: image.category,
-        price: 25.00, // Base price for prints
-        imageUrl: image.thumbnailUrl || image.url,
-        inStock: true,
-        type: 'print'
-      }));
-
-      res.json(products);
+      // TODO: Implement actual database query
+      res.json([]);
     } catch (error: any) {
-      console.error("Failed to fetch products:", error);
       res.status(500).json({ message: "Failed to fetch products", details: error.message });
     }
   });
@@ -2087,29 +1999,9 @@ Please respond with a JSON object containing:
 
   app.get("/api/questionnaire-responses", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
-      // Get actual questionnaire data from contact messages
-      const contactMessages = await storage.getContactMessages();
-      const responses = contactMessages
-        .filter(msg => msg.type === 'consultation' || msg.category === 'booking_inquiry')
-        .map(msg => ({
-          id: msg.id,
-          clientName: msg.name,
-          clientEmail: msg.email,
-          serviceType: msg.subject || 'General Inquiry',
-          responses: {
-            message: msg.message,
-            eventDate: null, // Would need additional fields
-            guestCount: null,
-            location: null,
-            budget: null
-          },
-          submittedAt: msg.createdAt,
-          status: msg.status || 'pending'
-        }));
-
-      res.json(responses);
+      // TODO: Implement actual database query
+      res.json([]);
     } catch (error: any) {
-      console.error("Failed to fetch questionnaire responses:", error);
       res.status(500).json({ message: "Failed to fetch questionnaire responses", details: error.message });
     }
   });

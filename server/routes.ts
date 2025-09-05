@@ -1362,6 +1362,171 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
+  // ===== QuickBooks Integration API Routes =====
+  app.get("/api/integrations", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
+    try {
+      // Return integration status - in a real app this would come from database
+      const integrations = [
+        {
+          id: 'quickbooks',
+          name: 'QuickBooks Online',
+          isConnected: false,
+          isActive: false,
+          status: 'disconnected',
+          lastSync: null,
+          error: null
+        },
+        {
+          id: 'stripe',
+          name: 'Stripe',
+          isConnected: false,
+          isActive: false,
+          status: 'disconnected',
+          lastSync: null,
+          error: null
+        },
+        {
+          id: 'google-calendar',
+          name: 'Google Calendar',
+          isConnected: false,
+          isActive: false,
+          status: 'disconnected',
+          lastSync: null,
+          error: null
+        },
+        {
+          id: 'mailchimp',
+          name: 'Mailchimp',
+          isConnected: false,
+          isActive: false,
+          status: 'disconnected',
+          lastSync: null,
+          error: null
+        }
+      ];
+      res.json(integrations);
+    } catch (error) {
+      console.error("Error fetching integrations:", error);
+      res.status(500).json({ error: "Failed to fetch integrations" });
+    }
+  });
+
+  app.post("/api/integrations/quickbooks/connect", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
+    try {
+      const { clientId, clientSecret, sandboxMode } = req.body;
+
+      if (!clientId || !clientSecret) {
+        return res.status(400).json({ error: "Client ID and Client Secret are required" });
+      }
+
+      // In a real implementation, you would:
+      // 1. Validate the credentials with QuickBooks API
+      // 2. Store encrypted credentials in database
+      // 3. Set up OAuth flow
+      
+      console.log(`QuickBooks connection attempt: ${clientId}, Sandbox: ${sandboxMode}`);
+      
+      // Simulate successful connection
+      res.json({
+        success: true,
+        message: "QuickBooks connected successfully",
+        integration: {
+          id: 'quickbooks',
+          isConnected: true,
+          isActive: true,
+          status: 'connected',
+          lastSync: new Date().toISOString()
+        }
+      });
+    } catch (error) {
+      console.error("QuickBooks connection error:", error);
+      res.status(500).json({ error: "Failed to connect to QuickBooks" });
+    }
+  });
+
+  app.post("/api/integrations/quickbooks/sync", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
+    try {
+      // In a real implementation, this would:
+      // 1. Fetch data from QuickBooks API
+      // 2. Sync customers, invoices, payments
+      // 3. Update local database
+      
+      console.log("Starting QuickBooks sync...");
+      
+      // Simulate sync process
+      const syncResults = {
+        customers: { synced: 0, created: 0, updated: 0 },
+        invoices: { synced: 0, created: 0, updated: 0 },
+        payments: { synced: 0, created: 0, updated: 0 },
+        lastSync: new Date().toISOString()
+      };
+      
+      // Get actual data to simulate sync
+      const clients = await storage.getClients();
+      const bookings = await storage.getBookings();
+      
+      syncResults.customers.synced = clients.length;
+      syncResults.invoices.synced = bookings.length;
+      
+      console.log("QuickBooks sync completed:", syncResults);
+      
+      res.json({
+        success: true,
+        message: "QuickBooks sync completed successfully",
+        results: syncResults
+      });
+    } catch (error) {
+      console.error("QuickBooks sync error:", error);
+      res.status(500).json({ error: "Failed to sync QuickBooks data" });
+    }
+  });
+
+  app.put("/api/integrations/:id/toggle", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
+    try {
+      const { id } = req.params;
+      const { isActive } = req.body;
+      
+      console.log(`Toggling integration ${id} to ${isActive ? 'active' : 'inactive'}`);
+      
+      res.json({
+        success: true,
+        message: `Integration ${id} ${isActive ? 'activated' : 'deactivated'}`,
+        integration: {
+          id,
+          isActive,
+          lastUpdated: new Date().toISOString()
+        }
+      });
+    } catch (error) {
+      console.error("Integration toggle error:", error);
+      res.status(500).json({ error: "Failed to toggle integration" });
+    }
+  });
+
+  app.get("/api/integrations/quickbooks/callback", async (req, res) => {
+    try {
+      const { code, state } = req.query;
+      
+      if (!code) {
+        return res.status(400).json({ error: "Authorization code not received" });
+      }
+      
+      // In a real implementation, you would:
+      // 1. Validate the state parameter
+      // 2. Exchange code for access token
+      // 3. Store tokens securely
+      // 4. Update integration status
+      
+      console.log(`QuickBooks OAuth callback received: code=${code}, state=${state}`);
+      
+      // Redirect to admin integrations page with success message
+      res.redirect('/admin/integrations?qb_connected=true');
+    } catch (error) {
+      console.error("QuickBooks OAuth callback error:", error);
+      res.redirect('/admin/integrations?qb_error=true');
+    }
+  });
+
   // ===== Invoice Analytics API Routes =====
   app.get("/api/invoices/stats", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
     try {

@@ -88,6 +88,28 @@ export function Integrations() {
     sandboxMode: true
   });
 
+  // Check for QuickBooks connection status on mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('qb_connected') === 'true') {
+      toast({
+        title: "QuickBooks Connected",
+        description: "Successfully connected to QuickBooks Online",
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/integrations'] });
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (urlParams.get('qb_error') === 'true') {
+      toast({
+        title: "Connection Failed",
+        description: "Failed to connect to QuickBooks. Please try again.",
+        variant: "destructive",
+      });
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [toast, queryClient]);
+
   // Fetch integration status from backend
   const { data: integrations, isLoading } = useQuery({
     queryKey: ['/api/integrations'],
@@ -169,13 +191,26 @@ export function Integrations() {
   };
 
   const handleQuickBooksOAuth = () => {
+    if (!qbCredentials.clientId || !qbCredentials.clientSecret) {
+      toast({
+        title: "Missing Credentials",
+        description: "Please provide both Client ID and Client Secret",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Redirect to QuickBooks OAuth
     const clientId = qbCredentials.clientId;
-    const redirectUri = `${window.location.origin}/admin/integrations/quickbooks/callback`;
+    const redirectUri = `${window.location.origin}/api/integrations/quickbooks/callback`;
     const scope = 'com.intuit.quickbooks.accounting';
     const state = Math.random().toString(36).substring(7);
     
-    const authUrl = `https://appcenter.intuit.com/connect/oauth2?` +
+    const baseUrl = qbCredentials.sandboxMode 
+      ? 'https://appcenter.intuit.com/connect/oauth2'
+      : 'https://appcenter.intuit.com/connect/oauth2';
+    
+    const authUrl = `${baseUrl}?` +
       `client_id=${clientId}&` +
       `scope=${scope}&` +
       `redirect_uri=${encodeURIComponent(redirectUri)}&` +
@@ -412,3 +447,26 @@ export function Integrations() {
     </div>
   );
 }
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/api";
+import {
+  CheckCircle,
+  AlertCircle,
+  RefreshCw,
+  ExternalLink,
+  Settings,
+  Plug,
+  DollarSign,
+  Zap,
+  FileText,
+  Users,
+  Shield
+} from "lucide-react";

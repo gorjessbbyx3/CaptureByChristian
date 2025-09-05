@@ -367,36 +367,21 @@ export async function generateInvoicePDF(data: InvoiceData): Promise<string> {
 }
 
 export async function emailInvoice(invoiceData: InvoiceData, pdfPath: string): Promise<boolean> {
-  // In a real implementation, you would integrate with:
-  // - Neon's email service for automated delivery
-  // - Include the PDF as an attachment
-  // - Add professional formatting and branding
-  
-  console.log(`✉️  Email would be sent to: ${invoiceData.clientName} (${invoiceData.clientEmail})`);
-  console.log(`📧 Subject: Invoice ${invoiceData.invoiceNumber} from CapturedCCollective`);
-  console.log(`📎 PDF attachment: ${pdfPath}`);
-  
-  const emailContent = `
-Dear ${invoiceData.clientName},
-
-Thank you for choosing CapturedCCollective for your photography needs! 
-
-Please find your invoice (${invoiceData.invoiceNumber}) attached. The total amount due is $${invoiceData.total.toFixed(2)}.
-
-Payment is due by ${invoiceData.dueDate}. Please contact us for payment arrangements:
-- Email: info@capturedccollective.com  
-- Phone: (808) XXX-XXXX
-
-If you have any questions about this invoice, please don't hesitate to contact us.
-
-Best regards,
-Christian Picaso
-CapturedCCollective
-Hawaii
-  `;
-  
-  console.log('📝 Email content:', emailContent);
-  
-  // For now, log success - real email integration would happen here
-  return true;
+  try {
+    // Import Neon email service
+    const { neonEmailService } = await import('./neon-email.js');
+    
+    // Send invoice via Neon's email service
+    return await neonEmailService.sendInvoiceEmail(invoiceData, pdfPath);
+    
+  } catch (error) {
+    console.error('❌ Failed to send invoice email:', error);
+    
+    // Fallback to console logging
+    console.log(`✉️  Email fallback for: ${invoiceData.clientName} (${invoiceData.clientEmail})`);
+    console.log(`📧 Subject: Invoice ${invoiceData.invoiceNumber} from CapturedCCollective`);
+    console.log(`📎 PDF attachment: ${pdfPath}`);
+    
+    return false;
+  }
 }

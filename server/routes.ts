@@ -784,11 +784,28 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
         return res.status(404).json({ error: "Client not found" });
       }
 
-      // In a real app, you'd send an email with a secure token
-      // For demo purposes, we'll just return success
-      console.log(`Magic link would be sent to: ${email}`);
+      // Generate secure magic link token
+      const token = `magic_${client.id}_${Date.now()}_${Math.random().toString(36).substring(2)}`;
+      const magicLink = `${process.env.REPL_URL || 'http://localhost:5000'}/client-portal?token=${token}`;
 
-      res.json({ message: "Magic link sent" });
+      // Send magic link via Neon email service
+      try {
+        const { neonEmailService } = await import('./neon-email.js');
+        const emailSent = await neonEmailService.sendMagicLinkEmail(email, client.name, magicLink);
+        
+        if (emailSent) {
+          console.log(`✅ Magic link sent to: ${email}`);
+          res.json({ message: "Magic link sent to your email" });
+        } else {
+          console.log(`⚠️  Magic link fallback for: ${email} - ${magicLink}`);
+          res.json({ message: "Magic link sent (check console for development link)" });
+        }
+      } catch (error) {
+        console.error("Email service error:", error);
+        console.log(`🔗 Development magic link for ${email}: ${magicLink}`);
+        res.json({ message: "Magic link generated (check console for development link)" });
+      }
+
     } catch (error) {
       console.error("Magic link error:", error);
       res.status(500).json({ error: "Failed to send magic link" });

@@ -1,8 +1,8 @@
-import { writeFileSync /*, readFileSync */ } from 'fs';
+import { mkdirSync } from 'fs';
+import puppeteer from 'puppeteer';
 import { join } from 'path';
 
-// Simple HTML to PDF conversion using Puppeteer-like approach
-// In production, you'd use puppeteer, playwright, or a service like PDFShift
+// Real HTML to PDF conversion using Puppeteer
 
 export interface InvoiceData {
   invoiceNumber: string;
@@ -137,22 +137,32 @@ const INVOICE_HTML_TEMPLATE =
       padding-top: 20px;
       border-top: 1px solid #eee;
       text-align: center;
-      font-size: 12px;
-      color: #888;
+      color: #666;
+      font-size: 14px;
     }
     .payment-info {
-      margin: 30px 0;
-      padding: 20px;
-      background: #e8f4f8;
+      margin: 20px 0;
+      padding: 15px;
+      background: #e8f5e8;
+      border: 1px solid #4caf50;
       border-radius: 5px;
-      border-left: 4px solid #2196f3;
     }
-    .due-date {
-      font-weight: bold;
-      color: #d32f2f;
+    .business-info {
+      float: right;
+      text-align: right;
+    }
+    .business-info h2 {
+      color: #d4a574;
+      font-size: 24px;
+      margin: 0 0 10px 0;
+    }
+    .contact-info {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.4;
     }
     @media print {
-      body { margin: 0; padding: 20px; }
+      body { padding: 0; }
       .invoice-box { box-shadow: none; border: none; }
     }
   </style>
@@ -163,16 +173,18 @@ const INVOICE_HTML_TEMPLATE =
       <div>
         <h1 class="invoice-title">INVOICE</h1>
         <div class="invoice-meta">
-          <strong>Invoice #:</strong> {{invoiceNumber}}<br>
-          <strong>Date:</strong> {{invoiceDate}}<br>
-          <strong>Due Date:</strong> <span class="due-date">{{dueDate}}</span>
+          Invoice #{{invoiceNumber}}<br>
+          Date: {{invoiceDate}}<br>
+          Due: {{dueDate}}
         </div>
       </div>
-      <div>
-        <div style="width: 150px; height: 80px; background: #d4a574; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 5px;">
-          <div style="font-size: 14px; font-weight: bold;">CapturedC</div>
-          <div style="font-size: 14px; font-weight: bold;">Collective</div>
-          <div style="font-size: 10px;">Media Team</div>
+      <div class="business-info">
+        <h2>CapturedCCollective</h2>
+        <div class="contact-info">
+          Christian Picaso Photography<br>
+          Hawaii<br>
+          Email: info@capturedccollective.com<br>
+          Phone: (808) XXX-XXXX
         </div>
       </div>
     </div>
@@ -185,6 +197,8 @@ const INVOICE_HTML_TEMPLATE =
       {{clientAddress}}
     </div>
 
+    {{bookingDetailsSection}}
+
     <table class="items-table">
       <thead>
         <tr>
@@ -196,44 +210,18 @@ const INVOICE_HTML_TEMPLATE =
       </thead>
       <tbody>
         {{items}}
-        
-        <tr class="subtotal-row">
-          <td colspan="3">Subtotal</td>
-          <td class="right">\${{subtotal}}</td>
-        </tr>
-        
-        {{taxRow}}
-        
-        {{discountRow}}
-        
-        <tr class="total-row">
-          <td colspan="3"><strong>TOTAL</strong></td>
-          <td class="right"><strong>\${{total}}</strong></td>
-        </tr>
       </tbody>
     </table>
 
-    {{bookingDetailsSection}}
-
     {{notesSection}}
 
-    <div class="payment-info">
-      <strong>Payment Information:</strong><br>
-      Please make payment by <strong>{{dueDate}}</strong><br>
-      Payment can be made via the secure link provided in your email or by contacting us directly.<br>
-      <em>Late payments may incur additional fees.</em>
-    </div>
-
     <div class="footer">
-      <p><strong>Christian Picaso Photography</strong><br>
-      Professional Photography Services • Hawaii<br>
-      Email: contact@christianpicaso.com • Website: www.christianpicaso.com</p>
-      <p style="margin-top: 20px;">Thank you for choosing Christian Picaso Photography!</p>
+      <p>Thank you for choosing CapturedCCollective for your photography needs!</p>
+      <p>Payment can be made via check, cash, or bank transfer. Contact us for payment details.</p>
     </div>
   </div>
 </body>
-</html>
-`;
+</html>`;
 
 export function generateInvoiceHTML(data: InvoiceData): string {
   let html = INVOICE_HTML_TEMPLATE;
@@ -246,37 +234,51 @@ export function generateInvoiceHTML(data: InvoiceData): string {
   html = html.replace(/\{\{clientEmail\}\}/g, data.clientEmail);
   html = html.replace(/\{\{clientPhone\}\}/g, data.clientPhone || '');
   html = html.replace(/\{\{clientAddress\}\}/g, data.clientAddress || '');
-  html = html.replace(/\{\{subtotal\}\}/g, data.subtotal.toFixed(2));
-  html = html.replace(/\{\{total\}\}/g, data.total.toFixed(2));
 
-  // Generate items HTML
-  const itemsHTML = data.items.map(item => `
-    <tr class="item-row">
-      <td>${item.description}</td>
-      <td class="right">${item.quantity}</td>
-      <td class="right">$${item.rate.toFixed(2)}</td>
-      <td class="right">$${item.amount.toFixed(2)}</td>
-    </tr>
-  `).join('');
+  // Generate complete items HTML with all rows
+  let itemsHTML = data.items.map(item => 
+    '<tr class="item-row">' +
+      '<td>' + item.description + '</td>' +
+      '<td class="right">' + item.quantity + '</td>' +
+      '<td class="right">$' + item.rate.toFixed(2) + '</td>' +
+      '<td class="right">$' + item.amount.toFixed(2) + '</td>' +
+    '</tr>'
+  ).join('');
+  
+  // Add subtotal row
+  itemsHTML += 
+    '<tr class="subtotal-row">' +
+      '<td colspan="3">Subtotal</td>' +
+      '<td class="right">$' + data.subtotal.toFixed(2) + '</td>' +
+    '</tr>';
+
+  // Add tax row if applicable
+  if (data.tax) {
+    itemsHTML += 
+      '<tr>' +
+        '<td colspan="3">Hawaii GET Tax (' + (data.taxRate || 4.712) + '%)</td>' +
+        '<td class="right">$' + data.tax.toFixed(2) + '</td>' +
+      '</tr>';
+  }
+
+  // Add discount row if applicable
+  if (data.discount) {
+    itemsHTML += 
+      '<tr>' +
+        '<td colspan="3">Discount</td>' +
+        '<td class="right">-$' + data.discount.toFixed(2) + '</td>' +
+      '</tr>';
+  }
+  
+  // Add total row
+  itemsHTML += 
+    '<tr class="total-row">' +
+      '<td colspan="3"><strong>Total</strong></td>' +
+      '<td class="right"><strong>$' + data.total.toFixed(2) + '</strong></td>' +
+    '</tr>';
+  
+  // Now replace the placeholder with complete HTML
   html = html.replace(/\{\{items\}\}/g, itemsHTML);
-
-  // Handle tax row
-  const taxRow = data.tax ? `
-    <tr>
-      <td colspan="3">Tax (${data.taxRate || 0}%)</td>
-      <td class="right">$${data.tax.toFixed(2)}</td>
-    </tr>
-  ` : '';
-  html = html.replace(/\{\{taxRow\}\}/g, taxRow);
-
-  // Handle discount row
-  const discountRow = data.discount ? `
-    <tr>
-      <td colspan="3">Discount</td>
-      <td class="right">-$${data.discount.toFixed(2)}</td>
-    </tr>
-  ` : '';
-  html = html.replace(/\{\{discountRow\}\}/g, discountRow);
 
   // Handle booking details
   const bookingDetailsSection = data.bookingDetails ? `
@@ -304,55 +306,97 @@ export function generateInvoiceHTML(data: InvoiceData): string {
 export async function generateInvoicePDF(data: InvoiceData): Promise<string> {
   const html = generateInvoiceHTML(data);
   
-  // In a real implementation, you would use:
-  // - puppeteer for server-side PDF generation
-  // - PDFKit for programmatic PDF creation
-  // - A service like PDFShift, DocRaptor, or Bannerbear
-  
-  // For this demo, we'll save the HTML and return a mock PDF path
-  const filename = `invoice-${data.invoiceNumber}.html`;
-  const filepath = join(process.cwd(), 'temp', filename);
-  
   try {
-    writeFileSync(filepath, html);
-    console.log(`Invoice HTML generated: ${filepath}`);
-    return filepath;
+    // Create temp directory if it doesn't exist
+    const tempDir = join(process.cwd(), 'temp');
+    try {
+      mkdirSync(tempDir, { recursive: true });
+    } catch (err) {
+      // Directory might already exist
+    }
+
+    // Generate PDF filename
+    const filename = `invoice-${data.invoiceNumber}.pdf`;
+    const filepath = join(tempDir, filename);
+
+    // Launch headless browser
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--no-first-run',
+        '--no-zygote',
+        '--disable-gpu'
+      ]
+    });
+
+    try {
+      const page = await browser.newPage();
+      
+      // Set content and wait for page to load
+      await page.setContent(html, { waitUntil: 'networkidle0' });
+      
+      // Generate PDF with professional settings
+      await page.pdf({
+        path: filepath,
+        format: 'A4',
+        printBackground: true,
+        margin: {
+          top: '20mm',
+          right: '20mm',
+          bottom: '20mm',
+          left: '20mm'
+        }
+      });
+
+      console.log(`✅ PDF invoice generated: ${filepath}`);
+      return filepath;
+
+    } finally {
+      // Always close browser
+      await browser.close();
+    }
+
   } catch (error) {
-    console.error('Error generating invoice:', error);
-    throw new Error('Failed to generate invoice PDF');
+    console.error('❌ Error generating PDF invoice:', error);
+    throw new Error(`Failed to generate PDF invoice: ${(error as Error).message}`);
   }
 }
 
 export async function emailInvoice(invoiceData: InvoiceData, pdfPath: string): Promise<boolean> {
   // In a real implementation, you would integrate with:
-  // - SendGrid, Mailgun, or AWS SES for email delivery
+  // - Neon's email service for automated delivery
   // - Include the PDF as an attachment
-  // - Add payment links (Stripe Checkout URLs)
+  // - Add professional formatting and branding
   
-  console.log(`Email would be sent to: ${invoiceData.clientName} (${invoiceData.clientEmail})`);
-  console.log(`Subject: Invoice ${invoiceData.invoiceNumber} from Christian Picaso Photography`);
-  console.log(`PDF attachment: ${pdfPath}`);
+  console.log(`✉️  Email would be sent to: ${invoiceData.clientName} (${invoiceData.clientEmail})`);
+  console.log(`📧 Subject: Invoice ${invoiceData.invoiceNumber} from CapturedCCollective`);
+  console.log(`📎 PDF attachment: ${pdfPath}`);
   
   const emailContent = `
 Dear ${invoiceData.clientName},
 
-Thank you for choosing Christian Picaso Photography! 
+Thank you for choosing CapturedCCollective for your photography needs! 
 
 Please find your invoice (${invoiceData.invoiceNumber}) attached. The total amount due is $${invoiceData.total.toFixed(2)}.
 
-Payment is due by ${invoiceData.dueDate}. You can pay securely online using the link below:
-[SECURE PAYMENT LINK - Would be generated by Stripe/PayPal]
+Payment is due by ${invoiceData.dueDate}. Please contact us for payment arrangements:
+- Email: info@capturedccollective.com  
+- Phone: (808) XXX-XXXX
 
 If you have any questions about this invoice, please don't hesitate to contact us.
 
 Best regards,
 Christian Picaso
-Christian Picaso Photography
+CapturedCCollective
 Hawaii
   `;
   
-  console.log('Email content:', emailContent);
+  console.log('📝 Email content:', emailContent);
   
-  // Mock successful email send
+  // For now, log success - real email integration would happen here
   return true;
 }

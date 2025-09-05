@@ -20,14 +20,84 @@ const upload = multer({
 });
 import { 
   insertClientSchema, insertBookingSchema, insertServiceSchema,
-  insertContractSchema, insertInvoiceSchema, insertGalleryImageSchema
+  insertContractSchema, insertInvoiceSchema, insertGalleryImageSchema,
+  insertUserSchema
 } from "@shared/schema.js";
 import { z } from "zod";
 import { generateBookingResponse, analyzeImage } from "./openai";
 import { log } from "./vite";
 import { getDatabaseInitializer } from "./database-init";
+import { 
+  authenticateToken, requireAdmin, verifyPassword, generateToken, 
+  initializeAdminUser, type AuthRequest, type JWTPayload 
+} from "./auth.js";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Initialize admin user on startup
+  await initializeAdminUser();
+
+  // Authentication routes
+  app.post("/api/auth/admin/login", async (req, res) => {
+    try {
+      const { username, password } = z.object({
+        username: z.string().min(1),
+        password: z.string().min(1)
+      }).parse(req.body);
+
+      const user = await storage.getUserByUsername(username);
+      if (!user || user.role !== 'admin') {
+        return res.status(401).json({ error: 'Invalid credentials' });
+      }
+
+      const isValidPassword = await verifyPassword(password, user.password);
+      if (!isValidPassword) {
+        return res.status(401).json({ error: 'Invalid credentials' });
+      }
+
+      const payload: JWTPayload = {
+        userId: user.id,
+        username: user.username,
+        role: user.role
+      };
+
+      const token = generateToken(payload);
+      
+      res.json({
+        success: true,
+        token,
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          role: user.role
+        }
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ error: 'Invalid request data', details: error.errors });
+      } else {
+        res.status(500).json({ error: 'Login failed' });
+      }
+    }
+  });
+
+  app.get("/api/auth/admin/verify", authenticateToken, requireAdmin, (req: AuthRequest, res) => {
+    res.json({
+      success: true,
+      user: {
+        id: req.user!.id,
+        username: req.user!.username,
+        email: req.user!.email,
+        role: req.user!.role
+      }
+    });
+  });
+
+  app.post("/api/auth/admin/logout", authenticateToken, (_req, res) => {
+    // With JWT, logout is handled client-side by removing the token
+    res.json({ success: true, message: 'Logged out successfully' });
+  });
+
   // Health check endpoint for Docker
   app.get("/api/health", (_req, res) => {
     const dbInitializer = getDatabaseInitializer();
@@ -40,7 +110,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Database status endpoint for debugging
-  app.get("/api/admin/database-status", async (_req, res) => {
+  app.get("/api/admin/database-status", authenticateToken, requireAdmin, async (_req, res) => {
     try {
       const dbInitializer = getDatabaseInitializer();
       const isInitialized = dbInitializer.getInitializationStatus();
@@ -66,7 +136,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Client routes
-  app.get("/api/clients", async (_req, res) => {
+  app.get("/api/clients", authenticateToken, requireAdmin, async (_req, res) => {
     try {
       const clients = await storage.getClients();
       res.json(clients);
@@ -76,7 +146,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/clients", async (req, res) => {
+  app.post("/api/clients", authenticateToken, requireAdmin, async (req, res) => {
     try {
       const clientData = insertClientSchema.parse(req.body);
       const client = await storage.createClient(clientData);
@@ -90,7 +160,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/clients/:id", async (req, res) => {
+  app.get("/api/clients/:id", authenticateToken, requireAdmin, async (req, res) => {
     try {
       const client = await storage.getClient(parseInt(req.params.id));
       if (!client) {
@@ -112,7 +182,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/services", async (req, res) => {
+  app.post("/api/services", authenticateToken, requireAdmin, async (req, res) => {
     try {
       const serviceData = insertServiceSchema.parse(req.body);
       const service = await storage.createService(serviceData);
@@ -168,7 +238,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Booking routes
-  app.get("/api/bookings", async (_req, res) => {
+  app.get("/api/bookings", authenticateToken, requireAdmin, async (_req, res) => {
     try {
       const bookings = await storage.getBookings();
       res.json(bookings);
@@ -193,7 +263,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     duration: z.number().optional(),
   });
 
-  app.post("/api/bookings", async (req, res) => {
+  app.post("/api/bookings", authenticateToken, requireAdmin, async (req, res) => {
     try {
       console.log("Received booking data:", req.body);
 
@@ -631,7 +701,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
   // Analytics routes
-  app.get("/api/analytics/stats", async (_req, res) => {
+  app.get("/api/analytics/stats", authenticateToken, requireAdmin, async (_req, res) => {
     try {
       const stats = await storage.getBookingStats();
       res.json(stats);
@@ -641,7 +711,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   });
 
 
-  app.get("/api/analytics/revenue/:year/:month", async (req, res) => {
+  app.get("/api/analytics/revenue/:year/:month", authenticateToken, requireAdmin, async (req, res) => {
     try {
       const year = parseInt(req.params.year);
       const month = parseInt(req.params.month);
@@ -1322,7 +1392,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
-  app.get("/api/analytics/business-kpis", async (_req, res) => {
+  app.get("/api/analytics/business-kpis", authenticateToken, requireAdmin, async (_req, res) => {
     try {
       const kpis = await storage.getBusinessKPIs();
       res.json(kpis);
@@ -1332,7 +1402,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
-  app.get("/api/analytics/clients", async (_req, res) => {
+  app.get("/api/analytics/clients", authenticateToken, requireAdmin, async (_req, res) => {
     try {
       const metrics = await storage.getClientMetrics();
       res.json(metrics);
@@ -1556,7 +1626,7 @@ Please respond with a JSON object containing:
   });
 
   // Real-time analytics endpoint
-  app.get("/api/analytics/realtime", async (_req, res) => {
+  app.get("/api/analytics/realtime", authenticateToken, requireAdmin, async (_req, res) => {
     try {
       const bookings = await storage.getBookings();
       const clients = await storage.getClients();

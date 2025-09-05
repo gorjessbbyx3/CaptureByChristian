@@ -32,6 +32,7 @@ interface ProfileData {
   email: string;
   address: string;
   headshot: string;
+  heroImage?: string;
   socialMedia: {
     instagram: string;
     facebook: string;
@@ -80,6 +81,35 @@ export function ProfileManagement() {
       setProfileData(profile as ProfileData);
     }
   }, [profile, profileData]);
+
+  const handleHeroImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 50 * 1024 * 1024) {
+      toast({
+        title: "File Too Large",
+        description: "Hero image must be less than 50MB",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsUploading(true);
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (reader.result) {
+        const base64 = reader.result as string;
+        handleInputChange('heroImage', base64);
+        toast({
+          title: "Hero Image Updated",
+          description: "Hero image has been updated successfully",
+        });
+      }
+      setIsUploading(false);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleHeadshotUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -195,7 +225,7 @@ export function ProfileManagement() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Profile Photo Section */}
         <Card>
           <CardHeader>

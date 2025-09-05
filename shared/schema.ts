@@ -285,6 +285,7 @@ export const profiles = pgTable("profiles", {
   email: text("email").notNull(),
   address: text("address").notNull(),
   headshot: text("headshot"), // base64 or URL
+  heroImage: text("hero_image"), // URL or base64 for hero section background
   socialMedia: json("social_media").$type<{
     instagram: string;
     facebook: string;

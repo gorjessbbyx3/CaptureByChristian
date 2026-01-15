@@ -296,6 +296,47 @@ export const profiles = pgTable("profiles", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const integrations = pgTable("integrations", {
+  id: serial("id").primaryKey(),
+  integrationId: text("integration_id").notNull().unique(),
+  name: text("name").notNull(),
+  isConnected: boolean("is_connected").default(false).notNull(),
+  isActive: boolean("is_active").default(false).notNull(),
+  status: text("status").default("disconnected").notNull(),
+  credentials: json("credentials").$type<{
+    clientId?: string;
+    clientSecret?: string;
+    accessToken?: string;
+    refreshToken?: string;
+  }>(),
+  lastSync: timestamp("last_sync"),
+  error: text("error"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const clientCredentials = pgTable("client_credentials", {
+  id: serial("id").primaryKey(),
+  clientId: integer("client_id").references(() => clients.id).notNull().unique(),
+  passwordHash: text("password_hash"),
+  portalAccess: boolean("portal_access").default(true).notNull(),
+  magicLinkToken: text("magic_link_token"),
+  magicLinkExpiry: timestamp("magic_link_expiry"),
+  lastLogin: timestamp("last_login"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const gallerySelections = pgTable("gallery_selections", {
+  id: serial("id").primaryKey(),
+  galleryId: text("gallery_id").notNull(),
+  clientId: integer("client_id").references(() => clients.id).notNull(),
+  favorites: json("favorites").$type<string[]>().default([]),
+  comments: json("comments").$type<Record<string, string>>().default({}),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // Relations
 export const clientsRelations = relations(clients, ({ many }) => ({
   bookings: many(bookings),
@@ -453,6 +494,24 @@ export const insertProfileSchema = createInsertSchema(profiles).omit({
   updatedAt: true,
 });
 
+export const insertIntegrationSchema = createInsertSchema(integrations).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertClientCredentialSchema = createInsertSchema(clientCredentials).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertGallerySelectionSchema = createInsertSchema(gallerySelections).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = any;
@@ -510,3 +569,12 @@ export type InsertClientMessage = any;
 
 export type Profile = typeof profiles.$inferSelect;
 export type InsertProfile = any;
+
+export type Integration = typeof integrations.$inferSelect;
+export type InsertIntegration = any;
+
+export type ClientCredential = typeof clientCredentials.$inferSelect;
+export type InsertClientCredential = any;
+
+export type GallerySelection = typeof gallerySelections.$inferSelect;
+export type InsertGallerySelection = any;

@@ -1,12 +1,16 @@
 import {
   users, clients, services, bookings, contracts, invoices, galleryImages, aiChats, contactMessages, clientPortalSessions, clientMessages, profiles,
+  integrations, clientCredentials, gallerySelections, products, orders, questionnaires,
   type User, type InsertUser, type Client, type InsertClient,
   type Service, type InsertService, type Booking, type InsertBooking,
   type Contract, type InsertContract, type Invoice, type InsertInvoice,
   type GalleryImage, type InsertGalleryImage, type AiChat, type InsertAiChat,
   type ContactMessage, type InsertContactMessage, type ClientMessage, type InsertClientMessage,
-  type Profile, type InsertProfile
+  type Profile, type InsertProfile, type Integration, type InsertIntegration,
+  type ClientCredential, type GallerySelection,
+  type Product, type InsertProduct, type Order, type InsertOrder, type Questionnaire, type InsertQuestionnaire
 } from "@shared/schema.js";
+import bcrypt from "bcrypt";
 import { db } from "./db.js";
 import { eq, desc, and, gte, lte, sql } from "drizzle-orm";
 
@@ -101,6 +105,49 @@ export interface IStorage {
   getInvoiceStats(): Promise<any>;
   getBusinessKPIs(): Promise<any>;
   getClientMetrics(): Promise<any>;
+
+  // Integrations
+  getIntegrations(): Promise<Integration[]>;
+  getIntegration(integrationId: string): Promise<Integration | undefined>;
+  createIntegration(integration: InsertIntegration): Promise<Integration>;
+  updateIntegration(integrationId: string, integration: Partial<InsertIntegration>): Promise<Integration>;
+
+  // Client Credentials
+  getClientCredentials(): Promise<(ClientCredential & { client: Client })[]>;
+  getClientCredential(clientId: number): Promise<ClientCredential | undefined>;
+  setClientPassword(clientId: number, password: string): Promise<ClientCredential>;
+  verifyClientPassword(clientId: number, password: string): Promise<boolean>;
+  toggleClientPortalAccess(clientId: number, enabled: boolean): Promise<ClientCredential>;
+  updateClientLastLogin(clientId: number): Promise<void>;
+  setMagicLinkToken(clientId: number, token: string, expiry: Date): Promise<void>;
+  clearMagicLinkToken(clientId: number): Promise<void>;
+
+  // Gallery Selections
+  getGallerySelections(galleryId: string, clientId: number): Promise<GallerySelection | undefined>;
+  saveGallerySelections(galleryId: string, clientId: number, favorites: string[], comments: Record<string, string>): Promise<GallerySelection>;
+
+  // Products
+  getProducts(): Promise<Product[]>;
+  getProduct(id: number): Promise<Product | undefined>;
+  createProduct(product: InsertProduct): Promise<Product>;
+  updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product>;
+  deleteProduct(id: number): Promise<void>;
+
+  // Orders
+  getOrders(): Promise<(Order & { client: Client })[]>;
+  getOrder(id: number): Promise<Order | undefined>;
+  createOrder(order: InsertOrder): Promise<Order>;
+  updateOrder(id: number, order: Partial<InsertOrder>): Promise<Order>;
+
+  // Questionnaires
+  getQuestionnaires(): Promise<Questionnaire[]>;
+  getQuestionnaire(id: number): Promise<Questionnaire | undefined>;
+  createQuestionnaire(questionnaire: InsertQuestionnaire): Promise<Questionnaire>;
+  updateQuestionnaire(id: number, questionnaire: Partial<InsertQuestionnaire>): Promise<Questionnaire>;
+  deleteQuestionnaire(id: number): Promise<void>;
+
+  // Portal Session Management
+  clearAllPortalSessions(): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -640,6 +687,282 @@ export class DatabaseStorage implements IStorage {
   async createProfile(insertProfile: InsertProfile): Promise<Profile> {
     const [profile] = await db.insert(profiles).values(insertProfile).returning();
     return profile;
+  }
+
+  // Integrations
+  async getIntegrations(): Promise<Integration[]> {
+    const existingIntegrations = await db.select().from(integrations);
+    
+    // Ensure default integrations exist
+    const defaultIntegrations = [
+      { integrationId: 'quickbooks', name: 'QuickBooks Online' },
+      { integrationId: 'stripe', name: 'Stripe' },
+      { integrationId: 'google-calendar', name: 'Google Calendar' },
+      { integrationId: 'mailchimp', name: 'Mailchimp' }
+    ];
+
+    for (const def of defaultIntegrations) {
+      const exists = existingIntegrations.find(i => i.integrationId === def.integrationId);
+      if (!exists) {
+        await db.insert(integrations).values({
+          integrationId: def.integrationId,
+          name: def.name,
+          isConnected: false,
+          isActive: false,
+          status: 'disconnected'
+        });
+      }
+    }
+
+    return await db.select().from(integrations).orderBy(integrations.name);
+  }
+
+  async getIntegration(integrationId: string): Promise<Integration | undefined> {
+    const [integration] = await db.select().from(integrations).where(eq(integrations.integrationId, integrationId));
+    return integration || undefined;
+  }
+
+  async createIntegration(insertIntegration: InsertIntegration): Promise<Integration> {
+    const [integration] = await db.insert(integrations).values(insertIntegration).returning();
+    return integration;
+  }
+
+  async updateIntegration(integrationId: string, updateData: Partial<InsertIntegration>): Promise<Integration> {
+    const [integration] = await db.update(integrations)
+      .set({ ...updateData, updatedAt: new Date() })
+      .where(eq(integrations.integrationId, integrationId))
+      .returning();
+    return integration;
+  }
+
+  // Client Credentials
+  async getClientCredentials(): Promise<(ClientCredential & { client: Client })[]> {
+    const allClients = await this.getClients();
+    const result: (ClientCredential & { client: Client })[] = [];
+
+    for (const client of allClients) {
+      let credential = await this.getClientCredential(client.id);
+      
+      // Create credential record if it doesn't exist
+      if (!credential) {
+        const [newCredential] = await db.insert(clientCredentials).values({
+          clientId: client.id,
+          portalAccess: true
+        }).returning();
+        credential = newCredential;
+      }
+
+      result.push({
+        ...credential,
+        client
+      });
+    }
+
+    return result;
+  }
+
+  async getClientCredential(clientId: number): Promise<ClientCredential | undefined> {
+    const [credential] = await db.select().from(clientCredentials).where(eq(clientCredentials.clientId, clientId));
+    return credential || undefined;
+  }
+
+  async setClientPassword(clientId: number, password: string): Promise<ClientCredential> {
+    const passwordHash = await bcrypt.hash(password, 10);
+    
+    let credential = await this.getClientCredential(clientId);
+    
+    if (credential) {
+      const [updated] = await db.update(clientCredentials)
+        .set({ passwordHash, updatedAt: new Date() })
+        .where(eq(clientCredentials.clientId, clientId))
+        .returning();
+      return updated;
+    } else {
+      const [created] = await db.insert(clientCredentials).values({
+        clientId,
+        passwordHash,
+        portalAccess: true
+      }).returning();
+      return created;
+    }
+  }
+
+  async verifyClientPassword(clientId: number, password: string): Promise<boolean> {
+    const credential = await this.getClientCredential(clientId);
+    if (!credential || !credential.passwordHash) {
+      return false;
+    }
+    return bcrypt.compare(password, credential.passwordHash);
+  }
+
+  async toggleClientPortalAccess(clientId: number, enabled: boolean): Promise<ClientCredential> {
+    let credential = await this.getClientCredential(clientId);
+    
+    if (credential) {
+      const [updated] = await db.update(clientCredentials)
+        .set({ portalAccess: enabled, updatedAt: new Date() })
+        .where(eq(clientCredentials.clientId, clientId))
+        .returning();
+      return updated;
+    } else {
+      const [created] = await db.insert(clientCredentials).values({
+        clientId,
+        portalAccess: enabled
+      }).returning();
+      return created;
+    }
+  }
+
+  async updateClientLastLogin(clientId: number): Promise<void> {
+    let credential = await this.getClientCredential(clientId);
+    
+    if (credential) {
+      await db.update(clientCredentials)
+        .set({ lastLogin: new Date(), updatedAt: new Date() })
+        .where(eq(clientCredentials.clientId, clientId));
+    } else {
+      await db.insert(clientCredentials).values({
+        clientId,
+        lastLogin: new Date(),
+        portalAccess: true
+      });
+    }
+  }
+
+  async setMagicLinkToken(clientId: number, token: string, expiry: Date): Promise<void> {
+    let credential = await this.getClientCredential(clientId);
+    
+    if (credential) {
+      await db.update(clientCredentials)
+        .set({ magicLinkToken: token, magicLinkExpiry: expiry, updatedAt: new Date() })
+        .where(eq(clientCredentials.clientId, clientId));
+    } else {
+      await db.insert(clientCredentials).values({
+        clientId,
+        magicLinkToken: token,
+        magicLinkExpiry: expiry,
+        portalAccess: true
+      });
+    }
+  }
+
+  async clearMagicLinkToken(clientId: number): Promise<void> {
+    await db.update(clientCredentials)
+      .set({ magicLinkToken: null, magicLinkExpiry: null, updatedAt: new Date() })
+      .where(eq(clientCredentials.clientId, clientId));
+  }
+
+  // Gallery Selections
+  async getGallerySelections(galleryId: string, clientId: number): Promise<GallerySelection | undefined> {
+    const [selection] = await db.select().from(gallerySelections)
+      .where(and(
+        eq(gallerySelections.galleryId, galleryId),
+        eq(gallerySelections.clientId, clientId)
+      ));
+    return selection || undefined;
+  }
+
+  async saveGallerySelections(galleryId: string, clientId: number, favorites: string[], comments: Record<string, string>): Promise<GallerySelection> {
+    const existing = await this.getGallerySelections(galleryId, clientId);
+    
+    if (existing) {
+      const [updated] = await db.update(gallerySelections)
+        .set({ favorites, comments, updatedAt: new Date() })
+        .where(eq(gallerySelections.id, existing.id))
+        .returning();
+      return updated;
+    } else {
+      const [created] = await db.insert(gallerySelections).values({
+        galleryId,
+        clientId,
+        favorites,
+        comments
+      }).returning();
+      return created;
+    }
+  }
+
+  // Products
+  async getProducts(): Promise<Product[]> {
+    return await db.select().from(products).orderBy(products.name);
+  }
+
+  async getProduct(id: number): Promise<Product | undefined> {
+    const [product] = await db.select().from(products).where(eq(products.id, id));
+    return product || undefined;
+  }
+
+  async createProduct(insertProduct: InsertProduct): Promise<Product> {
+    const [product] = await db.insert(products).values(insertProduct).returning();
+    return product;
+  }
+
+  async updateProduct(id: number, updateProduct: Partial<InsertProduct>): Promise<Product> {
+    const [product] = await db.update(products).set(updateProduct).where(eq(products.id, id)).returning();
+    return product;
+  }
+
+  async deleteProduct(id: number): Promise<void> {
+    await db.delete(products).where(eq(products.id, id));
+  }
+
+  // Orders
+  async getOrders(): Promise<(Order & { client: Client })[]> {
+    return await db
+      .select()
+      .from(orders)
+      .leftJoin(clients, eq(orders.clientId, clients.id))
+      .orderBy(desc(orders.createdAt))
+      .then(rows =>
+        rows.map(row => ({
+          ...row.orders,
+          client: row.clients!
+        }))
+      );
+  }
+
+  async getOrder(id: number): Promise<Order | undefined> {
+    const [order] = await db.select().from(orders).where(eq(orders.id, id));
+    return order || undefined;
+  }
+
+  async createOrder(insertOrder: InsertOrder): Promise<Order> {
+    const [order] = await db.insert(orders).values(insertOrder).returning();
+    return order;
+  }
+
+  async updateOrder(id: number, updateOrder: Partial<InsertOrder>): Promise<Order> {
+    const [order] = await db.update(orders).set(updateOrder).where(eq(orders.id, id)).returning();
+    return order;
+  }
+
+  // Questionnaires
+  async getQuestionnaires(): Promise<Questionnaire[]> {
+    return await db.select().from(questionnaires).orderBy(desc(questionnaires.createdAt));
+  }
+
+  async getQuestionnaire(id: number): Promise<Questionnaire | undefined> {
+    const [questionnaire] = await db.select().from(questionnaires).where(eq(questionnaires.id, id));
+    return questionnaire || undefined;
+  }
+
+  async createQuestionnaire(insertQuestionnaire: InsertQuestionnaire): Promise<Questionnaire> {
+    const [questionnaire] = await db.insert(questionnaires).values(insertQuestionnaire).returning();
+    return questionnaire;
+  }
+
+  async updateQuestionnaire(id: number, updateQuestionnaire: Partial<InsertQuestionnaire>): Promise<Questionnaire> {
+    const [questionnaire] = await db.update(questionnaires).set(updateQuestionnaire).where(eq(questionnaires.id, id)).returning();
+    return questionnaire;
+  }
+
+  async deleteQuestionnaire(id: number): Promise<void> {
+    await db.delete(questionnaires).where(eq(questionnaires.id, id));
+  }
+
+  // Portal Session Management
+  async clearAllPortalSessions(): Promise<void> {
+    await db.delete(clientPortalSessions);
   }
 }
 

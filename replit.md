@@ -29,3 +29,17 @@ The application follows a modern full-stack architecture.
 - **UI Components**: Radix UI primitives.
 - **Build Tools**: Vite.
 - **Development Tools**: TypeScript, ESLint/Prettier, Drizzle Kit.
+
+## Recent Changes (January 2026)
+
+### API Security & Database Fixes
+- **Gallery Selections**: Implemented database persistence for client gallery selections (favorites, comments) using new `gallery_selections` table
+- **Client Credentials**: Added secure password hashing with bcrypt for client portal authentication via `client_credentials` table
+- **Integration Status**: Database persistence for third-party integration status (QuickBooks, Stripe, Google Calendar) via `integrations` table
+- **Portal Session Reset**: Implemented actual database clearing for admin portal session reset functionality
+- **Products CRUD**: Full database-backed create, read, update, delete operations for products with Zod validation
+- **Questionnaires CRUD**: Full database-backed operations for questionnaires with Zod validation
+- **Orders Management**: Database-backed order retrieval and management
+- **Product Analytics**: Real-time analytics calculated from orders data (revenue, sales count, top products)
+- **Default QueryFn**: Added default query function to TanStack Query client to prevent "No queryFn" errors
+- **Security Fix**: Removed plain-text password logging vulnerability from client credential management

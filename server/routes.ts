@@ -821,7 +821,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   // Client Portal Authentication Routes
   app.post("/api/client-portal/login", async (req, res) => {
     try {
-      const { email } = req.body;
+      const { email, password } = req.body;
 
       // Find client by email
       const client = await storage.getClientByEmail(email);
@@ -829,14 +829,32 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
         return res.status(401).json({ error: "Invalid credentials" });
       }
 
-      // In a real app, you'd verify password hash
-      // For demo purposes, we'll accept any password
+      // Verify password against stored hash
+      const credential = await storage.getClientCredential(client.id);
+      if (!credential || !credential.passwordHash) {
+        return res.status(401).json({ error: "No password set. Please contact administrator or use magic link." });
+      }
+
+      const isValidPassword = await storage.verifyClientPassword(client.id, password);
+      if (!isValidPassword) {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
+
+      // Update last login timestamp
+      await storage.updateClientLastLogin(client.id);
+
+      // Generate proper JWT token for client
+      const token = generateToken({
+        userId: client.id,
+        username: client.email,
+        role: 'client'
+      });
 
       res.json({
         id: client.id,
         name: client.name,
         email: client.email,
-        token: `client_${client.id}_${Date.now()}` // Simple token for demo
+        token
       });
     } catch (error) {
       console.error("Client login error:", error);
@@ -883,7 +901,8 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
 
   app.get("/api/client-portal/bookings", authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const clientId = parseInt(req.query.clientId as string);
+      // Use authenticated user's ID for security - ignore clientId from query params
+      const clientId = req.user!.id;
       const bookings = await storage.getBookings();
       const clientBookings = bookings.filter(b => b.clientId === clientId);
 
@@ -896,7 +915,8 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
 
   app.get("/api/client-portal/galleries", authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const clientId = parseInt(req.query.clientId as string);
+      // Use authenticated user's ID for security - ignore clientId from query params
+      const clientId = req.user!.id;
 
       // Get real galleries from bookings and gallery images
       const bookings = await storage.getBookings();
@@ -995,11 +1015,8 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   app.get("/api/client-portal/selections/:galleryId", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const { galleryId } = req.params;
-      const clientId = parseInt(req.query.clientId as string);
-
-      if (!clientId) {
-        return res.status(400).json({ error: "Client ID is required" });
-      }
+      // Use authenticated user's ID for security
+      const clientId = req.user!.id;
 
       const selections = await storage.getGallerySelections(galleryId, clientId);
 
@@ -1018,11 +1035,9 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   app.post("/api/client-portal/selections/:galleryId", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const { galleryId } = req.params;
-      const { clientId, favorites, comments } = req.body;
-
-      if (!clientId) {
-        return res.status(400).json({ error: "Client ID is required" });
-      }
+      const { favorites, comments } = req.body;
+      // Use authenticated user's ID for security - ignore clientId from body
+      const clientId = req.user!.id;
 
       await storage.saveGallerySelections(galleryId, clientId, favorites || [], comments || {});
 
@@ -1035,7 +1050,8 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
 
   app.get("/api/client-portal/contracts", authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const clientId = parseInt(req.query.clientId as string);
+      // Use authenticated user's ID for security - ignore clientId from query params
+      const clientId = req.user!.id;
 
       // Get contracts directly by client ID
       const allContracts = await storage.getContracts();
@@ -1199,7 +1215,8 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   // Client Portal Invoices
   app.get("/api/client-portal/invoices", authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const clientId = parseInt(req.query.clientId as string);
+      // Use authenticated user's ID for security - ignore clientId from query params
+      const clientId = req.user!.id;
 
       // Get client bookings and generate invoice data
       const bookings = await storage.getBookings();
@@ -1945,11 +1962,8 @@ Please respond with a JSON object containing:
   // Client Portal Messaging API
   app.get("/api/client-portal/messages", authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const clientId = parseInt(req.query.clientId as string);
-
-      if (!clientId) {
-        return res.status(400).json({ error: "Client ID is required" });
-      }
+      // Use authenticated user's ID for security - ignore clientId from query params
+      const clientId = req.user!.id;
 
       const messages = await storage.getClientMessages(clientId);
       res.json(messages);
@@ -1961,9 +1975,11 @@ Please respond with a JSON object containing:
 
   app.post("/api/client-portal/send-message", authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const { clientId, message, senderName, senderEmail } = req.body;
+      const { message, senderName, senderEmail } = req.body;
+      // Use authenticated user's ID for security - ignore clientId from body
+      const clientId = req.user!.id;
 
-      if (!clientId || !message || !senderName || !senderEmail) {
+      if (!message || !senderName || !senderEmail) {
         return res.status(400).json({ error: "Missing required fields" });
       }
 

@@ -56,12 +56,32 @@ export async function authenticateToken(req: AuthRequest, res: Response, next: N
   }
 
   try {
-    const user = await storage.getUser(payload.userId);
-    if (!user) {
-      return res.status(401).json({ error: 'User not found' });
+    // Handle both admin users and client users
+    if (payload.role === 'client') {
+      // For client tokens, get client info and create a pseudo-user object
+      const client = await storage.getClient(payload.userId);
+      if (!client) {
+        return res.status(401).json({ error: 'Client not found' });
+      }
+      
+      // Create a user-like object for the client
+      req.user = {
+        id: client.id,
+        username: client.email,
+        email: client.email,
+        password: '', // Not needed for auth
+        role: 'client',
+        createdAt: client.createdAt
+      };
+    } else {
+      // For admin users, look up in users table
+      const user = await storage.getUser(payload.userId);
+      if (!user) {
+        return res.status(401).json({ error: 'User not found' });
+      }
+      req.user = user;
     }
 
-    req.user = user;
     next();
   } catch (error) {
     return res.status(500).json({ error: 'Authentication error' });

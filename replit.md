@@ -43,3 +43,9 @@ The application follows a modern full-stack architecture.
 - **Product Analytics**: Real-time analytics calculated from orders data (revenue, sales count, top products)
 - **Default QueryFn**: Added default query function to TanStack Query client to prevent "No queryFn" errors
 - **Security Fix**: Removed plain-text password logging vulnerability from client credential management
+
+### Client Portal Authentication Fixes
+- **Token Storage**: Fixed client portal login to properly store JWT token in localStorage after successful authentication
+- **Auth Headers**: Updated client dashboard queries to use the default queryFn which includes Authorization headers
+- **Message Sending**: Fixed send message mutation to use apiRequest with proper auth headers
+- **Query Types**: Added proper TypeScript type annotations to client portal data queries

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -36,47 +37,37 @@ export function ClientDashboard({ clientData, onLogout, onViewGallery }: ClientD
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
 
-  // Fetch client-specific data
-  const { data: clientBookings } = useQuery({
-    queryKey: ['/api/client-portal/bookings', clientData.id],
-    queryFn: () => fetch(`/api/client-portal/bookings?clientId=${clientData.id}`).then(r => r.json()),
+  // Fetch client-specific data using default queryFn with auth headers
+  const { data: clientBookings = [] } = useQuery<any[]>({
+    queryKey: [`/api/client-portal/bookings?clientId=${clientData.id}`],
   });
 
-  const { data: clientGalleries } = useQuery({
-    queryKey: ['/api/client-portal/galleries', clientData.id],
-    queryFn: () => fetch(`/api/client-portal/galleries?clientId=${clientData.id}`).then(r => r.json()),
+  const { data: clientGalleries = [] } = useQuery<any[]>({
+    queryKey: [`/api/client-portal/galleries?clientId=${clientData.id}`],
   });
 
-  const { data: clientContracts } = useQuery({
-    queryKey: ['/api/client-portal/contracts', clientData.id],
-    queryFn: () => fetch(`/api/client-portal/contracts?clientId=${clientData.id}`).then(r => r.json()),
+  const { data: clientContracts = [] } = useQuery<any[]>({
+    queryKey: [`/api/client-portal/contracts?clientId=${clientData.id}`],
   });
 
-  const { data: clientInvoices } = useQuery({
-    queryKey: ['/api/client-portal/invoices', clientData.id],
-    queryFn: () => fetch(`/api/client-portal/invoices?clientId=${clientData.id}`).then(r => r.json()),
+  const { data: clientInvoices = [] } = useQuery<any[]>({
+    queryKey: [`/api/client-portal/invoices?clientId=${clientData.id}`],
   });
 
   // Fetch client messages
-  const { data: clientMessages = [] } = useQuery({
-    queryKey: ['/api/client-portal/messages', clientData.id],
-    queryFn: () => fetch(`/api/client-portal/messages?clientId=${clientData.id}`).then(r => r.json()),
+  const { data: clientMessages = [] } = useQuery<any[]>({
+    queryKey: [`/api/client-portal/messages?clientId=${clientData.id}`],
   });
 
-  // Send message mutation
+  // Send message mutation using apiRequest for auth headers
   const sendMessageMutation = useMutation({
     mutationFn: async (messageData: { message: string }) => {
-      const response = await fetch('/api/client-portal/send-message', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          clientId: clientData.id,
-          message: messageData.message,
-          senderName: clientData.name,
-          senderEmail: clientData.email 
-        }),
+      const response = await apiRequest('POST', '/api/client-portal/send-message', { 
+        clientId: clientData.id,
+        message: messageData.message,
+        senderName: clientData.name,
+        senderEmail: clientData.email 
       });
-      if (!response.ok) throw new Error('Failed to send message');
       return response.json();
     },
     onSuccess: () => {
@@ -85,7 +76,7 @@ export function ClientDashboard({ clientData, onLogout, onViewGallery }: ClientD
         description: "Your message has been sent to the admin inbox.",
       });
       setNewMessage("");
-      queryClient.invalidateQueries({ queryKey: ['/api/client-portal/messages', clientData.id] });
+      queryClient.invalidateQueries({ queryKey: [`/api/client-portal/messages?clientId=${clientData.id}`] });
     },
     onError: () => {
       toast({

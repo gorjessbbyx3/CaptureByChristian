@@ -25,6 +25,10 @@ export function ClientLogin({ onLoginSuccess }: ClientLoginProps) {
       return response.json();
     },
     onSuccess: (data) => {
+      // Store the auth token for subsequent authenticated requests
+      if (data.token) {
+        localStorage.setItem('auth_token', data.token);
+      }
       toast({
         title: "Welcome back!",
         description: "You have successfully logged in to your client portal.",

@@ -49,3 +49,9 @@ The application follows a modern full-stack architecture.
 - **Auth Headers**: Updated client dashboard queries to use the default queryFn which includes Authorization headers
 - **Message Sending**: Fixed send message mutation to use apiRequest with proper auth headers
 - **Query Types**: Added proper TypeScript type annotations to client portal data queries
+
+### IDOR Security Fix (Critical)
+- **Client Data Isolation**: Fixed critical IDOR (Insecure Direct Object Reference) vulnerability where client portal endpoints accepted clientId from query parameters
+- **Server-Side Authentication**: All client portal endpoints now use `req.user!.id` from JWT token instead of accepting clientId from request
+- **Affected Endpoints**: bookings, galleries, contracts, invoices, messages, send-message, and gallery selections
+- **Result**: Client A can no longer access Client B's data by modifying request parameters

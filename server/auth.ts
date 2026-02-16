@@ -4,7 +4,13 @@ import type { Request, Response, NextFunction } from "express";
 import { storage } from "./storage.js";
 import type { User } from "@shared/schema.js";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-super-secret-jwt-key-change-in-production";
+const JWT_SECRET = process.env.JWT_SECRET || (() => {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error("JWT_SECRET environment variable must be set in production");
+  }
+  console.warn("WARNING: Using auto-generated JWT_SECRET. Set JWT_SECRET env var for production.");
+  return require('crypto').randomBytes(32).toString('hex');
+})();
 const JWT_EXPIRES_IN = "24h";
 
 export interface AuthRequest extends Request {

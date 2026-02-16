@@ -18,10 +18,9 @@ import { useToast } from "@/hooks/use-toast";
 
 interface GalleryViewerProps {
   galleryId: string;
-  clientId: string;
 }
 
-export function GalleryViewer({ galleryId, clientId }: GalleryViewerProps) {
+export function GalleryViewer({ galleryId }: GalleryViewerProps) {
   const [selectedImage, setSelectedImage] = useState<any>(null);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [comments, setComments] = useState<{ [key: string]: string }>({});
@@ -40,7 +39,7 @@ export function GalleryViewer({ galleryId, clientId }: GalleryViewerProps) {
   const { data: selectionsData } = useQuery({
     queryKey: ['/api/client-portal/selections', galleryId],
     queryFn: async () => {
-      const response = await fetch(`/api/client-portal/selections/${galleryId}?clientId=${clientId}`);
+      const response = await fetch(`/api/client-portal/selections/${galleryId}`);
       if (response.status === 404) {
         // No selections exist yet - return empty state
         return { favorites: [], comments: {} };
@@ -66,7 +65,7 @@ export function GalleryViewer({ galleryId, clientId }: GalleryViewerProps) {
       const response = await fetch(`/api/client-portal/selections/${galleryId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ clientId, ...data }),
+        body: JSON.stringify(data),
       });
       
       if (!response.ok) throw new Error('Failed to save selections');

@@ -871,8 +871,11 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
         return res.status(404).json({ error: "Client not found" });
       }
 
-      // Generate secure magic link token
+      // Generate secure magic link token and store it
       const token = `magic_${client.id}_${Date.now()}_${Math.random().toString(36).substring(2)}`;
+      const expiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour expiry
+      await storage.setMagicLinkToken(client.id, token, expiry);
+
       const magicLink = `${process.env.REPL_URL || 'http://localhost:5000'}/client-portal?token=${token}`;
 
       // Send magic link via Neon email service
@@ -896,6 +899,66 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     } catch (error) {
       console.error("Magic link error:", error);
       res.status(500).json({ error: "Failed to send magic link" });
+    }
+  });
+
+  // Verify magic link token and authenticate client
+  app.post("/api/client-portal/verify-magic-link", async (req, res) => {
+    try {
+      const { token } = req.body;
+
+      if (!token || typeof token !== 'string') {
+        return res.status(400).json({ error: "Token is required" });
+      }
+
+      // Extract client ID from token format: magic_<clientId>_<timestamp>_<random>
+      const parts = token.split('_');
+      if (parts.length < 4 || parts[0] !== 'magic') {
+        return res.status(401).json({ error: "Invalid token format" });
+      }
+
+      const clientId = parseInt(parts[1]);
+      if (isNaN(clientId)) {
+        return res.status(401).json({ error: "Invalid token" });
+      }
+
+      // Verify the token against stored value
+      const credential = await storage.getClientCredential(clientId);
+      if (!credential || credential.magicLinkToken !== token) {
+        return res.status(401).json({ error: "Invalid or expired magic link" });
+      }
+
+      // Check expiry
+      if (credential.magicLinkExpiry && new Date(credential.magicLinkExpiry) < new Date()) {
+        await storage.clearMagicLinkToken(clientId);
+        return res.status(401).json({ error: "Magic link has expired" });
+      }
+
+      // Token is valid — clear it (single use) and authenticate
+      await storage.clearMagicLinkToken(clientId);
+
+      const client = await storage.getClient(clientId);
+      if (!client) {
+        return res.status(404).json({ error: "Client not found" });
+      }
+
+      await storage.updateClientLastLogin(clientId);
+
+      const jwtToken = generateToken({
+        userId: client.id,
+        username: client.email,
+        role: 'client'
+      });
+
+      res.json({
+        id: client.id,
+        name: client.name,
+        email: client.email,
+        token: jwtToken
+      });
+    } catch (error) {
+      console.error("Magic link verification error:", error);
+      res.status(500).json({ error: "Verification failed" });
     }
   });
 
@@ -931,7 +994,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
           name: `${booking.service?.name || 'Photography Session'} - ${new Date(booking.date).toLocaleDateString()}`,
           clientId: clientId,
           status: bookingImages.length > 0 ? 'proofing' : 'pending',
-          coverImage: bookingImages.length > 0 ? bookingImages[0].url : "/api/placeholder/400/300",
+          coverImage: bookingImages.length > 0 ? bookingImages[0].url : null,
           photoCount: bookingImages.length,
           createdAt: booking.createdAt
         };
@@ -964,6 +1027,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   app.get("/api/client-portal/gallery/:galleryId", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const { galleryId } = req.params;
+      const clientId = req.user!.id;
 
       let galleryImages = [];
       let galleryName = "";
@@ -973,7 +1037,7 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       if (galleryId.startsWith('unbooked_')) {
         // Handle unbooked images
         const allImages = await storage.getGalleryImages();
-        galleryImages = allImages.filter(img => 
+        galleryImages = allImages.filter(img =>
           !img.bookingId && img.tags?.includes('client_gallery')
         );
         galleryName = "Additional Photos";
@@ -985,6 +1049,11 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
 
         if (!booking) {
           return res.status(404).json({ error: "Gallery not found" });
+        }
+
+        // Verify the authenticated client owns this booking
+        if (booking.clientId !== clientId) {
+          return res.status(403).json({ error: "Access denied" });
         }
 
         galleryName = `${booking.service?.name || 'Photography Session'} - ${new Date(booking.date).toLocaleDateString()}`;
@@ -1015,8 +1084,16 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   app.get("/api/client-portal/selections/:galleryId", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const { galleryId } = req.params;
-      // Use authenticated user's ID for security
       const clientId = req.user!.id;
+
+      // Verify the client owns this gallery's booking
+      if (!galleryId.startsWith('unbooked_')) {
+        const bookingId = parseInt(galleryId);
+        const booking = await storage.getBooking(bookingId);
+        if (booking && booking.clientId !== clientId) {
+          return res.status(403).json({ error: "Access denied" });
+        }
+      }
 
       const selections = await storage.getGallerySelections(galleryId, clientId);
 
@@ -1036,8 +1113,16 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     try {
       const { galleryId } = req.params;
       const { favorites, comments } = req.body;
-      // Use authenticated user's ID for security - ignore clientId from body
       const clientId = req.user!.id;
+
+      // Verify the client owns this gallery's booking
+      if (!galleryId.startsWith('unbooked_')) {
+        const bookingId = parseInt(galleryId);
+        const booking = await storage.getBooking(bookingId);
+        if (booking && booking.clientId !== clientId) {
+          return res.status(403).json({ error: "Access denied" });
+        }
+      }
 
       await storage.saveGallerySelections(galleryId, clientId, favorites || [], comments || {});
 
@@ -1083,10 +1168,20 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   app.post("/api/client-portal/contracts/:id/sign", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const contractId = parseInt(req.params.id);
+      const clientId = req.user!.id;
       const { signatureData } = req.body;
 
       if (!signatureData || !signatureData.fullName) {
         return res.status(400).json({ error: "Signature data is required" });
+      }
+
+      // Verify the authenticated client owns this contract
+      const contract = await storage.getContract(contractId);
+      if (!contract) {
+        return res.status(404).json({ error: "Contract not found" });
+      }
+      if (contract.clientId !== clientId) {
+        return res.status(403).json({ error: "Access denied" });
       }
 
       // Update contract with client signature
@@ -1406,74 +1501,6 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     }
   });
 
-  app.post("/api/integrations/quickbooks/connect", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
-    try {
-      const { clientId, clientSecret, sandboxMode } = req.body;
-
-      if (!clientId || !clientSecret) {
-        return res.status(400).json({ error: "Client ID and Client Secret are required" });
-      }
-
-      // Update integration status in database
-      await storage.updateIntegration('quickbooks', {
-        isConnected: true,
-        isActive: true,
-        status: 'connected',
-        lastSync: new Date(),
-        credentials: { clientId, clientSecret }
-      });
-
-      console.log(`QuickBooks connected: Sandbox=${sandboxMode}`);
-      
-      res.json({
-        success: true,
-        message: "QuickBooks connected successfully",
-        integration: {
-          id: 'quickbooks',
-          isConnected: true,
-          isActive: true,
-          status: 'connected',
-          lastSync: new Date().toISOString()
-        }
-      });
-    } catch (error) {
-      console.error("QuickBooks connection error:", error);
-      res.status(500).json({ error: "Failed to connect to QuickBooks" });
-    }
-  });
-
-  app.post("/api/integrations/quickbooks/sync", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
-    try {
-      const syncResults = {
-        customers: { synced: 0, created: 0, updated: 0 },
-        invoices: { synced: 0, created: 0, updated: 0 },
-        payments: { synced: 0, created: 0, updated: 0 },
-        lastSync: new Date().toISOString()
-      };
-      
-      // Get actual data to sync
-      const clientsList = await storage.getClients();
-      const bookings = await storage.getBookings();
-      
-      syncResults.customers.synced = clientsList.length;
-      syncResults.invoices.synced = bookings.length;
-
-      // Update last sync time
-      await storage.updateIntegration('quickbooks', {
-        lastSync: new Date()
-      });
-      
-      res.json({
-        success: true,
-        message: "QuickBooks sync completed successfully",
-        results: syncResults
-      });
-    } catch (error) {
-      console.error("QuickBooks sync error:", error);
-      res.status(500).json({ error: "Failed to sync QuickBooks data" });
-    }
-  });
-
   app.put("/api/integrations/:id/toggle", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const { id } = req.params;
@@ -1493,30 +1520,6 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     } catch (error) {
       console.error("Integration toggle error:", error);
       res.status(500).json({ error: "Failed to toggle integration" });
-    }
-  });
-
-  app.get("/api/integrations/quickbooks/callback", async (req, res) => {
-    try {
-      const { code, state } = req.query;
-      
-      if (!code) {
-        return res.status(400).json({ error: "Authorization code not received" });
-      }
-      
-      // In a real implementation, you would:
-      // 1. Validate the state parameter
-      // 2. Exchange code for access token
-      // 3. Store tokens securely
-      // 4. Update integration status
-      
-      console.log(`QuickBooks OAuth callback received: code=${code}, state=${state}`);
-      
-      // Redirect to admin integrations page with success message
-      res.redirect('/admin/integrations?qb_connected=true');
-    } catch (error) {
-      console.error("QuickBooks OAuth callback error:", error);
-      res.redirect('/admin/integrations?qb_error=true');
     }
   });
 
@@ -1822,7 +1825,6 @@ Please respond with a JSON object containing:
         notes: invoice.notes
       };
 
-      // Generate PDF and send email (mock implementation)
       const success = await emailInvoice(emailData, "");
 
       if (success) {
@@ -1874,21 +1876,11 @@ Please respond with a JSON object containing:
       }));
 
       const realTimeData = {
-        activeVisitors: 0, // No real-time visitor tracking available
-        pageViews: 0, // No page view tracking available
         newBookings: todayBookings.length,
         totalBookings: bookings.length,
         newClients: todayClients.length,
         totalClients: clients.length,
-        portfolioViews: 0, // No portfolio view tracking available
-        avgSessionDuration: "0:00", // No session tracking available
-        bounceRate: 0, // No bounce rate tracking available
-        topPages: [
-          { page: "/", views: 0, percentage: 0 },
-          { page: "/portfolio", views: 0, percentage: 0 },
-          { page: "/booking", views: 0, percentage: 0 },
-          { page: "/services", views: 0, percentage: 0 }
-        ],
+        newInquiries: todayMessages.length,
         recentActivity: [
           ...todayMessages.slice(0, 3).map(m => ({
             action: "New inquiry",
@@ -1903,12 +1895,6 @@ Please respond with a JSON object containing:
         ],
         trafficSources: trafficSources.length > 0 ? trafficSources.slice(0, 4) : [
           { source: "Direct", visitors: clients.length, percentage: 100 }
-        ],
-        deviceTypes: [
-          { type: "No tracking data", count: 0, percentage: 0 }
-        ],
-        locations: [
-          { city: "No tracking data", state: "", visitors: 0 }
         ]
       };
 

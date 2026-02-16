@@ -23,6 +23,7 @@ export interface InvoiceData {
   taxRate?: number;
   discount?: number;
   total: number;
+  businessPhone?: string;
   notes?: string;
   bookingDetails?: {
     serviceName: string;
@@ -184,7 +185,7 @@ const INVOICE_HTML_TEMPLATE =
           Christian Picaso Photography<br>
           Hawaii<br>
           Email: info@capturedccollective.com<br>
-          Phone: (808) XXX-XXXX
+          Phone: {{businessPhone}}
         </div>
       </div>
     </div>
@@ -234,6 +235,7 @@ export function generateInvoiceHTML(data: InvoiceData): string {
   html = html.replace(/\{\{clientEmail\}\}/g, data.clientEmail);
   html = html.replace(/\{\{clientPhone\}\}/g, data.clientPhone || '');
   html = html.replace(/\{\{clientAddress\}\}/g, data.clientAddress || '');
+  html = html.replace(/\{\{businessPhone\}\}/g, data.businessPhone || '');
 
   // Generate complete items HTML with all rows
   let itemsHTML = data.items.map(item => 

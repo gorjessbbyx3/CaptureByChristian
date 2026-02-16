@@ -695,7 +695,6 @@ export class DatabaseStorage implements IStorage {
     
     // Ensure default integrations exist
     const defaultIntegrations = [
-      { integrationId: 'quickbooks', name: 'QuickBooks Online' },
       { integrationId: 'stripe', name: 'Stripe' },
       { integrationId: 'google-calendar', name: 'Google Calendar' },
       { integrationId: 'mailchimp', name: 'Mailchimp' }

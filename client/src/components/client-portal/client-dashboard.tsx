@@ -39,34 +39,33 @@ export function ClientDashboard({ clientData, onLogout, onViewGallery }: ClientD
 
   // Fetch client-specific data using default queryFn with auth headers
   const { data: clientBookings = [] } = useQuery<any[]>({
-    queryKey: [`/api/client-portal/bookings?clientId=${clientData.id}`],
+    queryKey: ['/api/client-portal/bookings'],
   });
 
   const { data: clientGalleries = [] } = useQuery<any[]>({
-    queryKey: [`/api/client-portal/galleries?clientId=${clientData.id}`],
+    queryKey: ['/api/client-portal/galleries'],
   });
 
   const { data: clientContracts = [] } = useQuery<any[]>({
-    queryKey: [`/api/client-portal/contracts?clientId=${clientData.id}`],
+    queryKey: ['/api/client-portal/contracts'],
   });
 
   const { data: clientInvoices = [] } = useQuery<any[]>({
-    queryKey: [`/api/client-portal/invoices?clientId=${clientData.id}`],
+    queryKey: ['/api/client-portal/invoices'],
   });
 
   // Fetch client messages
   const { data: clientMessages = [] } = useQuery<any[]>({
-    queryKey: [`/api/client-portal/messages?clientId=${clientData.id}`],
+    queryKey: ['/api/client-portal/messages'],
   });
 
   // Send message mutation using apiRequest for auth headers
   const sendMessageMutation = useMutation({
     mutationFn: async (messageData: { message: string }) => {
-      const response = await apiRequest('POST', '/api/client-portal/send-message', { 
-        clientId: clientData.id,
+      const response = await apiRequest('POST', '/api/client-portal/send-message', {
         message: messageData.message,
         senderName: clientData.name,
-        senderEmail: clientData.email 
+        senderEmail: clientData.email
       });
       return response.json();
     },
@@ -76,7 +75,7 @@ export function ClientDashboard({ clientData, onLogout, onViewGallery }: ClientD
         description: "Your message has been sent to the admin inbox.",
       });
       setNewMessage("");
-      queryClient.invalidateQueries({ queryKey: [`/api/client-portal/messages?clientId=${clientData.id}`] });
+      queryClient.invalidateQueries({ queryKey: ['/api/client-portal/messages'] });
     },
     onError: () => {
       toast({
@@ -325,7 +324,7 @@ export function ClientDashboard({ clientData, onLogout, onViewGallery }: ClientD
                       <Card key={gallery.id} className="overflow-hidden">
                         <div className="aspect-video bg-muted relative">
                           <img
-                            src={gallery.coverImage || "/api/placeholder/400/300"}
+                            src={gallery.coverImage || ""}
                             alt={gallery.name}
                             className="w-full h-full object-cover"
                           />

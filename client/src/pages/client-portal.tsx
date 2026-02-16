@@ -84,9 +84,8 @@ export function ClientPortalPage() {
               <span>← Back to Dashboard</span>
             </button>
           </div>
-          <GalleryViewer 
-            galleryId={selectedGalleryId} 
-            clientId={clientData.id}
+          <GalleryViewer
+            galleryId={selectedGalleryId}
           />
         </div>
       </div>

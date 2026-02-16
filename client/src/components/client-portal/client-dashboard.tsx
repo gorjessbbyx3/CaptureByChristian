@@ -175,10 +175,11 @@ export function ClientDashboard({ clientData, onLogout, onViewGallery }: ClientD
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="galleries">Galleries</TabsTrigger>
             <TabsTrigger value="contracts">Contracts</TabsTrigger>
+            <TabsTrigger value="invoices">Invoices</TabsTrigger>
             <TabsTrigger value="messages">Messages</TabsTrigger>
             <TabsTrigger value="downloads">Downloads</TabsTrigger>
           </TabsList>
@@ -470,13 +471,13 @@ export function ClientDashboard({ clientData, onLogout, onViewGallery }: ClientD
                     {clientMessages.length ? (
                       <div className="space-y-3">
                         {clientMessages.map((message: any) => (
-                          <div key={message.id} className={`flex ${message.senderId === clientData.id ? 'justify-end' : 'justify-start'}`}>
+                          <div key={message.id} className={`flex ${message.isFromClient ? 'justify-end' : 'justify-start'}`}>
                             <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                              message.senderId === clientData.id 
-                                ? 'bg-bronze text-white' 
+                              message.isFromClient
+                                ? 'bg-bronze text-white'
                                 : 'bg-muted'
                             }`}>
-                              <p className="text-sm">{message.content}</p>
+                              <p className="text-sm">{message.message}</p>
                               <p className="text-xs opacity-70 mt-1">
                                 {format(new Date(message.createdAt), 'MMM dd, h:mm a')}
                               </p>

@@ -5,16 +5,17 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { 
-  Heart, 
-  MessageSquare, 
-  Share2, 
-  Eye, 
-  X, 
-  ChevronLeft, 
+import {
+  Heart,
+  MessageSquare,
+  Share2,
+  Eye,
+  X,
+  ChevronLeft,
   ChevronRight
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 interface GalleryViewerProps {
   galleryId: string;
@@ -32,20 +33,25 @@ export function GalleryViewer({ galleryId }: GalleryViewerProps) {
   // Fetch gallery data
   const { data: gallery, isLoading } = useQuery({
     queryKey: ['/api/client-portal/gallery', galleryId],
-    queryFn: () => fetch(`/api/client-portal/gallery/${galleryId}`).then(r => r.json()),
+    queryFn: async () => {
+      const response = await apiRequest('GET', `/api/client-portal/gallery/${galleryId}`);
+      return response.json();
+    },
   });
 
   // Fetch existing selections from real database
   const { data: selectionsData } = useQuery({
     queryKey: ['/api/client-portal/selections', galleryId],
     queryFn: async () => {
-      const response = await fetch(`/api/client-portal/selections/${galleryId}`);
-      if (response.status === 404) {
-        // No selections exist yet - return empty state
-        return { favorites: [], comments: {} };
+      try {
+        const response = await apiRequest('GET', `/api/client-portal/selections/${galleryId}`);
+        return response.json();
+      } catch (error: any) {
+        if (error.message?.startsWith('404')) {
+          return { favorites: [], comments: {} };
+        }
+        throw error;
       }
-      if (!response.ok) throw new Error('Failed to fetch selections');
-      return response.json();
     }
   });
 
@@ -62,13 +68,7 @@ export function GalleryViewer({ galleryId }: GalleryViewerProps) {
   // Save selections mutation
   const saveSelectionsMutation = useMutation({
     mutationFn: async (data: { favorites: string[], comments: { [key: string]: string } }) => {
-      const response = await fetch(`/api/client-portal/selections/${galleryId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-      
-      if (!response.ok) throw new Error('Failed to save selections');
+      const response = await apiRequest('POST', `/api/client-portal/selections/${galleryId}`, data);
       return response.json();
     },
     onSuccess: () => {

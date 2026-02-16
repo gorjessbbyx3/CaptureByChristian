@@ -45,6 +45,10 @@ export function ClientPortalPage() {
   };
 
   const handleLoginSuccess = (data: any) => {
+    // Store auth token for authenticated API requests
+    if (data.token) {
+      localStorage.setItem('auth_token', data.token);
+    }
     setClientData(data);
     setIsAuthenticated(true);
     localStorage.setItem('clientPortalData', JSON.stringify(data));
@@ -56,6 +60,7 @@ export function ClientPortalPage() {
     setCurrentView('dashboard');
     setSelectedGalleryId(null);
     localStorage.removeItem('clientPortalData');
+    localStorage.removeItem('auth_token');
   };
 
   const handleViewGallery = (galleryId: string) => {

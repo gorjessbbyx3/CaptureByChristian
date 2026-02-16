@@ -39,34 +39,33 @@ export function ClientDashboard({ clientData, onLogout, onViewGallery }: ClientD
 
   // Fetch client-specific data using default queryFn with auth headers
   const { data: clientBookings = [] } = useQuery<any[]>({
-    queryKey: [`/api/client-portal/bookings?clientId=${clientData.id}`],
+    queryKey: ['/api/client-portal/bookings'],
   });
 
   const { data: clientGalleries = [] } = useQuery<any[]>({
-    queryKey: [`/api/client-portal/galleries?clientId=${clientData.id}`],
+    queryKey: ['/api/client-portal/galleries'],
   });
 
   const { data: clientContracts = [] } = useQuery<any[]>({
-    queryKey: [`/api/client-portal/contracts?clientId=${clientData.id}`],
+    queryKey: ['/api/client-portal/contracts'],
   });
 
   const { data: clientInvoices = [] } = useQuery<any[]>({
-    queryKey: [`/api/client-portal/invoices?clientId=${clientData.id}`],
+    queryKey: ['/api/client-portal/invoices'],
   });
 
   // Fetch client messages
   const { data: clientMessages = [] } = useQuery<any[]>({
-    queryKey: [`/api/client-portal/messages?clientId=${clientData.id}`],
+    queryKey: ['/api/client-portal/messages'],
   });
 
   // Send message mutation using apiRequest for auth headers
   const sendMessageMutation = useMutation({
     mutationFn: async (messageData: { message: string }) => {
-      const response = await apiRequest('POST', '/api/client-portal/send-message', { 
-        clientId: clientData.id,
+      const response = await apiRequest('POST', '/api/client-portal/send-message', {
         message: messageData.message,
         senderName: clientData.name,
-        senderEmail: clientData.email 
+        senderEmail: clientData.email
       });
       return response.json();
     },
@@ -76,7 +75,7 @@ export function ClientDashboard({ clientData, onLogout, onViewGallery }: ClientD
         description: "Your message has been sent to the admin inbox.",
       });
       setNewMessage("");
-      queryClient.invalidateQueries({ queryKey: [`/api/client-portal/messages?clientId=${clientData.id}`] });
+      queryClient.invalidateQueries({ queryKey: ['/api/client-portal/messages'] });
     },
     onError: () => {
       toast({
@@ -176,10 +175,11 @@ export function ClientDashboard({ clientData, onLogout, onViewGallery }: ClientD
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="galleries">Galleries</TabsTrigger>
             <TabsTrigger value="contracts">Contracts</TabsTrigger>
+            <TabsTrigger value="invoices">Invoices</TabsTrigger>
             <TabsTrigger value="messages">Messages</TabsTrigger>
             <TabsTrigger value="downloads">Downloads</TabsTrigger>
           </TabsList>
@@ -325,7 +325,7 @@ export function ClientDashboard({ clientData, onLogout, onViewGallery }: ClientD
                       <Card key={gallery.id} className="overflow-hidden">
                         <div className="aspect-video bg-muted relative">
                           <img
-                            src={gallery.coverImage || "/api/placeholder/400/300"}
+                            src={gallery.coverImage || ""}
                             alt={gallery.name}
                             className="w-full h-full object-cover"
                           />
@@ -471,13 +471,13 @@ export function ClientDashboard({ clientData, onLogout, onViewGallery }: ClientD
                     {clientMessages.length ? (
                       <div className="space-y-3">
                         {clientMessages.map((message: any) => (
-                          <div key={message.id} className={`flex ${message.senderId === clientData.id ? 'justify-end' : 'justify-start'}`}>
+                          <div key={message.id} className={`flex ${message.isFromClient ? 'justify-end' : 'justify-start'}`}>
                             <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                              message.senderId === clientData.id 
-                                ? 'bg-bronze text-white' 
+                              message.isFromClient
+                                ? 'bg-bronze text-white'
                                 : 'bg-muted'
                             }`}>
-                              <p className="text-sm">{message.content}</p>
+                              <p className="text-sm">{message.message}</p>
                               <p className="text-xs opacity-70 mt-1">
                                 {format(new Date(message.createdAt), 'MMM dd, h:mm a')}
                               </p>

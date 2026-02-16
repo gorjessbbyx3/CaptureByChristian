@@ -13,14 +13,35 @@ export function ClientPortalPage() {
   useEffect(() => {
     // Check for existing session
     const storedClientData = localStorage.getItem('clientPortalData');
-    if (storedClientData) {
+    const storedToken = localStorage.getItem('auth_token');
+
+    if (storedClientData && storedToken) {
       try {
         const data = JSON.parse(storedClientData);
-        setClientData(data);
-        setIsAuthenticated(true);
+        // Validate the stored token is still valid
+        fetch('/api/client-portal/bookings', {
+          headers: { 'Authorization': `Bearer ${storedToken}` }
+        }).then(res => {
+          if (res.ok) {
+            setClientData(data);
+            setIsAuthenticated(true);
+          } else {
+            // Token expired or invalid — clear session
+            localStorage.removeItem('clientPortalData');
+            localStorage.removeItem('auth_token');
+          }
+        }).catch(() => {
+          // Network error — allow offline access with stored data
+          setClientData(data);
+          setIsAuthenticated(true);
+        });
       } catch (error) {
         localStorage.removeItem('clientPortalData');
+        localStorage.removeItem('auth_token');
       }
+    } else if (storedClientData && !storedToken) {
+      // No token stored — clear stale session data
+      localStorage.removeItem('clientPortalData');
     }
 
     // Handle magic link authentication
@@ -45,6 +66,10 @@ export function ClientPortalPage() {
   };
 
   const handleLoginSuccess = (data: any) => {
+    // Store auth token for authenticated API requests
+    if (data.token) {
+      localStorage.setItem('auth_token', data.token);
+    }
     setClientData(data);
     setIsAuthenticated(true);
     localStorage.setItem('clientPortalData', JSON.stringify(data));
@@ -56,6 +81,7 @@ export function ClientPortalPage() {
     setCurrentView('dashboard');
     setSelectedGalleryId(null);
     localStorage.removeItem('clientPortalData');
+    localStorage.removeItem('auth_token');
   };
 
   const handleViewGallery = (galleryId: string) => {
@@ -84,9 +110,8 @@ export function ClientPortalPage() {
               <span>← Back to Dashboard</span>
             </button>
           </div>
-          <GalleryViewer 
-            galleryId={selectedGalleryId} 
-            clientId={clientData.id}
+          <GalleryViewer
+            galleryId={selectedGalleryId}
           />
         </div>
       </div>

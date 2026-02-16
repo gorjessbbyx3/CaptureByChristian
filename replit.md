@@ -35,7 +35,7 @@ The application follows a modern full-stack architecture.
 ### API Security & Database Fixes
 - **Gallery Selections**: Implemented database persistence for client gallery selections (favorites, comments) using new `gallery_selections` table
 - **Client Credentials**: Added secure password hashing with bcrypt for client portal authentication via `client_credentials` table
-- **Integration Status**: Database persistence for third-party integration status (QuickBooks, Stripe, Google Calendar) via `integrations` table
+- **Integration Status**: Database persistence for third-party integration status (Stripe, Google Calendar) via `integrations` table
 - **Portal Session Reset**: Implemented actual database clearing for admin portal session reset functionality
 - **Products CRUD**: Full database-backed create, read, update, delete operations for products with Zod validation
 - **Questionnaires CRUD**: Full database-backed operations for questionnaires with Zod validation

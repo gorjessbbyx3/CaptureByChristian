@@ -522,27 +522,30 @@ export class DatabaseStorage implements IStorage {
 
   // Client Portal Sessions
   async getClientPortalSessions(): Promise<any[]> {
-    // Return empty sessions since no real portal tracking is implemented
-    return [];
+    return await db.select().from(clientPortalSessions).orderBy(desc(clientPortalSessions.createdAt));
   }
 
   async getActiveClientPortalSessions(): Promise<any[]> {
-    const sessions = await this.getClientPortalSessions();
-    return sessions.filter(session => session.status === 'active');
+    return await db.select().from(clientPortalSessions)
+      .where(gte(clientPortalSessions.expiresAt, new Date()));
   }
 
   async createClientPortalSession(session: any): Promise<any> {
-    // In a real implementation, this would create actual session tracking
-    return session;
+    const [created] = await db.insert(clientPortalSessions).values(session).returning();
+    return created;
   }
 
   async updateClientPortalSession(sessionToken: string, updates: any): Promise<any> {
-    // In a real implementation, this would update session data
-    return { sessionToken, ...updates };
+    const [updated] = await db.update(clientPortalSessions)
+      .set(updates)
+      .where(eq(clientPortalSessions.sessionToken, sessionToken))
+      .returning();
+    return updated;
   }
 
-  async deleteClientPortalSession(_sessionToken: string): Promise<void> {
-    // In a real implementation, this would expire/delete the session
+  async deleteClientPortalSession(sessionToken: string): Promise<void> {
+    await db.delete(clientPortalSessions)
+      .where(eq(clientPortalSessions.sessionToken, sessionToken));
   }
 
   async getClientPortalStats(): Promise<any> {
@@ -695,7 +698,6 @@ export class DatabaseStorage implements IStorage {
     
     // Ensure default integrations exist
     const defaultIntegrations = [
-      { integrationId: 'quickbooks', name: 'QuickBooks Online' },
       { integrationId: 'stripe', name: 'Stripe' },
       { integrationId: 'google-calendar', name: 'Google Calendar' },
       { integrationId: 'mailchimp', name: 'Mailchimp' }

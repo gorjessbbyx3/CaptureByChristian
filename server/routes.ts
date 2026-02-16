@@ -400,19 +400,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Contract routes
-  app.get("/api/contracts/:bookingId", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
-    try {
-      const contract = await storage.getContract(parseInt(req.params.bookingId));
-      if (!contract) {
-        return res.status(404).json({ error: "Contract not found" });
-      }
-      res.json(contract);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to fetch contract" });
-    }
-  });
-
   app.patch("/api/contracts/:id", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const updateData = req.body;
@@ -768,6 +755,28 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
 
   app.post("/api/invoices", authenticateToken, requireAdmin, async (req, res) => {
     try {
+      const { bookingId } = req.body;
+
+      if (bookingId) {
+        // Auto-generate invoice from booking
+        const booking = await storage.getBooking(bookingId);
+        if (!booking) {
+          return res.status(404).json({ error: "Booking not found" });
+        }
+
+        const invoiceData = {
+          bookingId: booking.id,
+          amount: booking.totalPrice,
+          dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+          status: 'pending' as const
+        };
+
+        const validatedData = insertInvoiceSchema.parse(invoiceData);
+        const invoice = await storage.createInvoice(validatedData);
+        return res.json(invoice);
+      }
+
+      // Direct invoice creation from raw data
       const invoiceData = insertInvoiceSchema.parse(req.body);
       const invoice = await storage.createInvoice(invoiceData);
       res.json(invoice);
@@ -775,7 +784,8 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       if (error instanceof z.ZodError) {
         res.status(400).json({ error: "Invalid invoice data", details: error.errors });
       } else {
-        res.status(500).json({ error: "Failed to create invoice" });
+        console.error("Error creating invoice:", error);
+        res.status(500).json({ error: "Failed to create invoice", details: (error as Error).message });
       }
     }
   });
@@ -997,7 +1007,11 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       let createdAt: Date | string = new Date().toISOString();
 
       if (galleryId.startsWith('unbooked_')) {
-        // Handle unbooked images
+        // Handle unbooked images — verify the gallery belongs to this client
+        const galleryClientId = parseInt(galleryId.replace('unbooked_', ''));
+        if (galleryClientId !== clientId) {
+          return res.status(403).json({ error: "Access denied" });
+        }
         const allImages = await storage.getGalleryImages();
         galleryImages = allImages.filter(img =>
           !img.bookingId && img.tags?.includes('client_gallery')
@@ -1048,8 +1062,13 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       const { galleryId } = req.params;
       const clientId = req.user!.id;
 
-      // Verify the client owns this gallery's booking
-      if (!galleryId.startsWith('unbooked_')) {
+      // Verify the client owns this gallery
+      if (galleryId.startsWith('unbooked_')) {
+        const galleryClientId = parseInt(galleryId.replace('unbooked_', ''));
+        if (galleryClientId !== clientId) {
+          return res.status(403).json({ error: "Access denied" });
+        }
+      } else {
         const bookingId = parseInt(galleryId);
         const booking = await storage.getBooking(bookingId);
         if (booking && booking.clientId !== clientId) {
@@ -1077,8 +1096,13 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       const { favorites, comments } = req.body;
       const clientId = req.user!.id;
 
-      // Verify the client owns this gallery's booking
-      if (!galleryId.startsWith('unbooked_')) {
+      // Verify the client owns this gallery
+      if (galleryId.startsWith('unbooked_')) {
+        const galleryClientId = parseInt(galleryId.replace('unbooked_', ''));
+        if (galleryClientId !== clientId) {
+          return res.status(403).json({ error: "Access denied" });
+        }
+      } else {
         const bookingId = parseInt(galleryId);
         const booking = await storage.getBooking(bookingId);
         if (booking && booking.clientId !== clientId) {
@@ -1558,44 +1582,6 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     } catch (error) {
       console.error("Error fetching invoices:", error);
       res.status(500).json({ error: "Failed to fetch invoices" });
-    }
-  });
-
-  // Create new invoice (auto-generate from booking)
-  app.post("/api/invoices", authenticateToken, requireAdmin, async (req, res) => {
-    try {
-      const { bookingId } = req.body;
-
-      if (!bookingId) {
-        return res.status(400).json({ error: "Booking ID is required" });
-      }
-
-      // Get the booking with service and client details
-      const booking = await storage.getBooking(bookingId);
-      if (!booking) {
-        return res.status(404).json({ error: "Booking not found" });
-      }
-
-      // Create invoice data automatically from booking  
-      const invoiceData = {
-        bookingId: booking.id,
-        amount: booking.totalPrice, // This comes as string from DB
-        dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
-        status: 'pending' as const
-      };
-
-      // Save to database using real storage
-      try {
-        const validatedData = insertInvoiceSchema.parse(invoiceData);
-        const invoice = await storage.createInvoice(validatedData);
-        res.json(invoice);
-      } catch (validationError) {
-        console.error("Invoice validation error:", validationError);
-        return res.status(400).json({ error: "Invalid invoice data", details: (validationError as any).errors });
-      }
-    } catch (error) {
-      console.error("Error creating invoice:", error);
-      res.status(500).json({ error: "Failed to create invoice", details: (error as Error).message });
     }
   });
 

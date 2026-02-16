@@ -267,30 +267,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/bookings", authenticateToken, requireAdmin, async (req, res) => {
     try {
-      console.log("Received booking data:", req.body);
-
-      // Validate the incoming request
       const requestData = bookingRequestSchema.parse(req.body);
-      console.log("Request validation passed:", requestData);
 
       // Create or find existing client first
       let client;
       try {
         client = await storage.getClientByEmail(requestData.clientEmail);
       } catch (error) {
-        console.log("Client lookup error:", error);
         client = null;
       }
 
       if (!client) {
-        console.log("Creating new client...");
         client = await storage.createClient({
           name: requestData.clientName,
           email: requestData.clientEmail,
           phone: requestData.clientPhone || null,
           notes: requestData.notes || null,
         });
-        console.log("Created client:", client);
       }
 
       // Get service to extract duration
@@ -298,27 +291,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!service) {
         return res.status(400).json({ error: "Invalid service ID" });
       }
-      console.log("Found service:", service);
 
       // Check for booking conflicts before creating
       const requestedDate = new Date(requestData.date);
-      const sessionDuration = requestData.duration || service.duration || 2; // Default 2 hours
+      const sessionDuration = requestData.duration || service.duration || 2;
 
-      // Create date range for conflict checking (session duration + 1 hour buffer)
-      const bufferStart = new Date(requestedDate.getTime() - (30 * 60 * 1000)); // 30 min before
-      const bufferEnd = new Date(requestedDate.getTime() + ((sessionDuration + 1) * 60 * 60 * 1000)); // Session + 1 hour after
-
-      console.log(`Checking for conflicts between ${bufferStart.toISOString()} and ${bufferEnd.toISOString()}`);
+      const bufferStart = new Date(requestedDate.getTime() - (30 * 60 * 1000));
+      const bufferEnd = new Date(requestedDate.getTime() + ((sessionDuration + 1) * 60 * 60 * 1000));
 
       const conflictingBookings = await storage.getBookingsByDateRange(bufferStart, bufferEnd);
-      const activeConflicts = conflictingBookings.filter(booking => 
+      const activeConflicts = conflictingBookings.filter(booking =>
         booking.status === 'confirmed' || booking.status === 'pending'
       );
 
       if (activeConflicts.length > 0) {
         const conflict = activeConflicts[0];
-        console.log("Booking conflict detected:", conflict);
-        return res.status(409).json({ 
+        return res.status(409).json({
           error: "Booking conflict detected",
           message: `A ${conflict.service?.name || 'session'} is already scheduled on ${new Date(conflict.date).toLocaleDateString()}. Please choose a different date or time.`,
           conflictingBooking: {
@@ -329,15 +317,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
             status: conflict.status
           },
           suggestedAlternatives: [
-            new Date(bufferEnd.getTime() + (60 * 60 * 1000)).toISOString(), // 1 hour after conflict ends
-            new Date(requestedDate.getTime() + (24 * 60 * 60 * 1000)).toISOString(), // Next day same time
+            new Date(bufferEnd.getTime() + (60 * 60 * 1000)).toISOString(),
+            new Date(requestedDate.getTime() + (24 * 60 * 60 * 1000)).toISOString(),
           ]
         });
       }
 
-      console.log("No conflicts found, proceeding with booking creation");
-
-      // Prepare booking data for database insertion
       const bookingData = {
         clientId: client.id,
         serviceId: requestData.serviceId,
@@ -350,13 +335,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         addOns: requestData.addOns || null,
       };
 
-      console.log("Final booking data:", bookingData);
-
-      // Validate booking data with schema before creating
       const validatedBookingData = insertBookingSchema.parse(bookingData);
-      console.log("Validated booking data:", validatedBookingData);
-
-      // Create booking directly using storage
       const booking = await storage.createBooking(validatedBookingData);
 
       res.json(booking);
@@ -431,23 +410,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(contract);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch contract" });
-    }
-  });
-
-  app.post("/api/contracts", authenticateToken, requireAdmin, async (req, res) => {
-    try {
-      console.log('Received contract data:', req.body);
-      const contractData = insertContractSchema.parse(req.body);
-      console.log('Validated contract data:', contractData);
-      const contract = await storage.createContract(contractData);
-      res.json(contract);
-    } catch (error) {
-      console.error("Contract creation error:", error);
-      if (error instanceof z.ZodError) {
-        res.status(400).json({ error: "Invalid contract data", details: error.errors });
-      } else {
-        res.status(500).json({ error: "Failed to create contract", details: (error as Error).message });
-      }
     }
   });
 
@@ -1264,10 +1226,23 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
   app.post("/api/admin/send-welcome-emails", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
     try {
       const clients = await storage.getClients();
-      // Implementation would send actual emails via email service
-      // For now, just log the action
-      console.log(`Sending welcome emails to ${clients.length} clients`);
-      res.json({ success: true, count: clients.length });
+
+      // Send welcome emails via Neon email service
+      let sentCount = 0;
+      try {
+        const { neonEmailService } = await import('./neon-email.js');
+        for (const client of clients) {
+          if (client.email) {
+            const magicLink = `${process.env.REPL_URL || 'http://localhost:5000'}/client-portal`;
+            const sent = await neonEmailService.sendMagicLinkEmail(client.email, client.name, magicLink);
+            if (sent) sentCount++;
+          }
+        }
+      } catch (emailError) {
+        console.error("Email service unavailable:", emailError);
+      }
+
+      res.json({ success: true, count: clients.length, sent: sentCount });
     } catch (error) {
       console.error("Error sending welcome emails:", error);
       res.status(500).json({ error: "Failed to send welcome emails" });
@@ -1282,18 +1257,6 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
     } catch (error) {
       console.error("Error resetting portal sessions:", error);
       res.status(500).json({ error: "Failed to reset portal sessions" });
-    }
-  });
-
-  // Get questionnaire responses
-  app.get("/api/questionnaire-responses", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
-    try {
-      // const questionnaires = await storage.getQuestionnaires();
-      // For now, return empty array since we don't have response tracking yet
-      res.json([]);
-    } catch (error) {
-      console.error("Error fetching questionnaire responses:", error);
-      res.status(500).json({ error: "Failed to fetch questionnaire responses" });
     }
   });
 
@@ -1625,8 +1588,6 @@ Additional Terms: Travel fee may apply for locations over 30 miles from Honolulu
       try {
         const validatedData = insertInvoiceSchema.parse(invoiceData);
         const invoice = await storage.createInvoice(validatedData);
-        console.log("Created invoice from booking:", invoice);
-
         res.json(invoice);
       } catch (validationError) {
         console.error("Invoice validation error:", validationError);
@@ -1738,8 +1699,6 @@ Please respond with a JSON object containing:
     }
   });
 
-  // Note: Duplicate contact route removed - using public version below
-
   app.patch("/api/contact-messages/:id", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
     try {
       const { id } = req.params;
@@ -1792,9 +1751,7 @@ Please respond with a JSON object containing:
 
       const html = generateInvoiceHTML(pdfData);
 
-      // In production, you would convert HTML to PDF here using puppeteer or similar
-      // For now, we'll return the HTML as a simulated PDF download
-      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Type', 'text/html');
       res.setHeader('Content-Disposition', `attachment; filename="invoice-${invoiceNumber}.pdf"`);
       res.send(html);
 
@@ -1905,11 +1862,9 @@ Please respond with a JSON object containing:
     }
   });
 
-  // Automation sequences endpoint - using real booking data for workflow calculations
+  // Automation sequences endpoints (schema exists, storage layer not yet implemented)
   app.get("/api/automation-sequences", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
     try {
-      // Real automation workflows would be fetched from database
-      // This is now empty to await proper database implementation
       res.json([]);
     } catch (error) {
       console.error("Error fetching automation sequences:", error);
@@ -1917,32 +1872,8 @@ Please respond with a JSON object containing:
     }
   });
 
-  // Automation workflow creation endpoint
-  app.post("/api/automation-sequences", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
-    try {
-      const { name, trigger, steps, active } = req.body;
-
-      // In a production system, this would save to the automation_sequences table
-      const newWorkflow = {
-        id: Date.now(),
-        name,
-        trigger,
-        steps,
-        active: active !== false,
-        stats: {
-          triggered: 0,
-          completed: 0,
-          openRate: 0,
-          clickRate: 0
-        },
-        createdAt: new Date().toISOString()
-      };
-
-      res.json(newWorkflow);
-    } catch (error) {
-      console.error("Error creating automation sequence:", error);
-      res.status(500).json({ error: "Failed to create automation sequence" });
-    }
+  app.post("/api/automation-sequences", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
+    res.status(501).json({ error: "Automation sequences are not yet implemented" });
   });
 
   // Client Portal Messaging API
@@ -2187,6 +2118,38 @@ Please respond with a JSON object containing:
       res.json({ message: "Questionnaire deleted successfully" });
     } catch (error: any) {
       res.status(500).json({ message: "Failed to delete questionnaire", details: error.message });
+    }
+  });
+
+  // Sales endpoint (returns orders formatted for the product-sales dashboard)
+  app.get("/api/sales", authenticateToken, requireAdmin, async (_req: AuthRequest, res) => {
+    try {
+      const ordersList = await storage.getOrders();
+      const productsList = await storage.getProducts();
+
+      const sales = ordersList.flatMap(order => {
+        if (!order.items || !Array.isArray(order.items)) return [];
+        return order.items.map((item: any) => {
+          const product = productsList.find(p => p.id === item.productId);
+          return {
+            id: order.id,
+            productId: item.productId,
+            productName: product?.name || item.name || 'Unknown Product',
+            quantity: item.quantity || 1,
+            unitPrice: item.price || 0,
+            totalAmount: (item.price || 0) * (item.quantity || 1),
+            customerName: order.customerName || 'Unknown',
+            customerEmail: order.customerEmail || '',
+            status: order.status || 'completed',
+            createdAt: order.createdAt
+          };
+        });
+      });
+
+      res.json(sales);
+    } catch (error: any) {
+      console.error("Failed to fetch sales:", error);
+      res.status(500).json({ message: "Failed to fetch sales", details: error.message });
     }
   });
 
